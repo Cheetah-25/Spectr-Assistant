@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "spectroscopy-assessment.schema.json",
+  "title": "SpectroscopyAssessment",
+  "description": "One first technical assessment of a customer enquiry. Keeps client facts, sourced claims, assumptions and proposed experiments visibly separate so an expert can review it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "decision_status",
+    "decision_status_reason",
+    "requirements",
+    "clarification_questions",
+    "recommendations",
+    "measurement_concept",
+    "spectral_range",
+    "risks",
+    "feasibility_plan",
+    "source_conflicts",
+    "meta"
+  ],
+  "properties": {
+    "case_id": { "type": "string", "description": "Identifier supplied by the caller, e.g. D01, or 'live' for a free-text enquiry." },
+
+    "decision_status": {
+      "type": "string",
+      "enum": ["provisional_assessment", "insufficient_information", "outside_supported_scope"]
+    },
+    "decision_status_reason": {
+      "type": "string",
+      "description": "One or two sentences: why this status, based on the stated facts."
+    },
+
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stated", "unknowns", "assumptions"],
+      "properties": {
+        "stated": {
+          "type": "array",
+          "description": "Only what the client actually said.",
+          "items": { "type": "string" }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["item", "why_it_matters"],
+            "properties": {
+              "item": { "type": "string" },
+              "why_it_matters": { "type": "string" }
+            }
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "Explicit working assumptions. Never presented as client facts.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "clarification_questions": {
+      "type": "array",
+      "description": "Ordered by priority: questions whose answers could change the method or setup come first.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["priority", "question", "could_change"],
+        "properties": {
+          "priority": { "type": "integer", "minimum": 1 },
+          "question": { "type": "string" },
+          "could_change": {
+            "type": "string",
+            "enum": ["method", "probe_or_geometry", "spectral_range", "experiment_design", "scope_or_feasibility"]
+          }
+        }
+      }
+    },
+
+    "recommendations": {
+      "type": "array",
+      "description": "Methods or combinations worth testing. May be empty when status is insufficient_information or outside_supported_scope.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["method", "role", "rationale", "applies_when", "confidence", "citations"],
+        "properties": {
+          "method": { "$ref": "#/$defs/method" },
+          "role": {
+            "type": "string",
+            "enum": ["primary_candidate", "comparison_candidate", "conditional", "not_recommended"]
+          },
+          "rationale": { "type": "string" },
+          "applies_when": { "type": "string", "description": "Conditions under which this recommendation holds." },
+          "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        }
+      }
+    },
+
+    "measurement_concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "needs_afs_confirmation", "citations"],
+      "properties": {
+        "summary": { "type": "string", "description": "High-level probe, geometry, measurement location and fiber link. May state that it cannot be defined yet." },
+        "geometry": {
+          "type": "string",
+          "enum": ["ATR", "diffuse_reflection", "transmission", "transflection", "raman_probe", "fluorescence_probe", "flow_cell_or_cuvette", "undetermined"]
+        },
+        "fiber_link_note": { "type": "string" },
+        "needs_afs_confirmation": { "type": "boolean" },
+        "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+      }
+    },
+
+    "spectral_range": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["method", "status", "note"],
+        "properties": {
+          "method": { "$ref": "#/$defs/method" },
+          "nominal_range": { "$ref": "#/$defs/range" },
+          "excitation_nm": { "type": "number", "description": "Raman and fluorescence only; stated separately from Raman shift." },
+          "fiber_family": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["nominal_only", "confirmed_by_sources", "unknown_until_system_defined"]
+          },
+          "note": { "type": "string", "description": "A nominal method range is not the range of a specific instrument, fiber or probe." },
+          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        }
+      }
+    },
+
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["risk", "mitigation"],
+        "properties": {
+          "risk": { "type": "string" },
+          "mitigation": { "type": "string" },
+          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        }
+      }
+    },
+
+    "feasibility_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objective", "samples_or_process_states", "reference_measurements", "comparisons", "steps", "go_no_go_basis"],
+      "properties": {
+        "objective": { "type": "string" },
+        "samples_or_process_states": { "type": "array", "items": { "type": "string" } },
+        "reference_measurements": { "type": "array", "items": { "type": "string" } },
+        "comparisons": { "type": "array", "items": { "type": "string" } },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "go_no_go_basis": {
+          "type": "string",
+          "description": "What decides go / no-go. Acceptance targets come from the client; none is invented."
+        }
+      }
+    },
+
+    "source_conflicts": {
+      "type": "array",
+      "description": "Places where AFS sources disagree and which reading was used.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "resolution"],
+        "properties": {
+          "description": { "type": "string" },
+          "resolution": { "type": "string" },
+          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        }
+      }
+    },
+
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "kb_version", "generated_at"],
+      "properties": {
+        "model": { "type": "string" },
+        "kb_version": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "verification": {
+          "type": "object",
+          "description": "Filled in by the code checks, not by the LLM.",
+          "properties": {
+            "citations_ok": { "type": "boolean" },
+            "range_check_ok": { "type": "boolean" },
+            "unsupported_numbers": { "type": "array", "items": { "type": "string" } },
+            "warnings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "method": {
+      "type": "string",
+      "enum": ["NIR", "MIR_ATR", "Raman", "Fluorescence", "UV_Vis", "combination", "other"]
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "unit"],
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "unit": { "type": "string", "enum": ["nm", "um", "cm-1"] }
+      }
+    },
+    "citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "page", "supports"],
+      "properties": {
+        "source_id": { "type": "string", "enum": ["S01", "S02", "S03", "S04", "S05"] },
+        "page": { "type": "integer", "minimum": 1, "description": "1-based PDF page, counting the title page. For S02 this is the slide number." },
+        "locator": { "type": "string", "description": "Optional, e.g. 'Table 1' or 'Fig. 7'." },
+        "quote": { "type": "string", "maxLength": 160, "description": "Optional short verbatim passage (under about 15 words). The code check verifies it appears on that page." },
+        "supports": { "type": "string", "description": "The claim this citation is meant to support." }
+      }
+    }
+  }
+}

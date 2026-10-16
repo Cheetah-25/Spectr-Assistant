@@ -1,0 +1,42 @@
+{
+  "source": "S02 p.6 (figure), transcribed in the organizers' examples document, section 5. Approximate values: check the figure before relying on an exact number.",
+  "unit": "um",
+  "conversion": "wavelength_um = 10000 / wavenumber_cm-1",
+  "fibers": [
+    {
+      "family": "Standard and Al/Cu-coated UV-Vis silica fibers",
+      "min_um": 0.19,
+      "max_um": 1.2
+    },
+    {
+      "family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+      "min_um": 0.35,
+      "max_um": 2.4
+    },
+    {
+      "family": "Chalcogenide As-S IR fibers (CIR)",
+      "min_um": 1.1,
+      "max_um": 6.5
+    },
+    {
+      "family": "Polycrystalline infrared fibers (PIR)",
+      "min_um": 3.0,
+      "max_um": 17.0
+    },
+    {
+      "family": "Hollow glass waveguides (HWG)",
+      "min_um": 2.0,
+      "max_um": 18.0
+    },
+    {
+      "family": "Indium fluoride fibers",
+      "min_um": 0.3,
+      "max_um": 5.5
+    },
+    {
+      "family": "Zirconium fluoride fibers",
+      "min_um": 0.3,
+      "max_um": 4.5
+    }
+  ]
+}
