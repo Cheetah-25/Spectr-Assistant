@@ -1,0 +1,29 @@
+# Spectroscopy Assistant — runtime dependencies
+#
+# The code is written to use the real `jsonschema` library when it is installed.
+# If `jsonschema` is not importable (e.g. an offline environment), the code falls
+# back to a small vendored Draft 2020-12 validator in `spectro/_jsonschema_mini.py`
+# that covers the keywords this project's schema uses. For production use, install
+# the pinned dependencies below.
+
+jsonschema>=4.21,<5
+
+# PDF / document ingestion (used by ingest.py in PR 2)
+pypdf>=4.2
+pdfminer.six>=20231228   # text-extraction fallback
+PyMuPDF>=1.24            # imported as `fitz` (slide rendering, if ever needed)
+openpyxl>=3.1
+pandas>=2.2
+
+# UI (app.py, PR 3)
+streamlit>=1.33
+
+# Config / secrets
+python-dotenv>=1.0
+
+# LLM providers (provider-agnostic; install whichever you configure via SPECTRO_LLM_PROVIDER)
+openai>=1.30
+anthropic>=0.25
+
+# Tests
+pytest>=8.0

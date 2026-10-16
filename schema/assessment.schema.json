@@ -63,6 +63,7 @@
 
     "clarification_questions": {
       "type": "array",
+      "maxItems": 5,
       "description": "Ordered by priority: questions whose answers could change the method or setup come first.",
       "items": {
         "type": "object",
@@ -81,6 +82,7 @@
 
     "recommendations": {
       "type": "array",
+      "maxItems": 3,
       "description": "Methods or combinations worth testing. May be empty when status is insufficient_information or outside_supported_scope.",
       "items": {
         "type": "object",
@@ -92,7 +94,7 @@
             "type": "string",
             "enum": ["primary_candidate", "comparison_candidate", "conditional", "not_recommended"]
           },
-          "rationale": { "type": "string" },
+          "rationale": { "type": "string", "maxLength": 300 },
           "applies_when": { "type": "string", "description": "Conditions under which this recommendation holds." },
           "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
           "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
