@@ -128,7 +128,11 @@
           "method": { "$ref": "#/$defs/method" },
           "nominal_range": { "$ref": "#/$defs/range" },
           "excitation_nm": { "type": "number", "description": "Raman and fluorescence only; stated separately from Raman shift." },
-          "fiber_family": { "type": "string" },
+          "fiber_family": {
+            "type": "string",
+            "description": "Optional. A fibre material family from the AFS fibre table, never a method name. Omit if no fibre family is being named.",
+            "enum": ["Standard and Al/Cu-coated UV-Vis silica fibers", "Standard and Al/Cu-coated Vis-NIR silica fibers", "Chalcogenide As-S IR fibers (CIR)", "Polycrystalline infrared fibers (PIR)", "Hollow glass waveguides (HWG)", "Indium fluoride fibers", "Zirconium fluoride fibers"]
+          },
           "status": {
             "type": "string",
             "enum": ["nominal_only", "confirmed_by_sources", "unknown_until_system_defined"]

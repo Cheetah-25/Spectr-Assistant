@@ -304,8 +304,9 @@ def check_ranges(assessment: dict, fibers: dict) -> Tuple[bool, List[str]]:
         if not fam or window is None:
             continue
         if fam not in families:
-            ok = False
-            warnings.append(f"spectral_range[{i}]: unknown fiber family {fam!r}")
+            # Unknown family names are only a warning: nothing can be checked, but
+            # nothing is shown to be wrong either.
+            warnings.append(f"spectral_range[{i}]: unknown fiber family {fam!r}; range not checked")
             continue
         fmin, fmax = families[fam]
         tol_lo = fmin * (1 - RANGE_TOLERANCE)
@@ -405,6 +406,16 @@ def check_status_consistency(assessment: dict) -> List[str]:
         warnings.append(
             "status 'provisional_assessment' with open unknowns but no clarification questions"
         )
+    if status == "insufficient_information" and recs and any(
+        isinstance(r, dict) and r.get("role") in ("primary_candidate", "comparison_candidate")
+        for r in recs
+    ):
+        warnings.append(
+            "status 'insufficient_information' but candidate methods are recommended; "
+            "consider provisional_assessment with open questions"
+        )
+    if status == "provisional_assessment" and not recs:
+        warnings.append("status 'provisional_assessment' but no recommendation is given")
     if status == "outside_supported_scope" and high_primary:
         warnings.append(
             "status 'outside_supported_scope' but a high-confidence primary recommendation is present"

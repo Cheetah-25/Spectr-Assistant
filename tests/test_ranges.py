@@ -69,8 +69,26 @@ def test_range_outside_family_flagged():
 def test_unknown_family_flagged():
     a = _assessment_with_range({"min": 1.0, "max": 2.0, "unit": "um"}, "Imaginary fiber")
     ok, warnings = verify.check_ranges(a, FIBERS)
-    assert not ok
+    # An unknown family name cannot be checked, so it is a warning, not a failure.
+    assert ok
     assert any("unknown fiber family" in w for w in warnings)
+
+
+def test_method_name_as_family_is_only_a_warning():
+    a = _assessment_with_range({"min": 1.0, "max": 2.5, "unit": "um"}, "NIR")
+    ok, warnings = verify.check_ranges(a, FIBERS)
+    assert ok
+    assert warnings
+
+
+def test_schema_fiber_enum_matches_fiber_table():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    schema = json.loads((root / "schema" / "assessment.schema.json").read_text())
+    table = json.loads((root / "data" / "fiber_families.json").read_text())
+    enum = schema["properties"]["spectral_range"]["items"]["properties"]["fiber_family"]["enum"]
+    assert set(enum) == {f["family"] for f in table["fibers"]}
 
 
 def test_no_family_is_skipped():

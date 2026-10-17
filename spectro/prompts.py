@@ -56,6 +56,22 @@ FACT_SYSTEM = (
     '"unknowns": [{"item": string, "why_it_matters": string}], "assumptions": [string]}.'
 )
 
+# Guidance on choosing the decision status (rule 4 stays as written above; this clarifies when
+# each status applies). Generic: no scenario wording.
+STATUS_GUIDANCE = """\
+Choosing the decision status:
+- Default to provisional_assessment when the enquiry names a material or process, a quantity to
+  measure, and a measurement location or process step. Then still give up to 3 recommendations
+  (a primary candidate and, where reasonable, a comparison candidate), list the open questions,
+  and mark what is assumed. Open questions lower confidence; they are not a reason to withhold
+  candidate methods.
+- Use insufficient_information only when the material or process, or the quantity to measure, is
+  missing, so that no method can be justified at all.
+- Use outside_supported_scope only when the request is not an in-line spectroscopy task.
+- List as unknowns only items that affect the method, probe, spectral range or experiment design.
+  Do not list budget, timeline or general project management as unknowns.
+"""
+
 # Compact reminder of the required container shapes. The schema is also enforced
 # via the provider's structured-output mode and re-validated in code, but stating
 # the shapes in words reduces malformed outputs (e.g. arrays of strings).
@@ -65,7 +81,8 @@ Output shape (all of these are arrays of OBJECTS, never arrays of strings):
 - clarification_questions: array of {priority:int, question, could_change} (at most 5).
 - recommendations: array of {method, role, rationale, applies_when, confidence, citations:[...]} (at most 3).
 - spectral_range: array of objects {method, status, note, and optionally nominal_range:{min,max,unit},
-  excitation_nm, fiber_family, citations}. Never a plain string.
+  excitation_nm, fiber_family, citations}. Never a plain string. fiber_family, if given, is a fibre
+  material family from the schema list, never a method name; omit it otherwise.
 - risks: array of {risk, mitigation, citations?}. source_conflicts: array of {description, resolution, citations?}.
 - measurement_concept: object {summary, needs_afs_confirmation:bool, citations:[...], ...}.
 - citation object: {source_id (S01..S05), page:int, supports, optional locator, optional quote}.
@@ -77,6 +94,8 @@ ASSESS_SYSTEM = (
     "Ground every sourced claim in the provided knowledge base and cite it. Keep client facts, "
     "sourced claims, assumptions and proposed experiments visibly separate.\n\n"
     + HARD_RULES
+    + "\n"
+    + STATUS_GUIDANCE
     + "\n"
     + SHAPE_NOTES
     + "\nReturn a single JSON object that conforms to the provided assessment schema. No prose "
