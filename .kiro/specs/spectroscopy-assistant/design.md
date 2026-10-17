@@ -68,7 +68,12 @@ Shared loader used by `assess.py`, `verify.py`, and the UI so the KB is read one
   - `SPECTRO_LLM_MODEL`, `SPECTRO_VISION_MODEL` (optional overrides)
   - provider key var (e.g. `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`)
 - Interface:
-  - `complete_json(system, user, schema) -> dict` — schema-constrained/JSON-mode text completion.
+  - `complete_json(system, user, schema) -> dict` — **structured-output** text completion:
+    OpenAI `response_format={"type":"json_schema", strict:false}` (non-strict, since our schema has
+    optional fields strict mode cannot express) with a `json_object` fallback; Anthropic a forced tool
+    whose `input_schema` is our schema. The assessment system prompt also states the required shapes
+    (`spectral_range`/`citations`/`recommendations` are arrays of objects, never strings). Results are
+    always re-validated locally — the provider is never trusted to enforce the contract.
   - `describe_images(system, images: list[Path], user) -> str` — single vision call (used once for S02).
   - `model_name() -> str` for `meta.model`.
 - On missing key/provider: raise `LLMConfigError` with a clear message (caught by callers / UI).
@@ -106,9 +111,13 @@ Two stages; both prompts generic.
    - Build user prompt = enquiry + extracted fact sheet + `KnowledgeBase.as_prompt_block()`.
    - Call `llm.complete_json(..., schema)`.
    - Validate against schema; run `verify.verify`.
-   - If invalid or verify fails → **one** repair call: same context + a compact list of the concrete
-     errors (schema messages, bad citations, range mismatches, unsupported numbers, status warnings).
-     Validate + verify again.
+   - If invalid or verify fails → **one** repair call: same context + the concrete errors, **led by the
+     exact schema errors** (`$.json.path: message`), then other issues (bad citations, range
+     mismatches, unsupported numbers, status/rule warnings). Validate + verify again.
+   - The model's return value is coerced to a dict first (a non-dict is wrapped so it surfaces as a
+     schema error); if the result is still invalid after the single repair pass, `assess` **does not
+     crash** — it writes `meta.verification` (with the errors) and returns the best-effort draft so the
+     runner can persist it and continue with the next case.
    - Fill `meta.model`, `meta.kb_version`, `meta.generated_at`; attach final `meta.verification`.
 - The function returns the assessment plus the verification result; it does not raise on
   `insufficient_information` — that is a valid outcome.
@@ -146,6 +155,12 @@ Pure functions over `(assessment, knowledge_base, enquiry, fiber_families)`.
 - `verify(...) -> VerifyResult { citations_ok, range_check_ok, unsupported_numbers[], warnings[], errors[] }`
   (rule-10 and rule-11 hits are added to `warnings`) and `write_verification(...)` to record the
   machine-checkable subset into `meta.verification`.
+- **Defensive by contract.** `verify()` validates the schema **first**; every other check skips
+  malformed structures (non-dict items, arrays-of-strings, non-list fields) instead of raising, via
+  `_as_list`/`_as_dict` guards, so malformed LLM output is reported as schema errors rather than
+  crashing. When the document is schema-invalid, `citations_ok`/`range_check_ok` are forced False (not
+  meaningfully confirmable). `render.to_markdown` is defensive the same way, so a best-effort draft can
+  always be written to Markdown. (Regression: `spectral_range` returned as an array of strings.)
 
 ### `render.py` (helper used by runner + UI)
 - **Every report begins with the exact mandated line** (constant `HEADER_NOTE`): "First assessment to

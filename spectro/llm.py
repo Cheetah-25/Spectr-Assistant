@@ -130,14 +130,39 @@ def _openai_client(cfg: LLMConfig):
 
 
 def _openai_complete_json(cfg: LLMConfig, system: str, user: str, schema: dict) -> dict:  # pragma: no cover
+    """Structured-output completion.
+
+    Prefers ``response_format={"type":"json_schema", ...}`` with the real schema
+    so the provider constrains the shape (arrays-of-objects, enums, etc.). We use
+    non-strict mode because strict mode requires every property to be listed in
+    ``required`` and forbids some constructs our schema uses for optional fields.
+    Falls back to plain json_object mode if the model/SDK rejects json_schema.
+    """
     client = _openai_client(cfg)
-    resp = client.chat.completions.create(
-        model=cfg.text_model,
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
-        response_format={"type": "json_object"},
-        temperature=0,
-    )
-    return json.loads(resp.choices[0].message.content)
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    try:
+        resp = client.chat.completions.create(
+            model=cfg.text_model,
+            messages=messages,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "spectroscopy_assessment",
+                    "schema": schema,
+                    "strict": False,
+                },
+            },
+            temperature=0,
+        )
+        return json.loads(resp.choices[0].message.content)
+    except Exception:
+        resp = client.chat.completions.create(
+            model=cfg.text_model,
+            messages=messages,
+            response_format={"type": "json_object"},
+            temperature=0,
+        )
+        return json.loads(resp.choices[0].message.content)
 
 
 def _openai_describe_images(cfg: LLMConfig, system: str, images: List[Path], user: str) -> str:  # pragma: no cover
@@ -169,7 +194,33 @@ def _anthropic_client(cfg: LLMConfig):
 
 
 def _anthropic_complete_json(cfg: LLMConfig, system: str, user: str, schema: dict) -> dict:  # pragma: no cover
+    """Structured-output via a tool whose input_schema is our JSON Schema.
+
+    Anthropic constrains tool input to the given schema, so forcing a single tool
+    call yields a shape-constrained object. Falls back to parsing a JSON object
+    from text if tool use is unavailable.
+    """
     client = _anthropic_client(cfg)
+    tool = {
+        "name": "emit_assessment",
+        "description": "Return the spectroscopy assessment as structured JSON.",
+        "input_schema": schema,
+    }
+    try:
+        msg = client.messages.create(
+            model=cfg.text_model,
+            max_tokens=4096,
+            system=system,
+            tools=[tool],
+            tool_choice={"type": "tool", "name": "emit_assessment"},
+            messages=[{"role": "user", "content": user}],
+            temperature=0,
+        )
+        for block in msg.content:
+            if getattr(block, "type", "") == "tool_use":
+                return dict(block.input)
+    except Exception:
+        pass
     msg = client.messages.create(
         model=cfg.text_model,
         max_tokens=4096,

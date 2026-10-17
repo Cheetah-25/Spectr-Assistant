@@ -16,6 +16,26 @@ from typing import Any, Dict, List
 HEADER_NOTE = "First assessment to support an AFS expert; not a final recommendation."
 
 
+def _dicts(value: Any) -> List[dict]:
+    """Return only the dict items of a list value (defensive against malformed
+    LLM output where an array may contain strings)."""
+    if not isinstance(value, list):
+        return []
+    return [v for v in value if isinstance(v, dict)]
+
+
+def _obj(value: Any) -> dict:
+    """Return value if it is a dict, else an empty dict."""
+    return value if isinstance(value, dict) else {}
+
+
+def _strs(value: Any) -> List[str]:
+    """Return list items rendered as strings (defensive)."""
+    if not isinstance(value, list):
+        return []
+    return [v if isinstance(v, str) else str(v) for v in value]
+
+
 def _fmt_citation(cit: Dict[str, Any]) -> str:
     tag = f"{cit.get('source_id')} p.{cit.get('page')}"
     loc = cit.get("locator")
@@ -42,7 +62,7 @@ def _summary_section(a: Dict[str, Any]) -> List[str]:
         lines.append("")
         lines.append(reason)
 
-    questions = a.get("clarification_questions", []) or []
+    questions = _dicts(a.get("clarification_questions"))
     if questions:
         ordered = sorted(questions, key=lambda q: q.get("priority", 99))
         lines.append("")
@@ -50,7 +70,7 @@ def _summary_section(a: Dict[str, Any]) -> List[str]:
         for q in ordered:
             lines.append(f"- ({q.get('could_change', '?')}) {q.get('question', '')}")
 
-    recs = a.get("recommendations", []) or []
+    recs = _dicts(a.get("recommendations"))
     lines.append("")
     lines.append("**Recommendations:**")
     if not recs:
@@ -70,15 +90,15 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
     lines.append("## Show reasoning")
     lines.append("")
 
-    req = a.get("requirements", {}) or {}
-    stated = req.get("stated", []) or []
+    req = _obj(a.get("requirements"))
+    stated = _strs(req.get("stated"))
     lines.append("### Stated facts")
     if stated:
         lines.extend(f"- {s}" for s in stated)
     else:
         lines.append("- (none)")
 
-    unknowns = req.get("unknowns", []) or []
+    unknowns = _dicts(req.get("unknowns"))
     lines.append("")
     lines.append("### Unknowns")
     if unknowns:
@@ -87,7 +107,7 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
     else:
         lines.append("- (none)")
 
-    assumptions = req.get("assumptions", []) or []
+    assumptions = _strs(req.get("assumptions"))
     lines.append("")
     lines.append("### Assumptions")
     if assumptions:
@@ -96,10 +116,10 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
         lines.append("- (none)")
 
     # Measurement concept
-    mc = a.get("measurement_concept", {}) or {}
+    mc = _obj(a.get("measurement_concept"))
     lines.append("")
     lines.append("### Measurement concept")
-    lines.append(mc.get("summary", "(not defined)"))
+    lines.append(str(mc.get("summary", "(not defined)")))
     if mc.get("geometry"):
         lines.append(f"- Geometry: {mc['geometry']}")
     if mc.get("fiber_link_note"):
@@ -108,12 +128,12 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
         lines.append("- Needs AFS confirmation: yes")
 
     # Spectral range
-    sr = a.get("spectral_range", []) or []
+    sr = _dicts(a.get("spectral_range"))
     if sr:
         lines.append("")
         lines.append("### Spectral range")
         for s in sr:
-            rng = s.get("nominal_range")
+            rng = _obj(s.get("nominal_range"))
             rng_txt = ""
             if rng:
                 rng_txt = f" {rng.get('min')}-{rng.get('max')} {rng.get('unit')}"
@@ -127,7 +147,7 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
             )
 
     # Risks
-    risks = a.get("risks", []) or []
+    risks = _dicts(a.get("risks"))
     if risks:
         lines.append("")
         lines.append("### Risks")
@@ -135,7 +155,7 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
             lines.append(f"- {r.get('risk', '')} — _mitigation:_ {r.get('mitigation', '')}")
 
     # Feasibility plan
-    fp = a.get("feasibility_plan", {}) or {}
+    fp = _obj(a.get("feasibility_plan"))
     if fp:
         lines.append("")
         lines.append("### Feasibility plan")
@@ -147,7 +167,7 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
             ("comparisons", "Comparisons"),
             ("steps", "Steps"),
         ]:
-            vals = fp.get(key) or []
+            vals = _strs(fp.get(key))
             if vals:
                 lines.append(f"- {label}:")
                 lines.extend(f"    - {v}" for v in vals)
@@ -162,7 +182,7 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
         lines.extend(f"- {c}" for c in cits)
 
     # Source conflicts
-    conflicts = a.get("source_conflicts", []) or []
+    conflicts = _dicts(a.get("source_conflicts"))
     if conflicts:
         lines.append("")
         lines.append("### Source conflicts")
@@ -170,16 +190,17 @@ def _reasoning_section(a: Dict[str, Any]) -> List[str]:
             lines.append(f"- {c.get('description', '')} — _resolution:_ {c.get('resolution', '')}")
 
     # Verification
-    meta = a.get("meta", {}) or {}
+    meta = _obj(a.get("meta"))
     ver = meta.get("verification")
     lines.append("")
     lines.append("### Verification")
+    ver = _obj(ver)
     if ver:
         lines.append(f"- Citations OK: {ver.get('citations_ok')}")
         lines.append(f"- Range check OK: {ver.get('range_check_ok')}")
-        unsup = ver.get("unsupported_numbers") or []
+        unsup = _strs(ver.get("unsupported_numbers"))
         lines.append(f"- Unsupported numbers: {', '.join(unsup) if unsup else 'none'}")
-        warns = ver.get("warnings") or []
+        warns = _strs(ver.get("warnings"))
         if warns:
             lines.append("- Warnings:")
             lines.extend(f"    - {w}" for w in warns)
@@ -202,8 +223,8 @@ def _collect_citations(a: Dict[str, Any]) -> List[str]:
     seen = set()
 
     def add_from(items):
-        for item in items or []:
-            for c in item.get("citations", []) or []:
+        for item in _dicts(items):
+            for c in _dicts(item.get("citations")):
                 text = _fmt_citation(c)
                 if text not in seen:
                     seen.add(text)
@@ -213,8 +234,8 @@ def _collect_citations(a: Dict[str, Any]) -> List[str]:
     add_from(a.get("spectral_range"))
     add_from(a.get("risks"))
     add_from(a.get("source_conflicts"))
-    mc = a.get("measurement_concept") or {}
-    for c in mc.get("citations", []) or []:
+    mc = _obj(a.get("measurement_concept"))
+    for c in _dicts(mc.get("citations")):
         text = _fmt_citation(c)
         if text not in seen:
             seen.add(text)

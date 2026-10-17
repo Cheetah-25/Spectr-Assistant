@@ -101,3 +101,58 @@ def test_write_verification_populates_meta(minimal_assessment, tiny_kb, enquiry_
     assert meta_ver["range_check_ok"] is True
     assert meta_ver["unsupported_numbers"] == []
     assert meta_ver["warnings"] == []
+
+
+# ---------------------------------------------------------------------------
+# Defensive behaviour: malformed structures must not crash verification.
+# ---------------------------------------------------------------------------
+
+
+def test_malformed_spectral_range_strings_no_crash(minimal_assessment, tiny_kb, enquiry_text):
+    """Regression: spectral_range returned as an array of strings used to raise
+    AttributeError in _iter_citations. It must now be reported as schema errors."""
+    bad = copy.deepcopy(minimal_assessment)
+    bad["spectral_range"] = ["NIR 1000-2500 nm", "MIR 2.5-16 um"]
+    result = verify.verify(bad, tiny_kb, enquiry_text, fibers={"fibers": []})
+    assert result.errors, "malformed spectral_range should produce schema errors"
+    assert any("spectral_range" in e for e in result.errors)
+    assert result.citations_ok is False
+    assert result.range_check_ok is False
+    assert not result.ok
+
+
+def test_malformed_recommendations_and_risks_no_crash(minimal_assessment, tiny_kb, enquiry_text):
+    bad = copy.deepcopy(minimal_assessment)
+    bad["recommendations"] = ["use NIR", "use Raman"]
+    bad["risks"] = ["fouling"]
+    bad["measurement_concept"] = "a probe somewhere"
+    result = verify.verify(bad, tiny_kb, enquiry_text, fibers={"fibers": []})
+    assert result.errors  # reported, not raised
+    assert not result.ok
+
+
+def test_individual_checks_defensive_on_strings(tiny_kb):
+    """Each check helper must skip malformed structures instead of raising."""
+    junk = {
+        "spectral_range": ["x"],
+        "recommendations": ["y"],
+        "risks": ["z"],
+        "source_conflicts": ["c"],
+        "measurement_concept": "m",
+        "requirements": "oops",
+        "clarification_questions": ["q"],
+    }
+    # None of these should raise.
+    ok, _ = verify.check_citations(junk, tiny_kb)
+    verify.check_research_readiness(junk)
+    verify.check_ranges(junk, {"fibers": []})
+    verify.find_unsupported_numbers(junk, tiny_kb, "enquiry")
+    verify.find_prices_and_codes(junk, tiny_kb)
+    verify.check_status_consistency(junk)
+
+
+def test_non_dict_assessment_no_crash(tiny_kb, enquiry_text):
+    result = verify.verify(["not", "an", "object"], tiny_kb, enquiry_text, fibers={"fibers": []})
+    assert result.errors
+    assert not result.ok
+    assert result.citations_ok is False
