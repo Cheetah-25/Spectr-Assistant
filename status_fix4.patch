@@ -1,0 +1,219 @@
+From f3b6eb533fd0b31e2c2c470ea68d0f30972f2004 Mon Sep 17 00:00:00 2001
+From: c <c@c>
+Date: Sat, 17 Oct 2026 10:38:33 +0200
+Subject: [PATCH] app, quote pruning, README
+
+---
+ README.md                     | 17 +++++++-
+ app.py                        | 82 +++++++++++++++++++++++++++++++++++
+ spectro/assess.py             |  4 ++
+ spectro/verify.py             | 28 ++++++++++++
+ tests/test_status_guidance.py | 20 +++++++++
+ 5 files changed, 150 insertions(+), 1 deletion(-)
+ create mode 100644 app.py
+
+diff --git a/README.md b/README.md
+index 566b590..00c22a4 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,16 @@
+-# Spectr-Assistant
+\ No newline at end of file
++# Spectr-Assistant
++## Run the app
++
++```bash
++source .venv/bin/activate
++export OPENAI_API_KEY="..."      # or ANTHROPIC_API_KEY with SPECTRO_LLM_PROVIDER=anthropic
++streamlit run app.py
++```
++
++Paste a customer enquiry (or pick an example) and press **Assess**. The summary view shows the status,
++the main clarification questions and the recommendations; **Show reasoning** lists stated facts,
++assumptions, citations, source conflicts and the automatic verification result. Every report is a
++first assessment to support an AFS expert, not a final recommendation.
++
++Citation quotes that are too long or not verbatim on the cited page are removed by the code (the page
++citation stays) and listed in the verification warnings.
+diff --git a/app.py b/app.py
+new file mode 100644
+index 0000000..78328be
+--- /dev/null
++++ b/app.py
+@@ -0,0 +1,82 @@
++"""Streamlit UI for the Spectroscopy Assistant.
++
++Run:  streamlit run app.py
++Needs a configured LLM provider and key (see README). The assessment is a FIRST assessment to
++support an AFS expert; it is not a final recommendation.
++"""
++from __future__ import annotations
++
++import json
++import sys
++from pathlib import Path
++
++import streamlit as st
++
++ROOT = Path(__file__).resolve().parent
++if str(ROOT) not in sys.path:
++    sys.path.insert(0, str(ROOT))
++
++from spectro import assess, render  # noqa: E402
++from spectro.kb import KnowledgeBase  # noqa: E402
++
++st.set_page_config(page_title="Spectroscopy Assistant", layout="wide")
++
++
++@st.cache_resource
++def _kb() -> KnowledgeBase:
++    return KnowledgeBase.load()
++
++
++@st.cache_data
++def _examples() -> list:
++    path = ROOT / "data" / "dev_scenarios.json"
++    try:
++        data = json.loads(path.read_text(encoding="utf-8"))
++    except Exception:
++        return []
++    items = data.get("scenarios") if isinstance(data, dict) else data
++    return [x for x in (items or []) if isinstance(x, dict) and x.get("enquiry")]
++
++
++st.title("In-line spectroscopy: first assessment")
++st.caption(render.HEADER_NOTE)
++
++examples = _examples()
++choice = st.selectbox(
++    "Example enquiry (optional)",
++    ["(write your own)"] + [f"{e.get('id', '')}: {e.get('title', '')}" for e in examples],
++)
++default_text = ""
++if choice != "(write your own)":
++    default_text = examples[[f"{e.get('id', '')}: {e.get('title', '')}" for e in examples].index(choice)]["enquiry"]
++
++enquiry = st.text_area("Customer enquiry", value=default_text, height=180, key=f"enq-{choice}")
++
++if st.button("Assess", type="primary", disabled=not enquiry.strip()):
++    with st.spinner("Reading the AFS knowledge base and checking the answer..."):
++        try:
++            assessment, result = assess.assess("live", enquiry.strip(), kb=_kb())
++        except Exception as exc:  # show a readable message instead of a stack trace
++            st.error(f"The assessment could not be produced: {exc}")
++        else:
++            st.session_state["assessment"] = assessment
++
++assessment = st.session_state.get("assessment")
++if assessment:
++    summary = render._summary_section(assessment)
++    st.markdown("\n".join(summary))
++    meta = assessment.get("meta", {}).get("verification", {})
++    if meta.get("warnings") or meta.get("unsupported_numbers"):
++        st.warning("Some automatic checks raised notes. See 'Show reasoning' for details.")
++    with st.expander("Show reasoning"):
++        st.markdown("\n".join(render._reasoning_section(assessment)))
++    st.download_button(
++        "Download report (Markdown)",
++        render.to_markdown(assessment),
++        file_name="assessment.md",
++    )
++    st.download_button(
++        "Download report (JSON)",
++        json.dumps(assessment, ensure_ascii=False, indent=2),
++        file_name="assessment.json",
++    )
+diff --git a/spectro/assess.py b/spectro/assess.py
+index 58b8827..2cf91fc 100644
+--- a/spectro/assess.py
++++ b/spectro/assess.py
+@@ -122,7 +122,9 @@ def assess(
+     user = _build_assess_user(case_id, enquiry, facts, kb)
+ 
+     assessment = _normalize_assessment(cj(prompts.ASSESS_SYSTEM, user, schema), case_id, facts, model, kb)
++    pruned = verify.prune_unverifiable_quotes(assessment, kb)
+     result = verify.verify(assessment, kb, enquiry, fibers=fibers, schema=schema)
++    result.warnings.extend(pruned)
+ 
+     if not result.ok:
+         # Exactly ONE repair pass. The prompt leads with the exact schema errors
+@@ -137,7 +139,9 @@ def assess(
+         repaired = _normalize_assessment(
+             cj(prompts.ASSESS_SYSTEM, repair_user, schema), case_id, facts, model, kb
+         )
++        pruned = verify.prune_unverifiable_quotes(repaired, kb)
+         repaired_result = verify.verify(repaired, kb, enquiry, fibers=fibers, schema=schema)
++        repaired_result.warnings.extend(pruned)
+         assessment, result = repaired, repaired_result
+ 
+     # Even if still invalid after the single repair pass, do NOT crash: record
+diff --git a/spectro/verify.py b/spectro/verify.py
+index 5da49ee..25103f8 100644
+--- a/spectro/verify.py
++++ b/spectro/verify.py
+@@ -211,6 +211,34 @@ def _iter_citations(assessment: dict):
+             yield f"measurement_concept.citations[{j}]", cit
+ 
+ 
++
++MAX_QUOTE_CHARS = 160
++
++
++def prune_unverifiable_quotes(assessment: dict, kb: KnowledgeBase) -> List[str]:
++    """Remove citation quotes that are too long or not verbatim on the cited page.
++
++    The citation itself (source and page) is kept; only the unverifiable quote is dropped, and each
++    removal is returned as a note so it stays visible in meta.verification.warnings.
++    """
++    notes: List[str] = []
++    if not isinstance(assessment, dict):
++        return notes
++    for loc, cit in _iter_citations(assessment):
++        quote = cit.get("quote")
++        if not quote or not isinstance(quote, str):
++            continue
++        src, page = cit.get("source_id"), cit.get("page")
++        too_long = len(quote) > MAX_QUOTE_CHARS
++        page_text = normalize_ws(kb.page_text(src, page) or "").lower() if kb.pages_for(src) else ""
++        missing = normalize_ws(quote).lower() not in page_text
++        if too_long or missing:
++            cit.pop("quote", None)
++            reason = "longer than 160 characters" if too_long else "not verbatim on the cited page"
++            notes.append(f"{loc}: quote removed ({reason}); citation kept at {src} p.{page}")
++    return notes
++
++
+ def check_citations(assessment: dict, kb: KnowledgeBase) -> Tuple[bool, List[str]]:
+     warnings: List[str] = []
+     ok = True
+diff --git a/tests/test_status_guidance.py b/tests/test_status_guidance.py
+index 5d68710..c98b4d5 100644
+--- a/tests/test_status_guidance.py
++++ b/tests/test_status_guidance.py
+@@ -31,3 +31,23 @@ def test_consistent_cases_do_not_warn():
+ 
+ def test_prompt_contains_status_guidance():
+     assert "Default to provisional_assessment" in prompts.ASSESS_SYSTEM
++
++
++def test_prune_removes_long_and_unverifiable_quotes(tiny_kb):
++    src = next(iter(tiny_kb.sources()))
++    page = sorted(tiny_kb.pages_for(src))[0]
++    real = " ".join(tiny_kb.page_text(src, page).split()[:4])
++    a = {
++        "recommendations": [
++            {"citations": [
++                {"source_id": src, "page": page, "quote": real, "supports": "x"},
++                {"source_id": src, "page": page, "quote": "definitely not on this page", "supports": "x"},
++                {"source_id": src, "page": page, "quote": real + " " + "word " * 60, "supports": "x"},
++            ]}
++        ]
++    }
++    notes = verify.prune_unverifiable_quotes(a, tiny_kb)
++    cits = a["recommendations"][0]["citations"]
++    assert cits[0].get("quote") == real
++    assert "quote" not in cits[1] and "quote" not in cits[2]
++    assert len(notes) == 2
+-- 
+2.43.0
+

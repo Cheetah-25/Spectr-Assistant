@@ -1,7 +1,7 @@
 {
   "case_id": "D03",
-  "decision_status": "insufficient_information",
-  "decision_status_reason": "The specific type of spectroscopy, expected turbidity levels, and protein concentration range are unknown, which are critical for selecting an appropriate method.",
+  "decision_status": "provisional_assessment",
+  "decision_status_reason": "The enquiry specifies a material (whey stream), a process step (before concentration), and a measurement goal (protein concentration), allowing for a provisional assessment of suitable spectroscopy methods.",
   "requirements": {
     "stated": [
       "The process involves a relatively clear whey stream before a concentration stage.",
@@ -11,59 +11,92 @@
     ],
     "unknowns": [
       {
-        "item": "The specific type of spectroscopy to be used.",
-        "why_it_matters": "Different spectroscopy methods have varying capabilities in handling turbidity and measuring protein concentration."
+        "item": "Specific type of spectroscopy to be used",
+        "why_it_matters": "Different spectroscopy methods have varying sensitivities to turbidity and may require different setups."
       },
       {
-        "item": "The range of turbidity levels expected in the whey stream.",
-        "why_it_matters": "The level of turbidity can affect the choice of measurement technique and the accuracy of the results."
+        "item": "Range of turbidity changes",
+        "why_it_matters": "The extent of turbidity affects the choice of optical components and measurement techniques."
       },
       {
-        "item": "The specific protein concentration range to be measured.",
-        "why_it_matters": "Knowing the concentration range is crucial for selecting a method with appropriate sensitivity and accuracy."
+        "item": "Protein concentration range",
+        "why_it_matters": "The concentration range impacts the calibration and sensitivity requirements of the spectroscopy method."
       },
       {
-        "item": "The flow rate and physical properties of the whey stream.",
-        "why_it_matters": "These factors can influence the design of the measurement setup and the choice of equipment."
+        "item": "Flow rate of the whey stream",
+        "why_it_matters": "Flow rate can influence the design of the measurement setup and the response time of the system."
+      },
+      {
+        "item": "Presence of other components in the whey stream",
+        "why_it_matters": "Other components may interfere with the spectroscopy measurements and affect accuracy."
       }
     ],
     "assumptions": [
-      "The whey stream is initially relatively clear but can become turbid.",
-      "Laboratory results are assumed to be accurate and reliable for use as a reference."
+      "The whey stream is primarily composed of water and proteins, with minimal interference from other substances.",
+      "The laboratory results are accurate and reliable for use as a reference."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What is the expected range of turbidity in the whey stream?",
-      "could_change": "method"
+      "question": "What is the expected range of protein concentrations in the whey stream?",
+      "could_change": "experiment_design"
     },
     {
       "priority": 2,
-      "question": "What is the specific protein concentration range to be measured?",
+      "question": "What is the range of turbidity changes expected in the whey stream?",
       "could_change": "method"
     },
     {
       "priority": 3,
-      "question": "What are the flow rate and physical properties of the whey stream?",
+      "question": "What is the flow rate of the whey stream during measurement?",
       "could_change": "probe_or_geometry"
     },
     {
       "priority": 4,
-      "question": "Is there a preferred type of spectroscopy method already considered?",
+      "question": "Are there any other components in the whey stream that could interfere with the measurements?",
       "could_change": "method"
     },
     {
       "priority": 5,
-      "question": "Are there any constraints on the measurement setup, such as space or environmental conditions?",
+      "question": "What are the specific laboratory methods used for reference measurements?",
       "could_change": "experiment_design"
     }
   ],
-  "recommendations": [],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "NIR spectroscopy is suitable for online analysis of liquids and can handle moderate turbidity due to its penetration depth and use of fiber optic probes.",
+      "applies_when": "The whey stream remains relatively clear or only moderately turbid.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy allows the use of ordinary glass for optics, making it ideal for online applications."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "role": "comparison_candidate",
+      "rationale": "Raman spectroscopy can provide complementary information and is less affected by water content, but may require special probes to handle turbidity.",
+      "applies_when": "The whey stream has significant turbidity or when complementary molecular information is needed.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Raman spectroscopy requires special probes but is recorded in the visible and NIR spectral regions."
+        }
+      ]
+    }
+  ],
   "measurement_concept": {
-    "summary": "Cannot be defined yet due to insufficient information on turbidity, protein concentration range, and spectroscopy method.",
-    "geometry": "undetermined",
-    "fiber_link_note": "The choice of fiber and probe depends on the method and turbidity levels.",
+    "summary": "The measurement concept involves using fiber optic probes for in-line analysis of the whey stream, with NIR as the primary method and Raman as a complementary option.",
+    "geometry": "transmission",
+    "fiber_link_note": "Fiber optic probes allow for remote and in-line measurements, suitable for varying turbidity conditions.",
     "needs_afs_confirmation": true,
     "citations": [
       {
@@ -73,19 +106,49 @@
       }
     ]
   },
-  "spectral_range": [],
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "status": "nominal_only",
+      "note": "NIR spectra contain overtones and component bands of fundamental vibrations.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 10,
+          "supports": "NIR vibrational spectroscopy (780–2500 nm) is the most common online analysis method."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "status": "nominal_only",
+      "note": "Raman shift range to be defined with the expert.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy is based on recording weak radiation signals observed when a sample is irradiated by a laser."
+        }
+      ]
+    }
+  ],
   "risks": [
     {
       "risk": "High turbidity may affect measurement accuracy.",
-      "mitigation": "Select a method that can handle varying turbidity levels, such as NIR with diffuse reflection."
+      "mitigation": "Use of chemometric models to correct for scattering effects."
     },
     {
-      "risk": "Inappropriate method selection due to unknown protein concentration range.",
-      "mitigation": "Clarify the concentration range to ensure method sensitivity matches the application."
+      "risk": "Presence of interfering substances in the whey stream.",
+      "mitigation": "Conduct preliminary tests to identify and account for potential interferences."
     }
   ],
   "feasibility_plan": {
-    "objective": "To determine the feasibility of using spectroscopy to track protein concentration in a whey stream with varying turbidity.",
+    "objective": "To evaluate the feasibility of using spectroscopy to track protein concentration in a whey stream under varying turbidity conditions.",
     "samples_or_process_states": [
       "Relatively clear whey stream",
       "Turbid whey stream"
@@ -94,21 +157,21 @@
       "Laboratory protein concentration measurements"
     ],
     "comparisons": [
-      "Spectroscopic measurements vs laboratory results"
+      "NIR vs Raman spectroscopy"
     ],
     "steps": [
-      "Clarify unknowns regarding turbidity and concentration range",
-      "Select appropriate spectroscopy method",
-      "Design measurement setup considering flow rate and turbidity",
-      "Conduct initial tests and compare with laboratory results"
+      "Define the range of protein concentrations and turbidity levels.",
+      "Set up NIR and Raman spectroscopy systems with appropriate probes.",
+      "Conduct measurements under controlled conditions.",
+      "Compare results with laboratory reference measurements."
     ],
-    "go_no_go_basis": "Comparison of spectroscopic measurements with laboratory results to determine accuracy and reliability."
+    "go_no_go_basis": "Comparison of spectroscopy results with laboratory reference measurements to determine accuracy and reliability."
   },
   "source_conflicts": [],
   "meta": {
     "model": "gpt-4o",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T07:42:56.959887+00:00",
+    "generated_at": "2026-10-17T09:15:01.170667+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,

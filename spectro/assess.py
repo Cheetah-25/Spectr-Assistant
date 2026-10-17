@@ -122,7 +122,9 @@ def assess(
     user = _build_assess_user(case_id, enquiry, facts, kb)
 
     assessment = _normalize_assessment(cj(prompts.ASSESS_SYSTEM, user, schema), case_id, facts, model, kb)
+    pruned = verify.prune_unverifiable_quotes(assessment, kb)
     result = verify.verify(assessment, kb, enquiry, fibers=fibers, schema=schema)
+    result.warnings.extend(pruned)
 
     if not result.ok:
         # Exactly ONE repair pass. The prompt leads with the exact schema errors
@@ -137,7 +139,9 @@ def assess(
         repaired = _normalize_assessment(
             cj(prompts.ASSESS_SYSTEM, repair_user, schema), case_id, facts, model, kb
         )
+        pruned = verify.prune_unverifiable_quotes(repaired, kb)
         repaired_result = verify.verify(repaired, kb, enquiry, fibers=fibers, schema=schema)
+        repaired_result.warnings.extend(pruned)
         assessment, result = repaired, repaired_result
 
     # Even if still invalid after the single repair pass, do NOT crash: record

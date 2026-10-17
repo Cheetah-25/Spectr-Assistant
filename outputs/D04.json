@@ -1,7 +1,7 @@
 {
   "case_id": "D04",
-  "decision_status": "insufficient_information",
-  "decision_status_reason": "The client has not specified the type of spectroscopy, probe selection, or calibration strategy, which are critical for method selection and feasibility assessment.",
+  "decision_status": "provisional_assessment",
+  "decision_status_reason": "The client has specified the process (cell culture in aqueous medium), the analytes (glucose and lactate), and the need for in situ spectroscopy to reduce measurement delays. This supports a provisional assessment for in-line spectroscopy methods.",
   "requirements": {
     "stated": [
       "The process involves cell culture in an aqueous medium.",
@@ -26,99 +26,158 @@
       }
     ],
     "assumptions": [
-      "The in situ spectroscopy will be used to measure glucose and lactate levels.",
-      "The goal is to reduce the delay in observing changes in glucose and lactate levels."
+      "The in situ spectroscopy will be used to measure glucose and lactate levels."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What type of spectroscopy are you considering for the in situ measurements?",
+      "question": "What are the specific concentration ranges of glucose and lactate in the cell culture medium?",
       "could_change": "method"
     },
     {
       "priority": 2,
-      "question": "Have you considered any specific probes for the in situ setup?",
-      "could_change": "probe_or_geometry"
-    },
-    {
-      "priority": 3,
-      "question": "What is your planned calibration strategy to ensure accuracy against laboratory measurements?",
+      "question": "What is the current method used for laboratory measurements of glucose and lactate?",
       "could_change": "experiment_design"
     },
     {
+      "priority": 3,
+      "question": "Are there any specific constraints on the probe installation within the bioreactor?",
+      "could_change": "probe_or_geometry"
+    },
+    {
       "priority": 4,
-      "question": "What are the expected concentration ranges of glucose and lactate during the process?",
-      "could_change": "spectral_range"
+      "question": "What is the acceptable delay for in situ measurements compared to laboratory results?",
+      "could_change": "experiment_design"
     },
     {
       "priority": 5,
-      "question": "Are there any specific environmental conditions or constraints in the cell culture process that might affect spectroscopy?",
-      "could_change": "scope_or_feasibility"
+      "question": "Is there a preference for a specific spectral range or method based on previous experiences?",
+      "could_change": "spectral_range"
     }
   ],
-  "recommendations": [],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "NIR spectroscopy is suitable for aqueous environments and can measure glucose and lactate with appropriate chemometric models.",
+      "applies_when": "The medium is aqueous and the analytes are glucose and lactate.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "role": "comparison_candidate",
+      "rationale": "Raman spectroscopy can provide complementary information and is effective in aqueous environments with low water interference.",
+      "applies_when": "Complementary information is needed and water interference is low.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Raman spectroscopy is recorded in the visible and NIR spectral regions and provides complementary information."
+        }
+      ]
+    }
+  ],
   "measurement_concept": {
-    "summary": "The measurement concept cannot be defined yet due to unspecified spectroscopy type and probe selection.",
+    "summary": "The measurement will use fiber optic probes for in situ analysis of glucose and lactate in a cell culture medium, with the probe type and calibration strategy to be defined.",
     "geometry": "undetermined",
-    "fiber_link_note": "Fiber link details depend on the chosen spectroscopy method and probe.",
+    "fiber_link_note": "Fiber optic probes will be used for in situ measurements.",
     "needs_afs_confirmation": true,
     "citations": [
       {
         "source_id": "S01",
         "page": 5,
-        "supports": "The need for selecting the most optimal method and approach for the specific analytical problem."
+        "supports": "Fiber optic probes are increasingly used for measuring liquid samples in situ."
       }
     ]
   },
-  "spectral_range": [],
-  "risks": [
+  "spectral_range": [
     {
-      "risk": "Inappropriate spectroscopy method selection could lead to inaccurate measurements.",
-      "mitigation": "Clarify the specific analytes and conditions to select the most suitable spectroscopy method.",
+      "method": "NIR",
+      "status": "nominal_only",
+      "note": "NIR spectroscopy typically covers 780–2500 nm, suitable for glucose and lactate analysis in aqueous media.",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
       "citations": [
         {
           "source_id": "S01",
-          "page": 5,
-          "supports": "Different methods have varying capabilities and limitations."
+          "page": 10,
+          "supports": "NIR spectra (780–2500 nm) contain overtones and component bands of fundamental vibrations."
         }
       ]
     },
     {
-      "risk": "Probe selection may not be optimal for the changing medium and cell population.",
-      "mitigation": "Evaluate probe options based on the specific process conditions and analytes.",
+      "method": "Raman",
+      "status": "nominal_only",
+      "note": "Raman spectroscopy is effective in the visible to NIR range, providing complementary information to NIR.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy is based on recording weak radiation signals observed when a sample is irradiated by a laser."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Changing medium and cell population may affect spectral measurements.",
+      "mitigation": "Develop robust chemometric models that account for variability in the medium and cell population.",
       "citations": [
         {
           "source_id": "S01",
           "page": 5,
-          "supports": "Different probes are required for different measurement interfaces and techniques."
+          "supports": "Chemometric algorithms are necessary for quantitative and qualitative analysis of spectral data."
+        }
+      ]
+    },
+    {
+      "risk": "Probe fouling or biofilm formation could affect measurement accuracy.",
+      "mitigation": "Regular cleaning and maintenance of probes, and possibly using anti-fouling coatings.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Fiber optic probes are used for in situ analysis, requiring maintenance to ensure accuracy."
         }
       ]
     }
   ],
   "feasibility_plan": {
-    "objective": "To establish an in situ spectroscopy method for real-time glucose and lactate monitoring in cell culture.",
+    "objective": "To evaluate the feasibility of in situ spectroscopy for real-time glucose and lactate monitoring in cell culture.",
     "samples_or_process_states": [
-      "Cell culture in aqueous medium with varying glucose and lactate levels."
+      "Cell culture medium with varying glucose and lactate concentrations."
     ],
     "reference_measurements": [
       "Existing laboratory measurements of glucose and lactate."
     ],
     "comparisons": [
-      "In situ spectroscopy results versus laboratory measurements."
+      "Compare in situ spectroscopy results with laboratory measurements."
     ],
     "steps": [
       "Select appropriate spectroscopy method and probe.",
-      "Develop calibration strategy.",
-      "Conduct pilot tests comparing in situ and laboratory results."
+      "Develop calibration models using chemometrics.",
+      "Conduct pilot tests in the cell culture process.",
+      "Compare results with laboratory measurements to assess accuracy and response time."
     ],
-    "go_no_go_basis": "Successful correlation between in situ and laboratory measurements."
+    "go_no_go_basis": "Comparison of in situ results with laboratory measurements to determine accuracy and response time."
   },
   "source_conflicts": [],
   "meta": {
     "model": "gpt-4o",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T07:43:17.779569+00:00",
+    "generated_at": "2026-10-17T09:15:23.827742+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,

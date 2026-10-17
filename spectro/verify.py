@@ -211,6 +211,34 @@ def _iter_citations(assessment: dict):
             yield f"measurement_concept.citations[{j}]", cit
 
 
+
+MAX_QUOTE_CHARS = 160
+
+
+def prune_unverifiable_quotes(assessment: dict, kb: KnowledgeBase) -> List[str]:
+    """Remove citation quotes that are too long or not verbatim on the cited page.
+
+    The citation itself (source and page) is kept; only the unverifiable quote is dropped, and each
+    removal is returned as a note so it stays visible in meta.verification.warnings.
+    """
+    notes: List[str] = []
+    if not isinstance(assessment, dict):
+        return notes
+    for loc, cit in _iter_citations(assessment):
+        quote = cit.get("quote")
+        if not quote or not isinstance(quote, str):
+            continue
+        src, page = cit.get("source_id"), cit.get("page")
+        too_long = len(quote) > MAX_QUOTE_CHARS
+        page_text = normalize_ws(kb.page_text(src, page) or "").lower() if kb.pages_for(src) else ""
+        missing = normalize_ws(quote).lower() not in page_text
+        if too_long or missing:
+            cit.pop("quote", None)
+            reason = "longer than 160 characters" if too_long else "not verbatim on the cited page"
+            notes.append(f"{loc}: quote removed ({reason}); citation kept at {src} p.{page}")
+    return notes
+
+
 def check_citations(assessment: dict, kb: KnowledgeBase) -> Tuple[bool, List[str]]:
     warnings: List[str] = []
     ok = True
@@ -342,6 +370,51 @@ def find_unsupported_numbers(assessment: dict, kb: KnowledgeBase, enquiry: str) 
             seen.add(f)
             out.append(f)
     return out
+
+
+_OUT_OF_SCOPE_TERMS = ("budget", "cost", "price", "timeline", "deadline", "delivery time")
+
+
+def check_out_of_scope_questions(assessment: dict) -> List[str]:
+    """Questions and unknowns must not be about budget, price or timeline (steering rule 10)."""
+    warnings: List[str] = []
+    items = []
+    for i, q in enumerate(_as_list(assessment.get("clarification_questions"))):
+        if isinstance(q, dict):
+            items.append((f"clarification_questions[{i}]", str(q.get("question", ""))))
+    for i, u in enumerate(_as_list(_as_dict(assessment.get("requirements")).get("unknowns"))):
+        if isinstance(u, dict):
+            items.append((f"requirements.unknowns[{i}]", str(u.get("item", ""))))
+    for loc, text in items:
+        low = text.lower()
+        if any(t in low for t in _OUT_OF_SCOPE_TERMS):
+            warnings.append(f"{loc}: asks about budget, cost, price or timeline; remove it (outside this assessment)")
+    return warnings
+
+
+def check_excitation_support(assessment: dict, kb: KnowledgeBase) -> List[str]:
+    """A stated laser excitation must appear on a page cited in the same spectral_range item."""
+    warnings: List[str] = []
+    for i, sr in enumerate(_as_list(assessment.get("spectral_range"))):
+        if not isinstance(sr, dict) or sr.get("excitation_nm") in (None, ""):
+            continue
+        try:
+            num = float(sr["excitation_nm"])
+        except (TypeError, ValueError):
+            continue
+        token = str(int(num)) if num == int(num) else str(num)
+        supported = False
+        for cit in _as_list(sr.get("citations")):
+            if isinstance(cit, dict):
+                text = kb.page_text(cit.get("source_id"), cit.get("page")) or ""
+                if re.search(r"(?<![\d.])" + re.escape(token) + r"(?![\d])", text):
+                    supported = True
+        if not supported:
+            warnings.append(
+                f"spectral_range[{i}]: excitation {token} nm is not stated on any page cited for it; "
+                "omit excitation_nm and say it is to be defined with the expert"
+            )
+    return warnings
 
 
 def find_prices_and_codes(assessment: dict, kb: KnowledgeBase) -> List[str]:
@@ -478,6 +551,8 @@ def verify(
     result.warnings.extend(find_prices_and_codes(assessment, kb))
 
     result.warnings.extend(check_status_consistency(assessment))
+    result.warnings.extend(check_out_of_scope_questions(assessment))
+    result.warnings.extend(check_excitation_support(assessment, kb))
 
     # When the document is schema-invalid, citation/range confirmation is not
     # meaningful: do not claim success on those flags.

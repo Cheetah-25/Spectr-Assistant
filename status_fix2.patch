@@ -1,0 +1,33 @@
+From a262012d89af022b99ad48107af924624996d932 Mon Sep 17 00:00:00 2001
+From: c <c@c>
+Date: Sat, 17 Oct 2026 10:07:04 +0200
+Subject: [PATCH] Refine status guidance: client-answerable questions, no
+ invented excitation
+
+---
+ spectro/prompts.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/spectro/prompts.py b/spectro/prompts.py
+index 14f9548..5ee9682 100644
+--- a/spectro/prompts.py
++++ b/spectro/prompts.py
+@@ -68,6 +68,15 @@ Choosing the decision status:
+ - Use insufficient_information only when the material or process, or the quantity to measure, is
+   missing, so that no method can be justified at all.
+ - Use outside_supported_scope only when the request is not an in-line spectroscopy task.
++- If the enquiry already names the methods to compare, give a provisional_assessment built around
++  those methods; the feasibility plan then concentrates on the experiment design and on what its
++  results would and would not demonstrate.
++- Clarification questions must be answerable by the client: sample or process properties, the
++  reference method, acceptance targets, installation constraints, measurement conditions. Never ask
++  the client to choose the method, the wavelength range, the probe design or the fibre; those are
++  for the assistant and the expert to propose. Do not ask about budget or timeline.
++- Do not invent a laser excitation wavelength, probe type or instrument setting. Name one only when
++  a source or the client gives it, otherwise write that it is to be defined with the expert.
+ - List as unknowns only items that affect the method, probe, spectral range or experiment design.
+   Do not list budget, timeline or general project management as unknowns.
+ """
+-- 
+2.43.0
+
