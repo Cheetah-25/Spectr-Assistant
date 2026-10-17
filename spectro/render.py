@@ -51,6 +51,64 @@ def _fmt_citation(cit: Dict[str, Any]) -> str:
     return " ".join(bits)
 
 
+SEVERITY_LABEL = {"wont_work": "Won't work", "wrong_assumption": "Wrong assumption", "check_first": "Check first"}
+PATH_LABEL = {
+    "A_chemometric_model": "Path A · AI chemometric model",
+    "B_custom_msf_system": "Path B · Customised multispectral fiber (MSF) system",
+    "C_spectral_fiber_sensor": "Path C · Spectral fiber sensor (SFS)",
+    "not_yet": "Not yet: the laboratory test comes first",
+    "none": "none",
+}
+MODE_LABEL = {"in_line": "In-line", "in_situ": "In situ", "at_line_or_lab_first": "Lab screening first",
+              "laboratory_study": "Laboratory study", "not_applicable": "No installation in scope"}
+
+
+def _inline_section(a: Dict[str, Any]) -> List[str]:
+    """Top block: the clearest answer (method, probe, location, fibre, alternative)."""
+    inl = _obj(a.get("inline_recommendation"))
+    if not inl:
+        return []
+    lines = ["## Recommended in-line method", ""]
+    lines.append(f"**{inl.get('headline', '')}**  ")
+    lines.append(f"_Mode: {MODE_LABEL.get(inl.get('mode'), inl.get('mode', '?'))}_")
+    lines.append("")
+    lines.append("| Method | Probe / interface | Install | Fiber |")
+    lines.append("|---|---|---|---|")
+    lines.append(f"| {inl.get('method', '?')} | {inl.get('probe', '')} | {inl.get('install_location', '')} | "
+                 f"{inl.get('fiber_family', 'not stated')} |")
+    if inl.get("test_against"):
+        lines.append("")
+        lines.append(f"**Test against:** {inl['test_against']}")
+    if inl.get("not_final_because"):
+        lines.append("")
+        lines.append(f"**Not final yet:** {inl['not_final_because']}")
+    return lines
+
+
+def _premise_section(a: Dict[str, Any]) -> List[str]:
+    items = _dicts(a.get("premise_findings"))
+    if not items:
+        return []
+    lines = ["## Problems with the request", ""]
+    for p in items:
+        lines.append(f"- **{SEVERITY_LABEL.get(p.get('severity'), p.get('severity', '?'))}:** {p.get('finding', '')}")
+    return lines
+
+
+def _pathway_section(a: Dict[str, Any]) -> List[str]:
+    pw = _obj(a.get("afs_pathway"))
+    if not pw:
+        return []
+    labs = ", ".join(f"{m.get('method')} ({str(m.get('role', '')).replace('_', ' ')})" for m in _dicts(pw.get("lab_test_methods")))
+    lines = ["## AFS pathway", ""]
+    lines.append(f"1. **Multi-method lab test:** {labs or '—'}")
+    lines.append(f"2. **Key spectral features:** {pw.get('key_spectral_features', '')}")
+    later = pw.get("later_path")
+    later_txt = f" Later: {PATH_LABEL.get(later, later)}." if later and later != "none" else ""
+    lines.append(f"3. **Tailored solution:** {PATH_LABEL.get(pw.get('path'), pw.get('path', '?'))} — {pw.get('path_reason', '')}{later_txt}")
+    return lines
+
+
 def _summary_section(a: Dict[str, Any]) -> List[str]:
     lines: List[str] = []
     status = a.get("decision_status", "unknown")
@@ -234,6 +292,13 @@ def _collect_citations(a: Dict[str, Any]) -> List[str]:
     add_from(a.get("spectral_range"))
     add_from(a.get("risks"))
     add_from(a.get("source_conflicts"))
+    add_from(a.get("premise_findings"))
+    for key in ("inline_recommendation", "afs_pathway"):
+        for c in _dicts(_obj(a.get(key)).get("citations")):
+            text = _fmt_citation(c)
+            if text not in seen:
+                seen.add(text)
+                out.append(text)
     mc = _obj(a.get("measurement_concept"))
     for c in _dicts(mc.get("citations")):
         text = _fmt_citation(c)
@@ -252,6 +317,10 @@ def to_markdown(assessment: Dict[str, Any]) -> str:
     title = f"# Spectroscopy assessment — {case_id}" if case_id else "# Spectroscopy assessment"
     lines.append(title)
     lines.append("")
+    for block in (_inline_section(assessment), _premise_section(assessment), _pathway_section(assessment)):
+        if block:
+            lines.extend(block)
+            lines.append("")
     lines.extend(_summary_section(assessment))
     lines.append("")
     lines.extend(_reasoning_section(assessment))
@@ -261,4 +330,8 @@ def to_markdown(assessment: Dict[str, Any]) -> str:
 
 def summary_lines(assessment: Dict[str, Any]) -> List[str]:
     """The short summary block (used by the UI's summary view)."""
-    return [HEADER_NOTE, ""] + _summary_section(assessment)
+    out = [HEADER_NOTE, ""]
+    for block in (_inline_section(assessment), _premise_section(assessment), _pathway_section(assessment)):
+        if block:
+            out += block + [""]
+    return out + _summary_section(assessment)

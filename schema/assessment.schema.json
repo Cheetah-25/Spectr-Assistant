@@ -20,47 +20,66 @@
     "meta"
   ],
   "properties": {
-    "case_id": { "type": "string", "description": "Identifier supplied by the caller, e.g. D01, or 'live' for a free-text enquiry." },
-
+    "case_id": {
+      "type": "string",
+      "description": "Identifier supplied by the caller, e.g. D01, or 'live' for a free-text enquiry."
+    },
     "decision_status": {
       "type": "string",
-      "enum": ["provisional_assessment", "insufficient_information", "outside_supported_scope"]
+      "enum": [
+        "provisional_assessment",
+        "insufficient_information",
+        "outside_supported_scope"
+      ]
     },
     "decision_status_reason": {
       "type": "string",
       "description": "One or two sentences: why this status, based on the stated facts."
     },
-
     "requirements": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["stated", "unknowns", "assumptions"],
+      "required": [
+        "stated",
+        "unknowns",
+        "assumptions"
+      ],
       "properties": {
         "stated": {
           "type": "array",
           "description": "Only what the client actually said.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "unknowns": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["item", "why_it_matters"],
+            "required": [
+              "item",
+              "why_it_matters"
+            ],
             "properties": {
-              "item": { "type": "string" },
-              "why_it_matters": { "type": "string" }
+              "item": {
+                "type": "string"
+              },
+              "why_it_matters": {
+                "type": "string"
+              }
             }
           }
         },
         "assumptions": {
           "type": "array",
           "description": "Explicit working assumptions. Never presented as client facts.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-
     "clarification_questions": {
       "type": "array",
       "maxItems": 5,
@@ -68,18 +87,32 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["priority", "question", "could_change"],
+        "required": [
+          "priority",
+          "question",
+          "could_change"
+        ],
         "properties": {
-          "priority": { "type": "integer", "minimum": 1 },
-          "question": { "type": "string" },
+          "priority": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "question": {
+            "type": "string"
+          },
           "could_change": {
             "type": "string",
-            "enum": ["method", "probe_or_geometry", "spectral_range", "experiment_design", "scope_or_feasibility"]
+            "enum": [
+              "method",
+              "probe_or_geometry",
+              "spectral_range",
+              "experiment_design",
+              "scope_or_feasibility"
+            ]
           }
         }
       }
     },
-
     "recommendations": {
       "type": "array",
       "maxItems": 3,
@@ -87,156 +120,554 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["method", "role", "rationale", "applies_when", "confidence", "citations"],
+        "required": [
+          "method",
+          "role",
+          "rationale",
+          "applies_when",
+          "confidence",
+          "citations"
+        ],
         "properties": {
-          "method": { "$ref": "#/$defs/method" },
+          "method": {
+            "$ref": "#/$defs/method"
+          },
           "role": {
             "type": "string",
-            "enum": ["primary_candidate", "comparison_candidate", "conditional", "not_recommended"]
+            "enum": [
+              "primary_candidate",
+              "comparison_candidate",
+              "conditional",
+              "not_recommended"
+            ]
           },
-          "rationale": { "type": "string", "maxLength": 300 },
-          "applies_when": { "type": "string", "description": "Conditions under which this recommendation holds." },
-          "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
-          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+          "rationale": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "applies_when": {
+            "type": "string",
+            "description": "Conditions under which this recommendation holds."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
         }
       }
     },
-
     "measurement_concept": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["summary", "needs_afs_confirmation", "citations"],
+      "required": [
+        "summary",
+        "needs_afs_confirmation",
+        "citations"
+      ],
       "properties": {
-        "summary": { "type": "string", "description": "High-level probe, geometry, measurement location and fiber link. May state that it cannot be defined yet." },
+        "summary": {
+          "type": "string",
+          "description": "High-level probe, geometry, measurement location and fiber link. May state that it cannot be defined yet."
+        },
         "geometry": {
           "type": "string",
-          "enum": ["ATR", "diffuse_reflection", "transmission", "transflection", "raman_probe", "fluorescence_probe", "flow_cell_or_cuvette", "undetermined"]
+          "enum": [
+            "ATR",
+            "diffuse_reflection",
+            "transmission",
+            "transflection",
+            "raman_probe",
+            "fluorescence_probe",
+            "flow_cell_or_cuvette",
+            "undetermined"
+          ]
         },
-        "fiber_link_note": { "type": "string" },
-        "needs_afs_confirmation": { "type": "boolean" },
-        "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+        "fiber_link_note": {
+          "type": "string"
+        },
+        "needs_afs_confirmation": {
+          "type": "boolean"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        }
       }
     },
-
     "spectral_range": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["method", "status", "note"],
+        "required": [
+          "method",
+          "status",
+          "note"
+        ],
         "properties": {
-          "method": { "$ref": "#/$defs/method" },
-          "nominal_range": { "$ref": "#/$defs/range" },
-          "excitation_nm": { "type": "number", "description": "Raman and fluorescence only; stated separately from Raman shift." },
+          "method": {
+            "$ref": "#/$defs/method"
+          },
+          "nominal_range": {
+            "$ref": "#/$defs/range"
+          },
+          "excitation_nm": {
+            "type": "number",
+            "description": "Raman and fluorescence only; stated separately from Raman shift."
+          },
           "fiber_family": {
             "type": "string",
             "description": "Optional. A fibre material family from the AFS fibre table, never a method name. Omit if no fibre family is being named.",
-            "enum": ["Standard and Al/Cu-coated UV-Vis silica fibers", "Standard and Al/Cu-coated Vis-NIR silica fibers", "Chalcogenide As-S IR fibers (CIR)", "Polycrystalline infrared fibers (PIR)", "Hollow glass waveguides (HWG)", "Indium fluoride fibers", "Zirconium fluoride fibers"]
+            "enum": [
+              "Standard and Al/Cu-coated UV-Vis silica fibers",
+              "Standard and Al/Cu-coated Vis-NIR silica fibers",
+              "Chalcogenide As-S IR fibers (CIR)",
+              "Polycrystalline infrared fibers (PIR)",
+              "Hollow glass waveguides (HWG)",
+              "Indium fluoride fibers",
+              "Zirconium fluoride fibers"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["nominal_only", "confirmed_by_sources", "unknown_until_system_defined"]
+            "enum": [
+              "nominal_only",
+              "confirmed_by_sources",
+              "unknown_until_system_defined"
+            ]
           },
-          "note": { "type": "string", "description": "A nominal method range is not the range of a specific instrument, fiber or probe." },
-          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+          "note": {
+            "type": "string",
+            "description": "A nominal method range is not the range of a specific instrument, fiber or probe."
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
         }
       }
     },
-
     "risks": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["risk", "mitigation"],
+        "required": [
+          "risk",
+          "mitigation"
+        ],
         "properties": {
-          "risk": { "type": "string" },
-          "mitigation": { "type": "string" },
-          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+          "risk": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
         }
       }
     },
-
     "feasibility_plan": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["objective", "samples_or_process_states", "reference_measurements", "comparisons", "steps", "go_no_go_basis"],
+      "required": [
+        "objective",
+        "samples_or_process_states",
+        "reference_measurements",
+        "comparisons",
+        "steps",
+        "go_no_go_basis"
+      ],
       "properties": {
-        "objective": { "type": "string" },
-        "samples_or_process_states": { "type": "array", "items": { "type": "string" } },
-        "reference_measurements": { "type": "array", "items": { "type": "string" } },
-        "comparisons": { "type": "array", "items": { "type": "string" } },
-        "steps": { "type": "array", "items": { "type": "string" } },
+        "objective": {
+          "type": "string"
+        },
+        "samples_or_process_states": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reference_measurements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comparisons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "go_no_go_basis": {
           "type": "string",
           "description": "What decides go / no-go. Acceptance targets come from the client; none is invented."
         }
       }
     },
-
     "source_conflicts": {
       "type": "array",
       "description": "Places where AFS sources disagree and which reading was used.",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["description", "resolution"],
+        "required": [
+          "description",
+          "resolution"
+        ],
         "properties": {
-          "description": { "type": "string" },
-          "resolution": { "type": "string" },
-          "citations": { "type": "array", "items": { "$ref": "#/$defs/citation" } }
+          "description": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
         }
       }
     },
-
     "meta": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["model", "kb_version", "generated_at"],
+      "required": [
+        "model",
+        "kb_version",
+        "generated_at"
+      ],
       "properties": {
-        "model": { "type": "string" },
-        "kb_version": { "type": "string" },
-        "generated_at": { "type": "string" },
+        "model": {
+          "type": "string"
+        },
+        "kb_version": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
         "verification": {
           "type": "object",
           "description": "Filled in by the code checks, not by the LLM.",
           "properties": {
-            "citations_ok": { "type": "boolean" },
-            "range_check_ok": { "type": "boolean" },
-            "unsupported_numbers": { "type": "array", "items": { "type": "string" } },
-            "warnings": { "type": "array", "items": { "type": "string" } }
+            "citations_ok": {
+              "type": "boolean"
+            },
+            "range_check_ok": {
+              "type": "boolean"
+            },
+            "unsupported_numbers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "premise_checks": {
+          "type": "array",
+          "description": "Filled in by code: premise checks computed before the LLM call.",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "premise_findings": {
+      "type": "array",
+      "maxItems": 6,
+      "description": "One entry per premise check computed in code (and any other premise the sources contradict). Plain-language severity.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "severity",
+          "finding"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "wont_work",
+              "wrong_assumption",
+              "check_first"
+            ]
+          },
+          "finding": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/citation"
+            }
+          }
+        }
+      }
+    },
+    "inline_recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The single clearest answer for the expert: which in-line method to test first, with which probe, where, over which fibre, and what to test it against. May say that no method can be named yet.",
+      "required": [
+        "mode",
+        "headline",
+        "method",
+        "probe",
+        "install_location",
+        "test_against"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "in_line",
+            "in_situ",
+            "at_line_or_lab_first",
+            "laboratory_study",
+            "not_applicable"
+          ]
+        },
+        "headline": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "method": {
+          "$ref": "#/$defs/method_or_none"
+        },
+        "probe": {
+          "type": "string"
+        },
+        "install_location": {
+          "type": "string"
+        },
+        "fiber_family": {
+          "type": "string",
+          "enum": [
+            "Standard and Al/Cu-coated UV-Vis silica fibers",
+            "Standard and Al/Cu-coated Vis-NIR silica fibers",
+            "Chalcogenide As-S IR fibers (CIR)",
+            "Polycrystalline infrared fibers (PIR)",
+            "Hollow glass waveguides (HWG)",
+            "Indium fluoride fibers",
+            "Zirconium fluoride fibers",
+            "not_yet_defined"
+          ]
+        },
+        "test_against": {
+          "type": "string"
+        },
+        "not_final_because": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        }
+      }
+    },
+    "afs_pathway": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The AFS guided pathway (S05; S02 p.20): multi-method lab test, key spectral features, tailored solution path.",
+      "required": [
+        "lab_test_methods",
+        "key_spectral_features",
+        "path",
+        "path_reason"
+      ],
+      "properties": {
+        "lab_test_methods": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "method",
+              "role"
+            ],
+            "properties": {
+              "method": {
+                "$ref": "#/$defs/method"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "main",
+                  "compare",
+                  "only_if_needed"
+                ]
+              }
+            }
+          }
+        },
+        "key_spectral_features": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "path": {
+          "type": "string",
+          "enum": [
+            "A_chemometric_model",
+            "B_custom_msf_system",
+            "C_spectral_fiber_sensor",
+            "not_yet"
+          ]
+        },
+        "path_reason": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "later_path": {
+          "type": "string",
+          "enum": [
+            "A_chemometric_model",
+            "B_custom_msf_system",
+            "C_spectral_fiber_sensor",
+            "none"
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
           }
         }
       }
     }
   },
-
   "$defs": {
     "method": {
       "type": "string",
-      "enum": ["NIR", "MIR_ATR", "Raman", "Fluorescence", "UV_Vis", "combination", "other"]
+      "enum": [
+        "NIR",
+        "MIR_ATR",
+        "Raman",
+        "Fluorescence",
+        "UV_Vis",
+        "combination",
+        "other"
+      ]
     },
     "range": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["min", "max", "unit"],
+      "required": [
+        "min",
+        "max",
+        "unit"
+      ],
       "properties": {
-        "min": { "type": "number" },
-        "max": { "type": "number" },
-        "unit": { "type": "string", "enum": ["nm", "um", "cm-1"] }
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "nm",
+            "um",
+            "cm-1"
+          ]
+        }
       }
     },
     "citation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_id", "page", "supports"],
+      "required": [
+        "source_id",
+        "page",
+        "supports"
+      ],
       "properties": {
-        "source_id": { "type": "string", "enum": ["S01", "S02", "S03", "S04", "S05"] },
-        "page": { "type": "integer", "minimum": 1, "description": "1-based PDF page, counting the title page. For S02 this is the slide number." },
-        "locator": { "type": "string", "description": "Optional, e.g. 'Table 1' or 'Fig. 7'." },
-        "quote": { "type": "string", "maxLength": 160, "description": "Optional short verbatim passage (under about 15 words). The code check verifies it appears on that page." },
-        "supports": { "type": "string", "description": "The claim this citation is meant to support." }
+        "source_id": {
+          "type": "string",
+          "enum": [
+            "S01",
+            "S02",
+            "S03",
+            "S04",
+            "S05"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based PDF page, counting the title page. For S02 this is the slide number."
+        },
+        "locator": {
+          "type": "string",
+          "description": "Optional, e.g. 'Table 1' or 'Fig. 7'."
+        },
+        "quote": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Optional short verbatim passage (under about 15 words). The code check verifies it appears on that page."
+        },
+        "supports": {
+          "type": "string",
+          "description": "The claim this citation is meant to support."
+        }
       }
+    },
+    "method_or_none": {
+      "type": "string",
+      "enum": [
+        "NIR",
+        "MIR_ATR",
+        "Raman",
+        "Fluorescence",
+        "UV_Vis",
+        "combination",
+        "other",
+        "none_yet"
+      ]
     }
   }
 }
