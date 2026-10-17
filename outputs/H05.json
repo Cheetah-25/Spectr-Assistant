@@ -1,0 +1,208 @@
+{
+  "case_id": "H05",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The enquiry lacks a defined contaminant or affected quality variable, making it impossible to recommend a specific spectroscopy method or sensor configuration. A preliminary laboratory study is needed to identify these unknowns.",
+  "requirements": {
+    "stated": [
+      "The process involves a liquid.",
+      "The process occasionally goes off specification.",
+      "There is a suspicion of contamination."
+    ],
+    "unknowns": [
+      {
+        "item": "Identity of the contaminant",
+        "why_it_matters": "Knowing the contaminant is crucial for selecting a spectroscopy method that can detect it."
+      },
+      {
+        "item": "Affected quality variable",
+        "why_it_matters": "Understanding which quality variable is affected helps in determining the relevant spectral range and sensitivity needed."
+      },
+      {
+        "item": "Spectroscopy method suitability",
+        "why_it_matters": "Different spectroscopy methods are suited for different types of contaminants and matrices."
+      },
+      {
+        "item": "Exact sensor configuration",
+        "why_it_matters": "The sensor configuration depends on the specific requirements of the process and the nature of the contaminant."
+      }
+    ],
+    "assumptions": [
+      "The client has not yet identified the contaminant.",
+      "The client has not yet identified the affected quality variable."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What is the suspected contaminant or class of contaminants?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "Which quality variable is affected when the process goes off specification?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "What are the typical process conditions (temperature, pressure, etc.)?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 4,
+      "question": "Is there a reference method currently used to detect the contamination?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 5,
+      "question": "What is the acceptable detection limit or sensitivity for the contaminant?",
+      "could_change": "scope_or_feasibility"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "The measurement concept cannot be defined yet due to unknown contaminant and quality variable.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link and probe design depend on the specific spectroscopy method chosen, which is currently undefined.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 3,
+        "supports": "test several approaches for incompletely known samples"
+      },
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "method selection depends on many factors"
+      }
+    ]
+  },
+  "spectral_range": [],
+  "risks": [
+    {
+      "risk": "Unknown contaminant may not be detectable by the chosen method.",
+      "mitigation": "Conduct preliminary tests with multiple spectroscopy methods to identify the contaminant."
+    },
+    {
+      "risk": "Process conditions may affect measurement accuracy.",
+      "mitigation": "Ensure the chosen method and probe are suitable for the process conditions."
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "Identify the contaminant and affected quality variable in the liquid process.",
+    "samples_or_process_states": [
+      "Liquid samples from the process when on-spec and off-spec."
+    ],
+    "reference_measurements": [
+      "To be agreed with the client, possibly including GC-MS or HPLC for contaminant identification."
+    ],
+    "comparisons": [
+      "Compare results from different spectroscopy methods to identify the most suitable one."
+    ],
+    "steps": [
+      "Collect samples from the process under different conditions.",
+      "Conduct a multi-method spectroscopy analysis in the laboratory.",
+      "Analyze data to identify potential contaminants and affected quality variables."
+    ],
+    "go_no_go_basis": "Identification of the contaminant and affected quality variable."
+  },
+  "source_conflicts": [],
+  "premise_findings": [
+    {
+      "check_id": "undefined_target",
+      "severity": "check_first",
+      "finding": "The quantity to measure is not yet defined. Method selection depends on the analytical problem."
+    },
+    {
+      "check_id": "premature_certainty",
+      "severity": "check_first",
+      "finding": "A final configuration or approval is requested; the stated facts do not yet support one."
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "not_applicable",
+    "headline": "No method can be named yet due to undefined contaminant and quality variable.",
+    "method": "none_yet",
+    "probe": "undetermined",
+    "install_location": "undetermined",
+    "fiber_family": "not_yet_defined",
+    "test_against": "undetermined",
+    "not_final_because": "The contaminant and affected quality variable are not yet identified.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 3,
+        "supports": "test several approaches for incompletely known samples"
+      },
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "method selection depends on many factors"
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "combination",
+        "role": "main"
+      }
+    ],
+    "key_spectral_features": "To be determined in the test.",
+    "path": "not_yet",
+    "path_reason": "The laboratory test must identify the contaminant and affected quality variable first.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 3,
+        "supports": "test several approaches for incompletely known samples"
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T21:52:24.771547+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    },
+    "premise_checks": [
+      {
+        "check_id": "undefined_target",
+        "severity": "check_first",
+        "finding": "The quantity to measure is not yet defined. Method selection depends on the analytical problem; for samples of incompletely known composition, several methods are screened first.",
+        "evidence": [
+          {
+            "source_id": "S01",
+            "page": 3,
+            "why": "test several approaches for incompletely known samples"
+          },
+          {
+            "source_id": "S01",
+            "page": 5,
+            "why": "method selection depends on many factors"
+          }
+        ],
+        "computed": {},
+        "label": "Check first"
+      },
+      {
+        "check_id": "premature_certainty",
+        "severity": "check_first",
+        "finding": "A final configuration or approval is requested; the stated facts do not yet support one. The assessment gives a first, reviewable recommendation and the facts still needed.",
+        "evidence": [
+          {
+            "source_id": "S01",
+            "page": 5,
+            "why": "method selection requires specialised knowledge of many factors"
+          }
+        ],
+        "computed": {},
+        "label": "Check first"
+      }
+    ]
+  }
+}

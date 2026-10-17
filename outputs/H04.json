@@ -1,0 +1,313 @@
+{
+  "case_id": "H04",
+  "decision_status": "provisional_assessment",
+  "decision_status_reason": "The existing silica fiber cable is not suitable for MIR ATR due to its transmission range mismatch, and the long distance between the analyzer and the measurement point is not feasible for mid-IR fibers. However, NIR spectroscopy could be a viable alternative using the existing fiber.",
+  "requirements": {
+    "stated": [
+      "The investigation is focused on water content in a petroleum line.",
+      "The method intended for use is MIR ATR.",
+      "The analyzer will be located in another building.",
+      "There is an existing silica fiber cable from a visible or NIR measurement setup that they would like to reuse."
+    ],
+    "unknowns": [
+      {
+        "item": "Link length",
+        "why_it_matters": "The length of the fiber optic link can affect signal attenuation and the feasibility of using the existing cable for MIR ATR."
+      },
+      {
+        "item": "Routing",
+        "why_it_matters": "The physical routing of the fiber can impact signal integrity and environmental exposure, which are critical for determining if the existing cable is suitable."
+      },
+      {
+        "item": "Operating conditions",
+        "why_it_matters": "Operating conditions such as temperature, pressure, and environmental exposure can affect the performance and durability of the fiber optic cable, especially when reusing a cable designed for different spectral ranges."
+      }
+    ],
+    "assumptions": [
+      "The existing silica fiber cable is assumed to be compatible with MIR ATR, despite being from a visible or NIR setup."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What is the length of the fiber optic link between the analyzer and the measurement point?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What are the specific operating conditions (temperature, pressure, environmental exposure) for the fiber optic cable?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "Is there flexibility in relocating the analyzer closer to the measurement point?",
+      "could_change": "method"
+    },
+    {
+      "priority": 4,
+      "question": "Are there any constraints on installing new fiber optic cables or equipment?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 5,
+      "question": "What is the required detection limit or accuracy for the water content measurement?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "NIR spectroscopy can be performed using the existing silica fiber cable and is suitable for water content analysis in petroleum.",
+      "applies_when": "The existing silica fiber cable must be reused and the analyzer cannot be relocated.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is suitable for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    },
+    {
+      "method": "MIR_ATR",
+      "role": "not_recommended",
+      "rationale": "The existing silica fiber cable does not support the MIR ATR range, and long-distance transmission is not feasible with mid-IR fibers.",
+      "applies_when": "The analyzer is located far from the measurement point and the existing cable must be reused.",
+      "confidence": "high",
+      "citations": [
+        {
+          "source_id": "S02",
+          "page": 6,
+          "supports": "Standard and Al/Cu-coated Vis-NIR silica fibers do not transmit the MIR ATR range."
+        },
+        {
+          "source_id": "S02",
+          "page": 9,
+          "supports": "Long-distance transmission is not feasible with mid-IR fibers."
+        }
+      ]
+    }
+  ],
+  "measurement_concept": {
+    "summary": "The current setup with a silica fiber cable is not suitable for MIR ATR due to range mismatch and distance limitations.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The existing silica fiber cable cannot be reused for MIR ATR.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S02",
+        "page": 6,
+        "supports": "Standard and Al/Cu-coated Vis-NIR silica fibers do not transmit the MIR ATR range."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "MIR_ATR",
+      "status": "nominal_only",
+      "note": "MIR ATR nominal range is 2.5-25.0 um, not supported by the existing silica fiber.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 9,
+          "supports": "Mid-IR range 4000-400 cm-1."
+        }
+      ]
+    },
+    {
+      "method": "NIR",
+      "status": "nominal_only",
+      "note": "NIR range is 780-2500 nm, compatible with the existing silica fiber.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectra (780–2500 nm) contain predominantly overtones and component bands of fundamental vibrations."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Signal attenuation and loss due to fiber range mismatch.",
+      "mitigation": "Consider using a fiber that supports the MIR ATR range, such as chalcogenide or PIR fibers.",
+      "citations": [
+        {
+          "source_id": "S02",
+          "page": 6,
+          "supports": "Chalcogenide As-S IR fibers and PIR fibers cover the MIR range."
+        }
+      ]
+    },
+    {
+      "risk": "Long-distance transmission issues with mid-IR fibers.",
+      "mitigation": "Relocate the analyzer closer to the measurement point or use a method compatible with the existing fiber.",
+      "citations": [
+        {
+          "source_id": "S02",
+          "page": 9,
+          "supports": "Long-distance transmission is not feasible with mid-IR fibers."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "Determine the feasibility of measuring water content in petroleum using a suitable spectroscopy method.",
+    "samples_or_process_states": [
+      "Petroleum samples with varying water content."
+    ],
+    "reference_measurements": [
+      "Laboratory analysis of water content in petroleum."
+    ],
+    "comparisons": [
+      "Compare NIR and MIR ATR methods for water content measurement."
+    ],
+    "steps": [
+      "Evaluate the feasibility of using NIR with the existing fiber.",
+      "Assess the possibility of relocating the analyzer for MIR ATR.",
+      "Conduct laboratory tests to compare NIR and MIR ATR performance."
+    ],
+    "go_no_go_basis": "The method must achieve the required detection limit and accuracy for water content measurement."
+  },
+  "source_conflicts": [],
+  "premise_findings": [
+    {
+      "check_id": "fiber_range_mismatch",
+      "severity": "wont_work",
+      "finding": "The existing silica fiber cable does not transmit the MIR ATR range."
+    },
+    {
+      "check_id": "long_mid_ir_link",
+      "severity": "wont_work",
+      "finding": "Long-distance transmission is not feasible with mid-IR fibers."
+    },
+    {
+      "check_id": "premature_certainty",
+      "severity": "check_first",
+      "finding": "A final configuration or approval is requested; the stated facts do not yet support one."
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "not_applicable",
+    "headline": "No method can be approved yet due to fiber range mismatch and distance limitations.",
+    "method": "none_yet",
+    "probe": "undetermined",
+    "install_location": "undetermined",
+    "fiber_family": "not_yet_defined",
+    "test_against": "NIR",
+    "not_final_because": "The existing fiber is not suitable for MIR ATR, and the analyzer's location is too far for mid-IR fibers.",
+    "citations": [
+      {
+        "source_id": "S02",
+        "page": 6,
+        "supports": "Standard and Al/Cu-coated Vis-NIR silica fibers do not transmit the MIR ATR range."
+      },
+      {
+        "source_id": "S02",
+        "page": 9,
+        "supports": "Long-distance transmission is not feasible with mid-IR fibers."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "NIR",
+        "role": "main"
+      },
+      {
+        "method": "MIR_ATR",
+        "role": "only_if_needed"
+      }
+    ],
+    "key_spectral_features": "To be determined in the test.",
+    "path": "not_yet",
+    "path_reason": "The feasibility of using the existing fiber for MIR ATR is not supported; NIR may be a viable alternative.",
+    "later_path": "none",
+    "citations": [
+      {
+        "source_id": "S02",
+        "page": 6,
+        "supports": "Standard and Al/Cu-coated Vis-NIR silica fibers do not transmit the MIR ATR range."
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T21:52:14.500452+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    },
+    "premise_checks": [
+      {
+        "check_id": "fiber_range_mismatch",
+        "severity": "wont_work",
+        "finding": "The named fibre (Standard and Al/Cu-coated Vis-NIR silica fibers, about 0.35-2.4 um) does not transmit any part of the nominal MIR ATR window (2.5-25.0 um). A fibre family that covers the method's range is required.",
+        "evidence": [
+          {
+            "source_id": "S02",
+            "page": 6,
+            "why": "fibre transmission ranges"
+          },
+          {
+            "source_id": "S01",
+            "page": 9,
+            "why": "mid-IR range 4000-400 cm-1"
+          }
+        ],
+        "computed": {
+          "method": "MIR_ATR",
+          "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+          "method_um": [
+            2.5,
+            25.0
+          ],
+          "fiber_um": [
+            0.35,
+            2.4
+          ],
+          "overlap_fraction": 0.0
+        },
+        "label": "Won't work"
+      },
+      {
+        "check_id": "long_mid_ir_link",
+        "severity": "wont_work",
+        "finding": "The analyser would be far from the measuring point. Long (100-300 m) cables are documented for low-OH silica (Vis-NIR) fibres; the sources document no comparable reach for mid-IR fibres (the shown mid-IR fibre comparison uses 2 m lengths). Placing the analyser near the point, or a method that works over silica, must be considered.",
+        "evidence": [
+          {
+            "source_id": "S02",
+            "page": 7,
+            "why": "100-300 m low-OH silica cables"
+          },
+          {
+            "source_id": "S02",
+            "page": 9,
+            "why": "PIR / hollow waveguide, 2 m"
+          }
+        ],
+        "computed": {},
+        "label": "Won't work"
+      },
+      {
+        "check_id": "premature_certainty",
+        "severity": "check_first",
+        "finding": "A final configuration or approval is requested; the stated facts do not yet support one. The assessment gives a first, reviewable recommendation and the facts still needed.",
+        "evidence": [
+          {
+            "source_id": "S01",
+            "page": 5,
+            "why": "method selection requires specialised knowledge of many factors"
+          }
+        ],
+        "computed": {},
+        "label": "Check first"
+      }
+    ]
+  }
+}

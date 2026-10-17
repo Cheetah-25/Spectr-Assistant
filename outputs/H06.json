@@ -1,0 +1,180 @@
+{
+  "case_id": "H06",
+  "decision_status": "outside_supported_scope",
+  "decision_status_reason": "The client cannot quote the LED NIR kidney study as proof of readiness for tumor boundary decisions during live surgery without in vivo validation and regulatory approval, which are outside this assessment's scope.",
+  "requirements": {
+    "stated": [
+      "The client read the supplied LED NIR kidney study.",
+      "The client wants to use the concept from the study to guide tumor boundary decisions during live surgery.",
+      "The client has no new in vivo data.",
+      "The client has no validation on their own setup."
+    ],
+    "unknowns": [
+      {
+        "item": "The specific findings of the LED NIR kidney study.",
+        "why_it_matters": "Understanding the specific findings is crucial to determine if they are applicable to guiding tumor boundary decisions during surgery."
+      },
+      {
+        "item": "The differences between the kidney study setup and the proposed tumor boundary setup.",
+        "why_it_matters": "Differences in setup could affect the applicability of the study's findings to the new context."
+      },
+      {
+        "item": "The specific requirements for the sensor to be considered ready for use in live surgery.",
+        "why_it_matters": "Knowing these requirements is necessary to assess if the current sensor meets them."
+      }
+    ],
+    "assumptions": [
+      "The client assumes that the findings from the kidney study can be directly applied to tumor boundary decisions without additional validation."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What are the specific findings of the LED NIR kidney study that you believe are applicable to tumor boundary decisions?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What are the differences between the kidney study setup and your proposed tumor boundary setup?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 3,
+      "question": "What specific requirements must the sensor meet to be considered ready for use in live surgery?",
+      "could_change": "scope_or_feasibility"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "The measurement concept cannot be defined yet due to lack of in vivo validation and regulatory approval for the proposed application.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link and probe design are not defined due to the lack of specific application details.",
+    "needs_afs_confirmation": false,
+    "citations": []
+  },
+  "spectral_range": [],
+  "risks": [
+    {
+      "risk": "The LED NIR kidney study findings may not directly apply to tumor boundary decisions during live surgery.",
+      "mitigation": "Conduct in vivo validation and clinical studies to confirm applicability."
+    },
+    {
+      "risk": "Lack of regulatory approval for the proposed use in live surgery.",
+      "mitigation": "Seek regulatory guidance and approval for clinical use.",
+      "citations": [
+        {
+          "source_id": "S03",
+          "page": 14,
+          "supports": "The results reported here can be considered as a successful feasibility study of an LED-based NIR sensor for cancer diagnostics aimed at in vivo applications."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To validate the LED NIR sensor for tumor boundary decisions during live surgery.",
+    "samples_or_process_states": [
+      "In vivo tumor samples during surgery."
+    ],
+    "reference_measurements": [
+      "Histopathological analysis of tumor margins."
+    ],
+    "comparisons": [
+      "Comparison with established surgical margin assessment techniques."
+    ],
+    "steps": [
+      "Conduct in vivo validation studies.",
+      "Develop a clinical protocol for sensor use during surgery.",
+      "Seek regulatory approval for clinical use."
+    ],
+    "go_no_go_basis": "Regulatory approval and successful in vivo validation."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T21:52:40.161563+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    },
+    "premise_checks": [
+      {
+        "check_id": "research_as_proof",
+        "severity": "wont_work",
+        "finding": "Research and proof-of-concept results are a reason to test a method, not proof that a different set-up is ready for the intended use. Use on patients additionally needs in vivo validation, clinical studies and the applicable regulatory approval, which are outside this assessment.",
+        "evidence": [
+          {
+            "source_id": "S03",
+            "page": 1,
+            "why": "in vitro samples, limited patient number"
+          },
+          {
+            "source_id": "S03",
+            "page": 3,
+            "why": "ex vivo spectra can differ from in vivo"
+          },
+          {
+            "source_id": "S03",
+            "page": 14,
+            "why": "proof of concept; further studies needed"
+          }
+        ],
+        "computed": {
+          "clinical_use": true
+        },
+        "label": "Won't work"
+      }
+    ]
+  },
+  "premise_findings": [
+    {
+      "check_id": "research_as_proof",
+      "severity": "wont_work",
+      "finding": "Research and proof-of-concept results are a reason to test a method, not proof that a different set-up is ready for the intended use. Use on patients additionally needs in vivo validation, clinical studies and the applicable regulatory approval, which are outside this assessment.",
+      "citations": [
+        {
+          "source_id": "S03",
+          "page": 1,
+          "supports": "In vitro samples, limited patient number."
+        },
+        {
+          "source_id": "S03",
+          "page": 3,
+          "supports": "Ex vivo spectra can differ from in vivo."
+        },
+        {
+          "source_id": "S03",
+          "page": 14,
+          "supports": "Proof of concept; further studies needed."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "not_applicable",
+    "headline": "In vivo validation and regulatory approval needed for clinical use.",
+    "method": "none_yet",
+    "probe": "not_yet_defined",
+    "install_location": "not_yet_defined",
+    "fiber_family": "not_yet_defined",
+    "test_against": "not_yet_defined",
+    "not_final_because": "In vivo validation and regulatory approval are required for clinical use.",
+    "citations": [
+      {
+        "source_id": "S03",
+        "page": 14,
+        "supports": "The results reported here can be considered as a successful feasibility study of an LED-based NIR sensor for cancer diagnostics aimed at in vivo applications."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [],
+    "key_spectral_features": "not_yet",
+    "path": "not_yet",
+    "path_reason": "In vivo validation and regulatory approval are required before proceeding with clinical use.",
+    "later_path": "none",
+    "citations": []
+  }
+}
