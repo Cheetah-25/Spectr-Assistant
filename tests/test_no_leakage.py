@@ -35,6 +35,7 @@ PROMPT_FILES = [
     _REPO_ROOT / "assess.py",
     _REPO_ROOT / "spectro" / "assess.py",
     _REPO_ROOT / "spectro" / "prompts.py",
+    _REPO_ROOT / "spectro" / "checks.py",
     _REPO_ROOT / ".kiro" / "steering" / "project.md",
 ]
 

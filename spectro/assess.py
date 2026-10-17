@@ -20,7 +20,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Callable, Dict, Optional, Tuple
 
-from . import llm, prompts, schema_tools, verify
+from . import checks, llm, prompts, schema_tools, verify
 from .kb import KnowledgeBase
 
 # A callable with the same signature as llm.complete_json, so tests can inject a
@@ -80,11 +80,12 @@ def _fact_sheet_text(facts: dict) -> str:
     return "\n".join(lines)
 
 
-def _build_assess_user(case_id: str, enquiry: str, facts: dict, kb: KnowledgeBase) -> str:
+def _build_assess_user(case_id: str, enquiry: str, facts: dict, kb: KnowledgeBase, findings=None) -> str:
     return (
         f"CASE ID: {case_id}\n\n"
         f"ENQUIRY:\n{enquiry.strip()}\n\n"
         f"{_fact_sheet_text(facts)}\n\n"
+        f"{checks.as_prompt_block(findings or [])}\n\n"
         f"{prompts.KB_HEADER}\n{kb.as_prompt_block()}\n"
     )
 
@@ -119,11 +120,12 @@ def assess(
     schema = schema_tools.load_schema()
 
     facts = extract_facts(enquiry, complete_json=cj)
-    user = _build_assess_user(case_id, enquiry, facts, kb)
+    findings = checks.run_checks(enquiry)
+    user = _build_assess_user(case_id, enquiry, facts, kb, findings)
 
     assessment = _normalize_assessment(cj(prompts.ASSESS_SYSTEM, user, schema), case_id, facts, model, kb)
     pruned = verify.prune_unverifiable_quotes(assessment, kb)
-    result = verify.verify(assessment, kb, enquiry, fibers=fibers, schema=schema)
+    result = verify.verify(assessment, kb, enquiry, fibers=fibers, schema=schema, findings=findings)
     result.warnings.extend(pruned)
 
     if not result.ok:
@@ -140,7 +142,7 @@ def assess(
             cj(prompts.ASSESS_SYSTEM, repair_user, schema), case_id, facts, model, kb
         )
         pruned = verify.prune_unverifiable_quotes(repaired, kb)
-        repaired_result = verify.verify(repaired, kb, enquiry, fibers=fibers, schema=schema)
+        repaired_result = verify.verify(repaired, kb, enquiry, fibers=fibers, schema=schema, findings=findings)
         repaired_result.warnings.extend(pruned)
         assessment, result = repaired, repaired_result
 
@@ -148,6 +150,7 @@ def assess(
     # the verification outcome (including schema errors) and return the best-effort
     # draft so the caller can write it out and move on.
     verify.write_verification(assessment, result)
+    assessment.setdefault("meta", {})["premise_checks"] = [f.as_dict() for f in findings]
     return assessment, result
 
 

@@ -507,12 +507,44 @@ def load_fiber_families(path: str | Path | None = None) -> dict:
         return json.load(fh)
 
 
+def check_premises_addressed(assessment: dict, findings) -> List[str]:
+    """Every premise check computed in code must appear in premise_findings, and a
+    'won't work' fibre mismatch must not be repeated in the in-line answer."""
+    warnings: List[str] = []
+    if not findings:
+        return warnings
+    listed = {pf.get("check_id") for pf in _as_list(assessment.get("premise_findings")) if isinstance(pf, dict)}
+    for f in findings:
+        if f.check_id not in listed:
+            warnings.append(f"premise check '{f.check_id}' ({f.severity}) is not addressed in premise_findings")
+        if f.check_id == "fiber_range_mismatch":
+            inl = _as_dict(assessment.get("inline_recommendation"))
+            if inl.get("method") == f.computed.get("method") and inl.get("fiber_family") == f.computed.get("fiber_family"):
+                warnings.append("inline_recommendation pairs a method with a fibre that cannot carry its range")
+    return warnings
+
+
+def check_inline_fiber(assessment: dict, fibers: dict) -> List[str]:
+    """The fibre named in the in-line answer must overlap the method's nominal window."""
+    from .checks import METHOD_WINDOWS_UM, overlap_fraction
+    inl = _as_dict(assessment.get("inline_recommendation"))
+    m, fam = inl.get("method"), inl.get("fiber_family")
+    if m not in METHOD_WINDOWS_UM or not fam or fam == "not_yet_defined":
+        return []
+    for f in _as_list((fibers or {}).get("fibers")):
+        if isinstance(f, dict) and f.get("family") == fam:
+            if overlap_fraction(METHOD_WINDOWS_UM[m], (float(f["min_um"]), float(f["max_um"]))) == 0.0:
+                return [f"inline_recommendation: {fam} does not transmit the {m} window"]
+    return []
+
+
 def verify(
     assessment: dict,
     kb: KnowledgeBase,
     enquiry: str,
     fibers: Optional[dict] = None,
     schema: Optional[dict] = None,
+    findings=None,
 ) -> VerifyResult:
     """Run every deterministic check and return a VerifyResult."""
     if fibers is None:
@@ -553,6 +585,8 @@ def verify(
     result.warnings.extend(check_status_consistency(assessment))
     result.warnings.extend(check_out_of_scope_questions(assessment))
     result.warnings.extend(check_excitation_support(assessment, kb))
+    result.warnings.extend(check_premises_addressed(assessment, findings))
+    result.warnings.extend(check_inline_fiber(assessment, fibers))
 
     # When the document is schema-invalid, citation/range confirmation is not
     # meaningful: do not claim success on those flags.

@@ -65,9 +65,13 @@ Choosing the decision status:
   (a primary candidate and, where reasonable, a comparison candidate), list the open questions,
   and mark what is assumed. Open questions lower confidence; they are not a reason to withhold
   candidate methods.
-- Use insufficient_information only when the material or process, or the quantity to measure, is
-  missing, so that no method can be justified at all.
-- Use outside_supported_scope only when the request is not an in-line spectroscopy task.
+- Use insufficient_information when the material or process, or the quantity to measure, is
+  missing or undefined, so that no method can be justified; or when a premise check marked "Won't work"
+  rules out the requested concept and choosing an alternative depends on facts the client has not given.
+  Still name the methods worth screening (role conditional) and the facts needed.
+- Use outside_supported_scope when the request is not an in-line spectroscopy task, or when the requested
+  use needs validation that a first technical assessment cannot give (for example decisions on patients).
+  Still propose the next laboratory feasibility steps that are within scope.
 - If the enquiry already names the methods to compare, give a provisional_assessment built around
   those methods; the feasibility plan then concentrates on the experiment design and on what its
   results would and would not demonstrate.
@@ -97,6 +101,39 @@ Choosing the decision status:
   Do not list budget, timeline or general project management as unknowns.
 """
 
+# Premise checks, in-line answer and AFS pathway. Generic: no scenario wording.
+PREMISE_AND_PATHWAY_GUIDANCE = """\
+Premise checks:
+- The user prompt lists PREMISE CHECKS computed in code from the enquiry. Each one is a fact, not a
+  suggestion. Add one premise_findings entry per check (same check_id and severity), stated plainly for
+  an engineer, and make the status, recommendations, measurement concept and plan consistent with it.
+  Add further premise_findings only when a cited source contradicts something the client assumes.
+- If the client asks you to approve, confirm or finalise something, answer that question directly in
+  decision_status_reason (yes / no / not yet, and why), without approving anything yourself.
+
+In-line answer (inline_recommendation):
+- Give the single clearest answer: the method to test first in the process, the probe or interface, where
+  it is installed in the process, the fibre family, and the one alternative to test it against.
+- mode: in_line for pipes, lines and process equipment; in_situ for reactors or vessels; laboratory_study
+  when the client asks for a laboratory study; at_line_or_lab_first when samples must be screened before
+  any installation; not_applicable when no installation is within scope.
+- If no method can be justified yet, use method none_yet and say in not_final_because what is missing.
+- A fibre family must cover the method's wavelengths (see the fibre table); never pair a method with a
+  fibre that does not transmit its range.
+
+AFS pathway (afs_pathway), following the AFS guided pathway in the business material:
+- lab_test_methods: the methods to include in the first multi-method laboratory test, each marked main,
+  compare or only_if_needed.
+- key_spectral_features: where in the spectrum the deciding information is expected, only as far as a
+  cited source supports it; otherwise say it is found in the test.
+- path: A_chemometric_model when one full-spectrum method with a calibration model is the likely
+  deliverable; B_custom_msf_system when several methods must keep being compared in the client's own
+  laboratory or research; C_spectral_fiber_sensor when a dedicated few-wavelength sensor for a fixed
+  process point is the likely end state; not_yet when the laboratory test must come first.
+  later_path names a plausible next path (for example C after A once the key bands are known).
+- Business material describes the service pathway only; it is never technical evidence for a method.
+"""
+
 # Compact reminder of the required container shapes. The schema is also enforced
 # via the provider's structured-output mode and re-validated in code, but stating
 # the shapes in words reduces malformed outputs (e.g. arrays of strings).
@@ -111,6 +148,11 @@ Output shape (all of these are arrays of OBJECTS, never arrays of strings):
 - risks: array of {risk, mitigation, citations?}. source_conflicts: array of {description, resolution, citations?}.
 - measurement_concept: object {summary, needs_afs_confirmation:bool, citations:[...], ...}.
 - citation object: {source_id (S01..S05), page:int, supports, optional locator, optional quote}.
+- premise_findings: array of {check_id, severity (wont_work|wrong_assumption|check_first), finding, citations?}.
+- inline_recommendation: object {mode, headline, method, probe, install_location, fiber_family?,
+  test_against, not_final_because?, citations?}.
+- afs_pathway: object {lab_test_methods:[{method, role}], key_spectral_features, path, path_reason,
+  later_path?, citations?}.
 """
 
 ASSESS_SYSTEM = (
@@ -121,6 +163,8 @@ ASSESS_SYSTEM = (
     + HARD_RULES
     + "\n"
     + STATUS_GUIDANCE
+    + "\n"
+    + PREMISE_AND_PATHWAY_GUIDANCE
     + "\n"
     + SHAPE_NOTES
     + "\nReturn a single JSON object that conforms to the provided assessment schema. No prose "

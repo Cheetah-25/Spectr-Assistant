@@ -34,9 +34,28 @@ from spectro import verify as verify_mod  # noqa: E402
 DEFAULT_OUT = REPO_ROOT / "outputs"
 
 
+def _parse_text_scenarios(text: str) -> List[dict]:
+    """Parse the plain-text scenario format: a '====' rule, an 'ID | Title' line, a '====' rule,
+    then the enquiry paragraph(s) up to the next rule or a Markdown heading."""
+    import re
+
+    out: List[dict] = []
+    pattern = re.compile(r"^=+\s*\n([A-Za-z]+\d+)\s*\|\s*(.+?)\s*\n=+\s*\n(.*?)(?=^=+\s*$|^#\s|\Z)", re.S | re.M)
+    for m in pattern.finditer(text):
+        enquiry = " ".join(m.group(3).split())
+        if enquiry:
+            out.append({"id": m.group(1), "title": m.group(2).strip(), "enquiry": enquiry})
+    return out
+
+
 def load_scenarios(path: Path) -> List[dict]:
-    with open(path, "r", encoding="utf-8") as fh:
-        data = json.load(fh)
+    raw = Path(path).read_text(encoding="utf-8")
+    if Path(path).suffix.lower() != ".json":
+        scenarios = _parse_text_scenarios(raw)
+        if not scenarios:
+            raise SystemExit(f"run_scenarios: no scenarios found in {path}")
+        return scenarios
+    data = json.loads(raw)
     scenarios = data.get("scenarios") if isinstance(data, dict) else data
     if not scenarios:
         raise SystemExit(f"run_scenarios: no scenarios found in {path}")
@@ -90,7 +109,7 @@ def run(scenario_path: Path, out_dir: Path) -> int:
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Run scenarios through the assessment pipeline.")
-    parser.add_argument("scenarios", help="path to a scenario JSON file")
+    parser.add_argument("scenarios", help="path to a scenario file (.json, or the plain-text ID | Title format)")
     parser.add_argument("--out", default=str(DEFAULT_OUT), help="output directory (default: outputs/)")
     args = parser.parse_args(argv)
 

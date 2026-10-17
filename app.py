@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
 
 from spectro import assess, render  # noqa: E402
 from spectro.kb import KnowledgeBase  # noqa: E402
+from spectro.uploads import read_upload  # noqa: E402
 
 st.set_page_config(page_title="Spectroscopy Assistant", layout="wide")
 
@@ -50,7 +51,16 @@ default_text = ""
 if choice != "(write your own)":
     default_text = examples[[f"{e.get('id', '')}: {e.get('title', '')}" for e in examples].index(choice)]["enquiry"]
 
-enquiry = st.text_area("Customer enquiry", value=default_text, height=180, key=f"enq-{choice}")
+uploaded = st.file_uploader("Or attach the enquiry as a file (.txt, .md, .pdf, .docx)", type=["txt", "md", "pdf", "docx"])
+if uploaded is not None:
+    try:
+        default_text = read_upload(uploaded.name, uploaded.getvalue())
+        st.caption(f"{uploaded.name}: {len(default_text):,} characters read.")
+    except Exception as exc:
+        st.error(f"Could not read {uploaded.name}: {exc}")
+
+enquiry = st.text_area("Customer enquiry", value=default_text, height=180,
+                       key=f"enq-{choice}-{uploaded.name if uploaded else ''}")
 
 if st.button("Assess", type="primary", disabled=not enquiry.strip()):
     with st.spinner("Reading the AFS knowledge base and checking the answer..."):
@@ -63,6 +73,9 @@ if st.button("Assess", type="primary", disabled=not enquiry.strip()):
 
 assessment = st.session_state.get("assessment")
 if assessment:
+    for block in (render._inline_section(assessment), render._premise_section(assessment), render._pathway_section(assessment)):
+        if block:
+            st.markdown("\n".join(block))
     summary = render._summary_section(assessment)
     st.markdown("\n".join(summary))
     meta = assessment.get("meta", {}).get("verification", {})
