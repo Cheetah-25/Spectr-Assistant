@@ -56,12 +56,29 @@ FACT_SYSTEM = (
     '"unknowns": [{"item": string, "why_it_matters": string}], "assumptions": [string]}.'
 )
 
+# Compact reminder of the required container shapes. The schema is also enforced
+# via the provider's structured-output mode and re-validated in code, but stating
+# the shapes in words reduces malformed outputs (e.g. arrays of strings).
+SHAPE_NOTES = """\
+Output shape (all of these are arrays of OBJECTS, never arrays of strings):
+- requirements: object {stated: [string], unknowns: [{item, why_it_matters}], assumptions: [string]}.
+- clarification_questions: array of {priority:int, question, could_change} (at most 5).
+- recommendations: array of {method, role, rationale, applies_when, confidence, citations:[...]} (at most 3).
+- spectral_range: array of objects {method, status, note, and optionally nominal_range:{min,max,unit},
+  excitation_nm, fiber_family, citations}. Never a plain string.
+- risks: array of {risk, mitigation, citations?}. source_conflicts: array of {description, resolution, citations?}.
+- measurement_concept: object {summary, needs_afs_confirmation:bool, citations:[...], ...}.
+- citation object: {source_id (S01..S05), page:int, supports, optional locator, optional quote}.
+"""
+
 ASSESS_SYSTEM = (
     "You are an assistant that drafts a FIRST technical assessment of a client enquiry on in-line "
     "fiber-optic spectroscopy, to support an expert's review. You do not give final configurations. "
     "Ground every sourced claim in the provided knowledge base and cite it. Keep client facts, "
     "sourced claims, assumptions and proposed experiments visibly separate.\n\n"
     + HARD_RULES
+    + "\n"
+    + SHAPE_NOTES
     + "\nReturn a single JSON object that conforms to the provided assessment schema. No prose "
     "outside the JSON."
 )

@@ -174,21 +174,41 @@ def _iter_text_fields(assessment: dict):
 # ---------------------------------------------------------------------------
 
 
+def _as_list(value) -> list:
+    """Return value if it is a list, else an empty list (defensive)."""
+    return value if isinstance(value, list) else []
+
+
+def _as_dict(value) -> dict:
+    """Return value if it is a dict, else an empty dict (defensive)."""
+    return value if isinstance(value, dict) else {}
+
+
 def _iter_citations(assessment: dict):
-    """Yield (location_label, citation_dict) across the whole assessment."""
+    """Yield (location_label, citation_dict) across the whole assessment.
+
+    Malformed structures (non-dict items, non-list citations, non-dict
+    citations) are skipped silently here; the schema validator reports them as
+    errors so nothing is lost. This keeps the checks crash-proof on malformed
+    LLM output (e.g. spectral_range returned as an array of strings).
+    """
 
     def from_list(items, base):
-        for i, item in enumerate(items or []):
-            for j, cit in enumerate(item.get("citations", []) or []):
-                yield f"{base}[{i}].citations[{j}]", cit
+        for i, item in enumerate(_as_list(items)):
+            if not isinstance(item, dict):
+                continue
+            for j, cit in enumerate(_as_list(item.get("citations"))):
+                if isinstance(cit, dict):
+                    yield f"{base}[{i}].citations[{j}]", cit
 
     yield from from_list(assessment.get("recommendations"), "recommendations")
     yield from from_list(assessment.get("spectral_range"), "spectral_range")
     yield from from_list(assessment.get("risks"), "risks")
     yield from from_list(assessment.get("source_conflicts"), "source_conflicts")
-    mc = assessment.get("measurement_concept") or {}
-    for j, cit in enumerate(mc.get("citations", []) or []):
-        yield f"measurement_concept.citations[{j}]", cit
+    mc = _as_dict(assessment.get("measurement_concept"))
+    for j, cit in enumerate(_as_list(mc.get("citations"))):
+        if isinstance(cit, dict):
+            yield f"measurement_concept.citations[{j}]", cit
 
 
 def check_citations(assessment: dict, kb: KnowledgeBase) -> Tuple[bool, List[str]]:
@@ -238,22 +258,31 @@ def check_research_readiness(assessment: dict) -> List[str]:
     return warnings
 
 
-def _to_um_window(rng: dict) -> Optional[Tuple[float, float]]:
-    """Convert a {min,max,unit} range to a (min_um, max_um) window."""
-    if not rng:
+def _to_um_window(rng) -> Optional[Tuple[float, float]]:
+    """Convert a {min,max,unit} range to a (min_um, max_um) window.
+
+    Returns None for anything that is not a well-formed numeric range object
+    (defensive against malformed LLM output)."""
+    if not isinstance(rng, dict):
         return None
     unit = rng.get("unit")
     lo = rng.get("min")
     hi = rng.get("max")
     if lo is None or hi is None or unit is None:
         return None
+    try:
+        lo_f, hi_f = float(lo), float(hi)
+    except (TypeError, ValueError):
+        return None
     if unit == "um":
-        a, b = float(lo), float(hi)
+        a, b = lo_f, hi_f
     elif unit == "nm":
-        a, b = float(lo) / 1000.0, float(hi) / 1000.0
+        a, b = lo_f / 1000.0, hi_f / 1000.0
     elif unit == "cm-1":
         # wavelength_um = 10000 / wavenumber_cm-1 ; inverts ordering.
-        a, b = 10000.0 / float(hi), 10000.0 / float(lo)
+        if lo_f == 0 or hi_f == 0:
+            return None
+        a, b = 10000.0 / hi_f, 10000.0 / lo_f
     else:
         return None
     return (min(a, b), max(a, b))
@@ -262,8 +291,14 @@ def _to_um_window(rng: dict) -> Optional[Tuple[float, float]]:
 def check_ranges(assessment: dict, fibers: dict) -> Tuple[bool, List[str]]:
     warnings: List[str] = []
     ok = True
-    families = {f["family"]: (f["min_um"], f["max_um"]) for f in fibers.get("fibers", [])}
-    for i, sr in enumerate(assessment.get("spectral_range", []) or []):
+    families = {
+        f["family"]: (f["min_um"], f["max_um"])
+        for f in _as_list((fibers or {}).get("fibers"))
+        if isinstance(f, dict) and {"family", "min_um", "max_um"} <= set(f)
+    }
+    for i, sr in enumerate(_as_list(assessment.get("spectral_range"))):
+        if not isinstance(sr, dict):
+            continue  # malformed item: reported by the schema validator
         fam = sr.get("fiber_family")
         window = _to_um_window(sr.get("nominal_range"))
         if not fam or window is None:
@@ -344,14 +379,16 @@ def check_status_consistency(assessment: dict) -> List[str]:
     """Decision status must be consistent with open unknowns and recommendations."""
     warnings: List[str] = []
     status = assessment.get("decision_status")
-    unknowns = (assessment.get("requirements", {}) or {}).get("unknowns", []) or []
-    recs = assessment.get("recommendations", []) or []
-    questions = assessment.get("clarification_questions", []) or []
+    unknowns = _as_list(_as_dict(assessment.get("requirements")).get("unknowns"))
+    recs = _as_list(assessment.get("recommendations"))
+    questions = _as_list(assessment.get("clarification_questions"))
 
     high_primary = [
         r
         for r in recs
-        if r.get("role") == "primary_candidate" and r.get("confidence") == "high"
+        if isinstance(r, dict)
+        and r.get("role") == "primary_candidate"
+        and r.get("confidence") == "high"
     ]
 
     if status == "insufficient_information" and high_primary:
@@ -399,30 +436,43 @@ def verify(
 
     result = VerifyResult()
 
-    # Schema validity (structural errors).
+    # 1) Schema validity FIRST. Malformed structures (e.g. spectral_range as an
+    #    array of strings) are reported here as schema errors.
     result.errors = schema_tools.schema_errors(assessment, schema)
 
-    # Citations.
+    # 2) Every remaining check is defensive: it skips malformed structures rather
+    #    than raising, so a schema-invalid document never crashes verification.
+    #    When the shape is malformed, citation/range checks cannot be trusted, so
+    #    we mark those flags False to signal "not confirmed" while still surfacing
+    #    any warnings the defensive passes can produce.
+    if not isinstance(assessment, dict):
+        result.citations_ok = False
+        result.range_check_ok = False
+        if not result.errors:
+            result.errors = ["$: assessment is not a JSON object"]
+        return result
+
     cites_ok, cite_warn = check_citations(assessment, kb)
     result.citations_ok = cites_ok
     result.warnings.extend(cite_warn)
 
-    # Research-readiness misuse (rule 11).
     result.warnings.extend(check_research_readiness(assessment))
 
-    # Ranges.
     range_ok, range_warn = check_ranges(assessment, fibers)
     result.range_check_ok = range_ok
     result.warnings.extend(range_warn)
 
-    # Unsupported numbers.
     result.unsupported_numbers = find_unsupported_numbers(assessment, kb, enquiry)
 
-    # Prices / product codes / delivery times (rule 10).
     result.warnings.extend(find_prices_and_codes(assessment, kb))
 
-    # Status consistency.
     result.warnings.extend(check_status_consistency(assessment))
+
+    # When the document is schema-invalid, citation/range confirmation is not
+    # meaningful: do not claim success on those flags.
+    if result.errors:
+        result.citations_ok = False
+        result.range_check_ok = False
 
     return result
 

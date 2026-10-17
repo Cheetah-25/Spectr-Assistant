@@ -146,3 +146,70 @@ def test_kb_is_in_prompt_and_no_dev_hint_leak(kb):
     assert "=== S01 p.10" in user
     # useful_sources must never be injected by assess (it never receives it).
     assert "useful_sources" not in user
+
+
+def _malformed_assessment():
+    """A draft where spectral_range is an array of strings (the crash case)."""
+    a = _valid_assessment()
+    a["spectral_range"] = ["NIR 1000-2500 nm", "MIR 2.5-16 um"]
+    return a
+
+
+def test_malformed_spectral_range_repaired(kb):
+    state = {"n": 0}
+
+    def fake(system, user, schema):
+        if "decision_status" not in str(schema):
+            return _fact_payload()
+        state["n"] += 1
+        if state["n"] == 1:
+            return _malformed_assessment()  # strings -> schema error, no crash
+        return _valid_assessment()  # repair returns a valid shape
+
+    assessment, result = assess.assess(
+        "D01", "We have a powder blend.", kb=kb,
+        fibers={"fibers": []}, complete_json=fake, model_name="test-model",
+    )
+    assert state["n"] == 2, "a single repair pass should run"
+    assert result.ok, f"after repair should pass: errors={result.errors} warnings={result.warnings}"
+    assert assessment["spectral_range"] == []
+
+
+def test_persistent_malformed_output_does_not_crash(kb):
+    """If the model keeps returning strings even after the repair pass, assess
+    must not crash: it returns the best-effort draft with meta.verification
+    showing the schema errors."""
+    def fake(system, user, schema):
+        if "decision_status" not in str(schema):
+            return _fact_payload()
+        return _malformed_assessment()  # always malformed
+
+    assessment, result = assess.assess(
+        "D07", "Hot polymer melt with an API.", kb=kb,
+        fibers={"fibers": []}, complete_json=fake, model_name="test-model",
+    )
+    # No exception; errors are reported, not raised.
+    assert result.errors
+    assert not result.ok
+    # Best-effort draft is still written out with meta.verification populated.
+    assert assessment["meta"]["verification"]["citations_ok"] is False
+    assert assessment["meta"]["kb_version"] == "kb-test"
+    # case_id present (the draft carried its own; we never drop it).
+    assert assessment["case_id"]
+
+
+def test_non_dict_model_output_does_not_crash(kb):
+    """A model that returns a list/string instead of an object must not crash."""
+    def fake(system, user, schema):
+        if "decision_status" not in str(schema):
+            return _fact_payload()
+        return ["this", "should", "be", "an", "object"]
+
+    assessment, result = assess.assess(
+        "D01", "enquiry", kb=kb, fibers={"fibers": []},
+        complete_json=fake, model_name="m",
+    )
+    assert result.errors
+    assert not result.ok
+    assert isinstance(assessment, dict)
+    assert assessment["case_id"] == "D01"

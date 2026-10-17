@@ -76,3 +76,57 @@ def test_outputs_written(tmp_path, monkeypatch):
 def test_missing_scenario_file_returns_2():
     rc = run_scenarios.main(["/nonexistent/scenarios.json"])
     assert rc == 2
+
+
+def test_malformed_model_output_continues_and_reports(tmp_path, monkeypatch):
+    """End-to-end: a model that returns spectral_range as strings must not crash
+    the run; both cases are written and the summary reflects the failure."""
+    from spectro.kb import KBEntry
+
+    def fake_cj(system, user, schema):
+        if "decision_status" not in str(schema):
+            return {"stated": [], "unknowns": [], "assumptions": []}
+        return {
+            "case_id": "D06",
+            "decision_status": "insufficient_information",
+            "decision_status_reason": "r",
+            "requirements": {"stated": [], "unknowns": [], "assumptions": []},
+            "clarification_questions": [],
+            "recommendations": [],
+            "measurement_concept": {"summary": "s", "needs_afs_confirmation": True, "citations": []},
+            "spectral_range": ["NIR 1000-2500 nm"],  # malformed on purpose
+            "risks": [],
+            "feasibility_plan": {
+                "objective": "o", "samples_or_process_states": [], "reference_measurements": [],
+                "comparisons": [], "steps": [], "go_no_go_basis": "g",
+            },
+            "source_conflicts": [],
+            "meta": {},
+        }
+
+    kb = KnowledgeBase(entries=[KBEntry("S01", 10, "AFS technical", "pdf_page", "text")], version="kb-x")
+    from spectro import assess as assess_mod
+    orig = assess_mod.assess
+
+    def wrap(case_id, enquiry, kb=None, fibers=None, complete_json=None, model_name=None):
+        return orig(case_id, enquiry, kb=kb, fibers={"fibers": []},
+                    complete_json=fake_cj, model_name="m")
+
+    monkeypatch.setattr(run_scenarios.assess, "assess", wrap)
+    monkeypatch.setattr(run_scenarios.KnowledgeBase, "load", classmethod(lambda cls: kb))
+
+    sf = tmp_path / "s.json"
+    sf.write_text(json.dumps({"scenarios": [
+        {"id": "D06", "enquiry": "petroleum water"},
+        {"id": "D07", "enquiry": "hot melt"},
+    ]}), encoding="utf-8")
+    out_dir = tmp_path / "out"
+
+    rc = run_scenarios.run(sf, out_dir)  # must not raise
+    assert rc == 1, "at least one case needs attention -> rc 1"
+    for cid in ("D06", "D07"):
+        data = json.loads((out_dir / f"{cid}.json").read_text(encoding="utf-8"))
+        assert data["meta"]["verification"]["citations_ok"] is False
+        assert data["meta"]["verification"].get("warnings") is not None
+        md = (out_dir / f"{cid}.md").read_text(encoding="utf-8")
+        assert md.startswith("> First assessment to support an AFS expert")

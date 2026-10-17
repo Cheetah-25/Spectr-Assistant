@@ -90,7 +90,10 @@ def _build_assess_user(case_id: str, enquiry: str, facts: dict, kb: KnowledgeBas
 
 
 def _finalize_meta(assessment: dict, model: str, kb: KnowledgeBase) -> None:
-    meta = assessment.setdefault("meta", {})
+    meta = assessment.get("meta")
+    if not isinstance(meta, dict):
+        meta = {}
+        assessment["meta"] = meta
     meta["model"] = model
     meta["kb_version"] = kb.version
     meta["generated_at"] = _now_iso()
@@ -118,33 +121,66 @@ def assess(
     facts = extract_facts(enquiry, complete_json=cj)
     user = _build_assess_user(case_id, enquiry, facts, kb)
 
-    assessment = cj(prompts.ASSESS_SYSTEM, user, schema)
-    _ensure_case_id(assessment, case_id)
-    _ensure_requirements_from_facts(assessment, facts)
-    _finalize_meta(assessment, model, kb)
-
+    assessment = _normalize_assessment(cj(prompts.ASSESS_SYSTEM, user, schema), case_id, facts, model, kb)
     result = verify.verify(assessment, kb, enquiry, fibers=fibers, schema=schema)
 
     if not result.ok:
-        # One repair pass with the concrete, generic error messages.
+        # Exactly ONE repair pass. The prompt leads with the exact schema errors
+        # (JSON path + message), then the other concrete issues.
         repair_user = (
             user
             + "\n\nPREVIOUS JSON:\n"
             + _compact_json(assessment)
             + "\n\n"
-            + prompts.REPAIR_PREAMBLE
-            + "\n- "
-            + "\n- ".join(result.repair_messages())
+            + _repair_block(result)
         )
-        repaired = cj(prompts.ASSESS_SYSTEM, repair_user, schema)
-        _ensure_case_id(repaired, case_id)
-        _ensure_requirements_from_facts(repaired, facts)
-        _finalize_meta(repaired, model, kb)
+        repaired = _normalize_assessment(
+            cj(prompts.ASSESS_SYSTEM, repair_user, schema), case_id, facts, model, kb
+        )
         repaired_result = verify.verify(repaired, kb, enquiry, fibers=fibers, schema=schema)
         assessment, result = repaired, repaired_result
 
+    # Even if still invalid after the single repair pass, do NOT crash: record
+    # the verification outcome (including schema errors) and return the best-effort
+    # draft so the caller can write it out and move on.
     verify.write_verification(assessment, result)
     return assessment, result
+
+
+def _repair_block(result: verify.VerifyResult) -> str:
+    """Build the repair instruction, leading with exact schema errors."""
+    lines = [prompts.REPAIR_PREAMBLE]
+    if result.errors:
+        lines.append("Schema errors (JSON path: message) — fix the shape first:")
+        lines += [f"- {e}" for e in result.errors]
+    other = (
+        list(result.warnings)
+        + [f"unsupported number: {n}" for n in result.unsupported_numbers]
+    )
+    if other:
+        lines.append("Other issues:")
+        lines += [f"- {m}" for m in other]
+    return "\n".join(lines)
+
+
+def _normalize_assessment(raw, case_id: str, facts: dict, model: str, kb: KnowledgeBase) -> dict:
+    """Coerce the model's return value into a dict and seed required scaffolding.
+
+    Defensive against a model that returns a non-dict (list/string): wrap it so
+    verification can run, record schema errors, and the pipeline never crashes.
+    """
+    if not isinstance(raw, dict):
+        assessment: dict = {
+            "case_id": case_id,
+            "meta": {},
+            "_malformed_model_output": raw if isinstance(raw, (list, str, int, float, bool)) else str(raw),
+        }
+    else:
+        assessment = raw
+    _ensure_case_id(assessment, case_id)
+    _ensure_requirements_from_facts(assessment, facts)
+    _finalize_meta(assessment, model, kb)
+    return assessment
 
 
 def _ensure_case_id(assessment: dict, case_id: str) -> None:
