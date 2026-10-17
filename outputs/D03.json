@@ -1,0 +1,119 @@
+{
+  "case_id": "D03",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The specific type of spectroscopy, expected turbidity levels, and protein concentration range are unknown, which are critical for selecting an appropriate method.",
+  "requirements": {
+    "stated": [
+      "The process involves a relatively clear whey stream before a concentration stage.",
+      "The goal is to track protein concentration in the whey stream using spectroscopy.",
+      "Laboratory results will be used as the reference for protein concentration.",
+      "The whey stream can become more turbid under some operating conditions."
+    ],
+    "unknowns": [
+      {
+        "item": "The specific type of spectroscopy to be used.",
+        "why_it_matters": "Different spectroscopy methods have varying capabilities in handling turbidity and measuring protein concentration."
+      },
+      {
+        "item": "The range of turbidity levels expected in the whey stream.",
+        "why_it_matters": "The level of turbidity can affect the choice of measurement technique and the accuracy of the results."
+      },
+      {
+        "item": "The specific protein concentration range to be measured.",
+        "why_it_matters": "Knowing the concentration range is crucial for selecting a method with appropriate sensitivity and accuracy."
+      },
+      {
+        "item": "The flow rate and physical properties of the whey stream.",
+        "why_it_matters": "These factors can influence the design of the measurement setup and the choice of equipment."
+      }
+    ],
+    "assumptions": [
+      "The whey stream is initially relatively clear but can become turbid.",
+      "Laboratory results are assumed to be accurate and reliable for use as a reference."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What is the expected range of turbidity in the whey stream?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What is the specific protein concentration range to be measured?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "What are the flow rate and physical properties of the whey stream?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 4,
+      "question": "Is there a preferred type of spectroscopy method already considered?",
+      "could_change": "method"
+    },
+    {
+      "priority": 5,
+      "question": "Are there any constraints on the measurement setup, such as space or environmental conditions?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "Cannot be defined yet due to insufficient information on turbidity, protein concentration range, and spectroscopy method.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The choice of fiber and probe depends on the method and turbidity levels.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+      }
+    ]
+  },
+  "spectral_range": [],
+  "risks": [
+    {
+      "risk": "High turbidity may affect measurement accuracy.",
+      "mitigation": "Select a method that can handle varying turbidity levels, such as NIR with diffuse reflection."
+    },
+    {
+      "risk": "Inappropriate method selection due to unknown protein concentration range.",
+      "mitigation": "Clarify the concentration range to ensure method sensitivity matches the application."
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To determine the feasibility of using spectroscopy to track protein concentration in a whey stream with varying turbidity.",
+    "samples_or_process_states": [
+      "Relatively clear whey stream",
+      "Turbid whey stream"
+    ],
+    "reference_measurements": [
+      "Laboratory protein concentration measurements"
+    ],
+    "comparisons": [
+      "Spectroscopic measurements vs laboratory results"
+    ],
+    "steps": [
+      "Clarify unknowns regarding turbidity and concentration range",
+      "Select appropriate spectroscopy method",
+      "Design measurement setup considering flow rate and turbidity",
+      "Conduct initial tests and compare with laboratory results"
+    ],
+    "go_no_go_basis": "Comparison of spectroscopic measurements with laboratory results to determine accuracy and reliability."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:42:56.959887+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    }
+  }
+}

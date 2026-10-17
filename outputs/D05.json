@@ -1,0 +1,192 @@
+{
+  "case_id": "D05",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The client's goals and the optical properties of the broth are not sufficiently defined to select a specific method or setup.",
+  "requirements": {
+    "stated": [
+      "The goal is to perform optical measurements during yeast fermentation.",
+      "The purpose is to follow yeast growth and notice changes earlier.",
+      "The broth becomes more optically dense as the fermentation progresses."
+    ],
+    "unknowns": [
+      {
+        "item": "Definition of biomass signal and metabolic signal as separate targets.",
+        "why_it_matters": "Defining these targets is crucial for determining the specific optical measurements needed and the type of spectroscopy that would be most effective."
+      },
+      {
+        "item": "Specific optical properties of the broth at different stages of fermentation.",
+        "why_it_matters": "Understanding these properties is necessary to select appropriate wavelengths and methods for accurate measurements."
+      },
+      {
+        "item": "Reference measurements needed for the feasibility study.",
+        "why_it_matters": "Reference measurements are essential to validate the optical measurements and ensure they correlate with actual fermentation parameters."
+      }
+    ],
+    "assumptions": [
+      "The optical density of the broth is a significant factor affecting measurement accuracy.",
+      "The team is considering both biomass and metabolic signals as potential indicators of fermentation progress."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What specific optical properties of the broth are expected at different fermentation stages?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "How do you define biomass and metabolic signals in the context of your process?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "What reference measurements are available or planned for validating the optical measurements?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 4,
+      "question": "What is the expected range of optical density during fermentation?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 5,
+      "question": "Are there any specific constraints on the measurement setup, such as space or environmental conditions?",
+      "could_change": "probe_or_geometry"
+    }
+  ],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "NIR spectroscopy is suitable for monitoring biomass and metabolic changes in fermentation due to its ability to penetrate dense media and provide information on chemical composition.",
+      "applies_when": "The broth's optical properties and target signals are compatible with NIR's capabilities.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy allows the use of ordinary glass for optics, making it ideal for online applications."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "role": "comparison_candidate",
+      "rationale": "Raman spectroscopy can provide detailed molecular information and is effective in aqueous environments, which may help in distinguishing metabolic signals.",
+      "applies_when": "The broth's optical density does not excessively scatter the Raman signal.",
+      "confidence": "low",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy is suitable for aqueous environments and provides molecular fingerprints."
+        }
+      ]
+    }
+  ],
+  "measurement_concept": {
+    "summary": "The measurement concept cannot be fully defined yet due to unknown broth properties and target signals.",
+    "geometry": "undetermined",
+    "fiber_link_note": "Fiber link details depend on the chosen method and broth properties.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is suitable for online applications with fiber optic probes."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "fiber_family": "VIS-NIR silica",
+      "status": "nominal_only",
+      "note": "NIR range is suitable for monitoring fermentation processes.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectra contain overtones and component bands of fundamental vibrations."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "excitation_nm": 785,
+      "fiber_family": "VIS-NIR silica",
+      "status": "nominal_only",
+      "note": "Raman spectroscopy provides molecular information but may be affected by broth turbidity.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy uses visible and NIR spectral regions."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "High optical density may limit penetration depth and accuracy of measurements.",
+      "mitigation": "Consider using ATR or reflection probes to handle high optical density.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "ATR probes can be used for dense media."
+        }
+      ]
+    },
+    {
+      "risk": "Unclear definition of target signals may lead to inappropriate method selection.",
+      "mitigation": "Clarify target signals and their optical characteristics before finalizing the method.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 7,
+          "supports": "Combining spectral methods can help in complex analyses."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To determine the feasibility of using optical spectroscopy for monitoring yeast fermentation.",
+    "samples_or_process_states": [
+      "Yeast fermentation broth at various stages"
+    ],
+    "reference_measurements": [
+      "Optical density",
+      "Biomass concentration",
+      "Metabolite concentrations"
+    ],
+    "comparisons": [
+      "NIR vs Raman spectroscopy"
+    ],
+    "steps": [
+      "Define target signals and optical properties of the broth.",
+      "Select appropriate spectral methods based on broth characteristics.",
+      "Conduct preliminary tests with selected methods."
+    ],
+    "go_no_go_basis": "Successful correlation between optical measurements and reference data."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:43:37.897740+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": false,
+      "unsupported_numbers": [],
+      "warnings": [
+        "spectral_range[0]: unknown fiber family 'VIS-NIR silica'"
+      ]
+    }
+  }
+}

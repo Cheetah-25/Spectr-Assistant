@@ -1,0 +1,179 @@
+{
+  "case_id": "D01",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The specific API and excipients, required sensitivity, and environmental conditions are unknown, which are critical for selecting the appropriate spectroscopy method.",
+  "requirements": {
+    "stated": [
+      "The company manufactures tablets from a powder blend containing an active pharmaceutical ingredient and excipients.",
+      "Laboratory checks are currently used to determine if the blend is on target.",
+      "Results from laboratory checks arrive after the material has moved through the press.",
+      "The company wants to assess if a fiber-based measurement in the feed frame could follow API concentration changes.",
+      "The first pilot should compare reasonable measurement options before committing to production equipment."
+    ],
+    "unknowns": [
+      {
+        "item": "Specific API and excipients used in the powder blend",
+        "why_it_matters": "Different APIs and excipients may have different optical properties, affecting the choice of spectroscopy method."
+      },
+      {
+        "item": "Required sensitivity and accuracy for API concentration measurement",
+        "why_it_matters": "Determines the specifications needed for the measurement system to be effective."
+      },
+      {
+        "item": "Environmental conditions in the feed frame",
+        "why_it_matters": "Conditions such as dust, vibration, and temperature can affect measurement accuracy and equipment choice."
+      },
+      {
+        "item": "Budget constraints for the pilot and production equipment",
+        "why_it_matters": "Influences the selection of measurement technologies and the scale of the pilot."
+      },
+      {
+        "item": "Timeline for implementing the pilot and production system",
+        "why_it_matters": "Affects planning and resource allocation for the project."
+      }
+    ],
+    "assumptions": [
+      "The feed frame is accessible for installing fiber-based measurement equipment.",
+      "The company is open to exploring different spectroscopy methods for the pilot."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What is the specific API and excipients used in the powder blend?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What are the required sensitivity and accuracy for API concentration measurement?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 3,
+      "question": "What are the environmental conditions in the feed frame?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 4,
+      "question": "Are there any budget constraints for the pilot and production equipment?",
+      "could_change": "scope_or_feasibility"
+    },
+    {
+      "priority": 5,
+      "question": "What is the timeline for implementing the pilot and production system?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "Cannot be defined yet due to insufficient information on API, excipients, and environmental conditions.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link setup is undetermined until more information is available.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "fiber_family": "NIR",
+      "status": "nominal_only",
+      "note": "NIR is suitable for online applications with fiber optic probes.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "nominal_range": {
+        "min": 400,
+        "max": 1100,
+        "unit": "nm"
+      },
+      "excitation_nm": 785,
+      "fiber_family": "Raman",
+      "status": "nominal_only",
+      "note": "Raman spectroscopy provides complementary information to NIR.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy is based on recording weak radiation signals observed when a sample is irradiated by a laser."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Unknown API and excipients may not be suitable for the selected spectroscopy method.",
+      "mitigation": "Identify the specific API and excipients to tailor the spectroscopy method accordingly.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    },
+    {
+      "risk": "Environmental conditions in the feed frame may affect measurement accuracy.",
+      "mitigation": "Assess environmental conditions to ensure compatibility with the chosen spectroscopy method.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To assess the feasibility of using fiber-based spectroscopy for real-time API concentration monitoring in the feed frame.",
+    "samples_or_process_states": [
+      "Powder blend samples with varying API concentrations."
+    ],
+    "reference_measurements": [
+      "Laboratory analysis of API concentration."
+    ],
+    "comparisons": [
+      "Compare real-time spectroscopy data with laboratory results."
+    ],
+    "steps": [
+      "Identify specific API and excipients.",
+      "Determine required sensitivity and accuracy.",
+      "Assess environmental conditions in the feed frame.",
+      "Select appropriate spectroscopy methods for testing.",
+      "Conduct pilot tests and compare results with laboratory data."
+    ],
+    "go_no_go_basis": "The spectroscopy method must reliably track API concentration changes in real-time compared to laboratory results."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:42:05.576206+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": false,
+      "unsupported_numbers": [],
+      "warnings": [
+        "spectral_range[0]: unknown fiber family 'NIR'",
+        "spectral_range[1]: unknown fiber family 'Raman'"
+      ]
+    }
+  }
+}

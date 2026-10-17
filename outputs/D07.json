@@ -1,0 +1,120 @@
+{
+  "case_id": "D07",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The client has not specified the optical measurement techniques being considered, nor the temperature range or the nature of material build-up, which are critical for selecting suitable methods and probes.",
+  "requirements": {
+    "stated": [
+      "Developing a hot polymer extrusion process.",
+      "The process incorporates an active pharmaceutical ingredient.",
+      "Interested in detecting composition changes during processing using optical measurement.",
+      "Have offline assays available.",
+      "The process interface is hot.",
+      "The process interface may be exposed to material build up."
+    ],
+    "unknowns": [
+      {
+        "item": "Specific optical measurement techniques being considered",
+        "why_it_matters": "Different techniques have varying sensitivities and capabilities for detecting composition changes."
+      },
+      {
+        "item": "Temperature range of the process",
+        "why_it_matters": "Temperature affects the choice of materials and design of the optical probe."
+      },
+      {
+        "item": "Nature and extent of material build up",
+        "why_it_matters": "Material build up can affect the accuracy and maintenance of the optical probe."
+      },
+      {
+        "item": "Type of active pharmaceutical ingredient",
+        "why_it_matters": "Different ingredients may have different optical properties, affecting detection capability."
+      },
+      {
+        "item": "Desired sensitivity and accuracy of the measurement",
+        "why_it_matters": "Determines the specifications and suitability of the optical probe."
+      }
+    ],
+    "assumptions": [
+      "The optical measurement needs to be in-line with the process.",
+      "The optical probe must withstand high temperatures and potential material build up."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What specific optical measurement techniques are being considered?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What is the temperature range of the process?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 3,
+      "question": "What is the nature and extent of material build-up at the process interface?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 4,
+      "question": "What is the type of active pharmaceutical ingredient being used?",
+      "could_change": "method"
+    },
+    {
+      "priority": 5,
+      "question": "What is the desired sensitivity and accuracy of the measurement?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "Cannot be defined yet due to insufficient information on the process conditions and measurement requirements.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link requirements depend on the temperature and material build-up conditions, which are not yet specified.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "The need for high-speed spectral acquisition and real-time results in online measurements."
+      }
+    ]
+  },
+  "spectral_range": [],
+  "risks": [
+    {
+      "risk": "High temperature and material build-up may damage the probe or affect measurement accuracy.",
+      "mitigation": "Select probes and materials that are resistant to high temperatures and can be easily cleaned or replaced."
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To determine the feasibility of using optical spectroscopy for in-line monitoring of composition changes in a hot polymer extrusion process.",
+    "samples_or_process_states": [
+      "Hot polymer melt with active pharmaceutical ingredient."
+    ],
+    "reference_measurements": [
+      "Offline assays of composition."
+    ],
+    "comparisons": [
+      "Compare in-line spectral data with offline assay results."
+    ],
+    "steps": [
+      "Identify suitable optical measurement techniques.",
+      "Determine process conditions such as temperature and material build-up.",
+      "Select appropriate probes and fibers based on process conditions.",
+      "Conduct initial tests to compare in-line and offline results."
+    ],
+    "go_no_go_basis": "Comparison of in-line spectral data with offline assay results to determine if the optical method can reliably detect composition changes."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:44:26.079822+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    }
+  }
+}

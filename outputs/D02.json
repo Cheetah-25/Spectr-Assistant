@@ -1,0 +1,198 @@
+{
+  "case_id": "D02",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The client's requirements for wavelength ranges, accuracy, and precision are not specified, which are critical for selecting the appropriate spectroscopic method.",
+  "requirements": {
+    "stated": [
+      "The product is an opaque, concentrated milk product.",
+      "The product flows through a processing line.",
+      "The current analysis is for fat and protein.",
+      "The product's temperature and texture vary during production.",
+      "They want earlier information about composition changes.",
+      "They want to retain laboratory checks."
+    ],
+    "unknowns": [
+      {
+        "item": "Specific wavelength ranges of interest for spectroscopy",
+        "why_it_matters": "Different components absorb light at different wavelengths, which affects the choice of spectroscopic method."
+      },
+      {
+        "item": "Acceptable levels of measurement accuracy and precision",
+        "why_it_matters": "Determines the feasibility of using in-line spectroscopy compared to laboratory methods."
+      },
+      {
+        "item": "Flow rate of the milk product",
+        "why_it_matters": "Affects the design of the in-line spectroscopy setup and the integration with the processing line."
+      },
+      {
+        "item": "Budget for implementing spectroscopy",
+        "why_it_matters": "Influences the choice of equipment and technology for the spectroscopy setup."
+      },
+      {
+        "item": "Space available for installing in-line spectroscopy equipment",
+        "why_it_matters": "Determines the physical feasibility of integrating the spectroscopy system into the existing processing line."
+      }
+    ],
+    "assumptions": [
+      "The client is considering in-line spectroscopy as a method for real-time monitoring.",
+      "The client is open to conducting a practical comparison experiment between in-line spectroscopy and laboratory checks."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What specific wavelength ranges are of interest for detecting fat and protein in the milk product?",
+      "could_change": "spectral_range"
+    },
+    {
+      "priority": 2,
+      "question": "What are the acceptable levels of measurement accuracy and precision for the in-line spectroscopy?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "What is the flow rate of the milk product in the processing line?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 4,
+      "question": "What is the budget for implementing the in-line spectroscopy system?",
+      "could_change": "scope_or_feasibility"
+    },
+    {
+      "priority": 5,
+      "question": "How much space is available for installing the in-line spectroscopy equipment?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "The measurement concept cannot be defined yet due to insufficient information on wavelength ranges and accuracy requirements.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link and probe design depend on the specific method chosen, which is currently undetermined.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "fiber_family": "silica",
+      "status": "nominal_only",
+      "note": "NIR is suitable for online applications and can penetrate dense samples.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy allows the use of ordinary glass for optics, making it ideal for online applications."
+        }
+      ]
+    },
+    {
+      "method": "MIR_ATR",
+      "nominal_range": {
+        "min": 4000,
+        "max": 400,
+        "unit": "cm-1"
+      },
+      "fiber_family": "polycrystalline",
+      "status": "nominal_only",
+      "note": "MIR ATR is suitable for analyzing thin samples or surface layers.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "MIR ATR is used for surface analysis with high sensitivity."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "nominal_range": {
+        "min": 400,
+        "max": 3600,
+        "unit": "cm-1"
+      },
+      "excitation_nm": 785,
+      "fiber_family": "silica",
+      "status": "nominal_only",
+      "note": "Raman provides complementary information to NIR and MIR.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Raman spectroscopy is complementary to NIR and MIR."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Inadequate spectral range selection could lead to poor detection of target components.",
+      "mitigation": "Clarify the specific wavelength ranges of interest for fat and protein analysis.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Different spectral methods have varying capabilities and limitations."
+        }
+      ]
+    },
+    {
+      "risk": "Space constraints may limit the feasibility of installing the spectroscopy system.",
+      "mitigation": "Assess the available space for equipment installation before finalizing the setup.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "The physical feasibility of integrating the spectroscopy system depends on available space."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To evaluate the feasibility of in-line spectroscopy for real-time monitoring of fat and protein in a concentrated milk product.",
+    "samples_or_process_states": [
+      "Opaque, concentrated milk product at various stages of processing."
+    ],
+    "reference_measurements": [
+      "Laboratory checks for fat and protein content."
+    ],
+    "comparisons": [
+      "Comparison of in-line spectroscopy results with laboratory checks."
+    ],
+    "steps": [
+      "Define specific wavelength ranges for fat and protein detection.",
+      "Determine acceptable accuracy and precision levels.",
+      "Assess flow rate and space constraints for equipment installation.",
+      "Conduct a practical comparison experiment with laboratory checks."
+    ],
+    "go_no_go_basis": "The decision will be based on whether the in-line spectroscopy can provide reliable real-time data that aligns with laboratory checks."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:42:32.704972+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": false,
+      "unsupported_numbers": [],
+      "warnings": [
+        "spectral_range[0]: unknown fiber family 'silica'",
+        "spectral_range[1]: unknown fiber family 'polycrystalline'",
+        "spectral_range[2]: unknown fiber family 'silica'"
+      ]
+    }
+  }
+}

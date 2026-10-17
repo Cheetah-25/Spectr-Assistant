@@ -1,0 +1,155 @@
+{
+  "case_id": "D08",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The objectives and criteria for the comparison experiment are not clearly defined, making it difficult to design an appropriate experiment or interpret its results.",
+  "requirements": {
+    "stated": [
+      "The research group is evaluating a spectral measurement interface.",
+      "The materials used are model biological tissues such as chicken muscle, fat, and liver.",
+      "The group wants to compare MIR ATR and fluorescence information.",
+      "The material is heterogeneous.",
+      "Sequential measurements may not sample the same location.",
+      "This is a laboratory classification study."
+    ],
+    "unknowns": [
+      {
+        "item": "Specific objectives of the comparison experiment",
+        "why_it_matters": "Understanding the objectives is crucial to designing the experiment and interpreting its results."
+      },
+      {
+        "item": "Details of the MIR ATR and fluorescence setups",
+        "why_it_matters": "The setup details affect the comparability and reliability of the measurements."
+      },
+      {
+        "item": "Criteria for evaluating the comparison",
+        "why_it_matters": "Clear criteria are needed to determine the success or failure of the comparison."
+      },
+      {
+        "item": "Definition of 'same location' in the context of the study",
+        "why_it_matters": "This affects how measurements are taken and compared, impacting the study's validity."
+      }
+    ],
+    "assumptions": [
+      "The comparison of MIR ATR and fluorescence will provide meaningful insights despite the heterogeneity of the material.",
+      "The laboratory classification study will yield results that can be generalized or applied to other contexts."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What are the specific objectives of the comparison experiment?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 2,
+      "question": "What are the details of the MIR ATR and fluorescence setups?",
+      "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 3,
+      "question": "What criteria will be used to evaluate the comparison?",
+      "could_change": "scope_or_feasibility"
+    },
+    {
+      "priority": 4,
+      "question": "How is 'same location' defined in the context of this study?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "The measurement concept cannot be defined yet due to insufficient information on objectives and setup details.",
+    "geometry": "undetermined",
+    "fiber_link_note": "The fiber link and probe design depend on the specific objectives and setup details.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 8,
+        "supports": "The need for simultaneous measurements in heterogeneous samples."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "MIR_ATR",
+      "nominal_range": {
+        "min": 2.5,
+        "max": 25,
+        "unit": "um"
+      },
+      "fiber_family": "PIR",
+      "status": "nominal_only",
+      "note": "MIR ATR typically covers the mid-infrared range.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "MIR ATR range and typical applications."
+        }
+      ]
+    },
+    {
+      "method": "Fluorescence",
+      "excitation_nm": 470,
+      "fiber_family": "UV-silica",
+      "status": "nominal_only",
+      "note": "Fluorescence typically uses UV to visible excitation.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Fluorescence range and typical applications."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Heterogeneity of the sample may lead to inconsistent results between methods.",
+      "mitigation": "Use a multispectral probe to ensure measurements are taken from the same location.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 8,
+          "supports": "The importance of simultaneous measurements in heterogeneous samples."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To compare MIR ATR and fluorescence information for classifying biological tissues.",
+    "samples_or_process_states": [
+      "Chicken muscle",
+      "Chicken fat",
+      "Chicken liver"
+    ],
+    "reference_measurements": [
+      "Standard histological classification"
+    ],
+    "comparisons": [
+      "MIR ATR vs Fluorescence"
+    ],
+    "steps": [
+      "Define specific objectives and criteria for comparison.",
+      "Set up MIR ATR and fluorescence measurements.",
+      "Conduct measurements on the same sample locations.",
+      "Analyze data using chemometric methods."
+    ],
+    "go_no_go_basis": "Defined criteria for successful classification."
+  },
+  "source_conflicts": [],
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T07:44:48.882893+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": false,
+      "unsupported_numbers": [],
+      "warnings": [
+        "spectral_range[0]: unknown fiber family 'PIR'"
+      ]
+    }
+  }
+}
