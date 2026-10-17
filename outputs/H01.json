@@ -1,0 +1,278 @@
+{
+  "case_id": "H01",
+  "decision_status": "provisional_assessment",
+  "decision_status_reason": "The client's request to reuse an existing NIR calibration with a new API and excipient blend is unlikely to succeed without re-calibration due to matrix changes. Adding Raman does not preserve the old calibration; it requires its own calibration and validation.",
+  "requirements": {
+    "stated": [
+      "Existing NIR pilot follows API concentration in one powder formulation at the tablet press feed frame.",
+      "A different API and excipient blend is being introduced.",
+      "There is a desire to reuse the existing NIR calibration."
+    ],
+    "unknowns": [
+      {
+        "item": "Compatibility of the existing NIR calibration with the new API and excipient blend.",
+        "why_it_matters": "Determines if the existing calibration can be reused without modification."
+      },
+      {
+        "item": "The specific properties of the new API and excipient blend.",
+        "why_it_matters": "These properties could affect the NIR and Raman spectroscopy results and calibration validity."
+      },
+      {
+        "item": "The rationale behind the suggestion to add Raman spectroscopy.",
+        "why_it_matters": "Understanding this could clarify how Raman might complement or validate the existing NIR calibration."
+      }
+    ],
+    "assumptions": [
+      "The existing NIR calibration is specific to the current API and excipient blend.",
+      "Adding Raman spectroscopy might help maintain the validity of the existing NIR calibration."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What are the specific properties of the new API and excipient blend?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "What is the rationale behind the suggestion to add Raman spectroscopy?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "Are there any specific acceptance criteria for the new API and excipient blend measurements?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "NIR is already in use and suitable for monitoring API concentration in powder formulations.",
+      "applies_when": "The new API and excipient blend have similar optical properties to the existing formulation.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "role": "comparison_candidate",
+      "rationale": "Raman can provide complementary information on molecular structure, potentially aiding in distinguishing between different APIs.",
+      "applies_when": "The new API and excipient blend have distinct Raman-active features.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy provides complementary qualitative and quantitative information about the sample's composition."
+        }
+      ]
+    }
+  ],
+  "measurement_concept": {
+    "summary": "NIR and Raman spectroscopy could be used to monitor API concentration and molecular structure at the tablet press feed frame.",
+    "geometry": "undetermined",
+    "fiber_link_note": "Fiber selection depends on the specific spectral range required for the new API and excipient blend.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+      },
+      {
+        "source_id": "S01",
+        "page": 11,
+        "supports": "Raman spectroscopy provides complementary qualitative and quantitative information about the sample's composition."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "status": "nominal_only",
+      "note": "NIR spectra contain predominantly overtones and component bands of fundamental vibrations.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 10,
+          "supports": "NIR spectra (780–2500 nm) contain predominantly overtones and component bands of fundamental vibrations."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "status": "nominal_only",
+      "note": "Raman shift range depends on the specific molecular features of the sample. Excitation wavelength to be defined with the expert.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman spectroscopy is based on recording weak radiation signals observed when a sample is irradiated by a laser."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Existing NIR calibration may not be valid for the new API and excipient blend.",
+      "mitigation": "Conduct a feasibility study to assess the compatibility of the existing calibration with the new blend.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "A chemometric calibration is built and validated for a specific sample matrix."
+        }
+      ]
+    },
+    {
+      "risk": "Raman spectroscopy requires its own calibration and validation.",
+      "mitigation": "Develop a new calibration model for Raman spectroscopy specific to the new API and excipient blend.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 9,
+          "supports": "Data fusion needs dedicated algorithms."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To determine if the existing NIR calibration can be reused with the new API and excipient blend, and to evaluate the potential of Raman spectroscopy as a complementary method.",
+    "samples_or_process_states": [
+      "Existing API and excipient blend",
+      "New API and excipient blend"
+    ],
+    "reference_measurements": [
+      "Current NIR calibration results",
+      "New Raman calibration results"
+    ],
+    "comparisons": [
+      "NIR results with existing and new blends",
+      "Raman results with new blend"
+    ],
+    "steps": [
+      "Conduct NIR measurements on the new blend using the existing calibration.",
+      "Develop and validate a new Raman calibration for the new blend.",
+      "Compare the results to assess compatibility and complementarity."
+    ],
+    "go_no_go_basis": "Compatibility of the existing NIR calibration with the new blend and successful Raman calibration."
+  },
+  "source_conflicts": [],
+  "premise_findings": [
+    {
+      "check_id": "calibration_transfer",
+      "severity": "wrong_assumption",
+      "finding": "A chemometric calibration is built and validated for a specific sample matrix. A changed composition is a new matrix, so the existing model must be re-tested and most likely rebuilt. Adding a second method creates a new (fused) model that also needs calibration and validation; it does not keep the old model valid.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "A chemometric calibration is built and validated for a specific sample matrix."
+        },
+        {
+          "source_id": "S01",
+          "page": 9,
+          "supports": "Data fusion needs dedicated algorithms."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "at_line_or_lab_first",
+    "headline": "Test NIR and Raman for new API blend at the lab first.",
+    "method": "NIR",
+    "probe": "diffuse reflection",
+    "install_location": "tablet press feed frame",
+    "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+    "test_against": "Raman",
+    "not_final_because": "Compatibility of the existing NIR calibration with the new blend is unknown.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "NIR spectroscopy is ideal for online applications, including remote measurements via fiber optic probes."
+      },
+      {
+        "source_id": "S01",
+        "page": 11,
+        "supports": "Raman spectroscopy provides complementary qualitative and quantitative information about the sample's composition."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "NIR",
+        "role": "main"
+      },
+      {
+        "method": "Raman",
+        "role": "compare"
+      }
+    ],
+    "key_spectral_features": "To be identified during testing.",
+    "path": "not_yet",
+    "path_reason": "The laboratory test must come first to determine the compatibility and complementarity of NIR and Raman for the new blend.",
+    "later_path": "A_chemometric_model",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "A chemometric calibration is built and validated for a specific sample matrix."
+      },
+      {
+        "source_id": "S01",
+        "page": 9,
+        "supports": "Data fusion needs dedicated algorithms."
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T21:51:16.021575+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    },
+    "premise_checks": [
+      {
+        "check_id": "calibration_transfer",
+        "severity": "wrong_assumption",
+        "finding": "A chemometric calibration is built and validated for a specific sample matrix. A changed composition is a new matrix, so the existing model must be re-tested and most likely rebuilt. Adding a second method creates a new (fused) model that also needs calibration and validation; it does not keep the old model valid.",
+        "evidence": [
+          {
+            "source_id": "S01",
+            "page": 5,
+            "why": "chemometric models are built, validated, applied"
+          },
+          {
+            "source_id": "S01",
+            "page": 10,
+            "why": "overlapping NIR bands need chemometrics"
+          },
+          {
+            "source_id": "S01",
+            "page": 9,
+            "why": "data fusion needs dedicated algorithms"
+          }
+        ],
+        "computed": {},
+        "label": "Wrong assumption"
+      }
+    ]
+  }
+}

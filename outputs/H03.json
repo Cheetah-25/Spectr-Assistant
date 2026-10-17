@@ -1,0 +1,194 @@
+{
+  "case_id": "H03",
+  "decision_status": "insufficient_information",
+  "decision_status_reason": "The client has not identified a fluorescent target or marker for glucose concentration and viable biomass, which is crucial for using fluorescence spectroscopy effectively in this application.",
+  "requirements": {
+    "stated": [
+      "The client has a fluorescence spectrometer.",
+      "The client wants to report glucose concentration and viable biomass during fermentation using the spectrometer.",
+      "The client believes fluorescence can be very sensitive."
+    ],
+    "unknowns": [
+      {
+        "item": "Fluorescent target, marker, or reference relationship for glucose concentration and viable biomass.",
+        "why_it_matters": "Identifying a specific fluorescent target or marker is crucial for accurately measuring glucose concentration and viable biomass using fluorescence spectroscopy."
+      },
+      {
+        "item": "Specific method or setup for using the fluorescence spectrometer in this application.",
+        "why_it_matters": "The method or setup will determine how the spectrometer can be used effectively for the desired measurements."
+      }
+    ],
+    "assumptions": [
+      "The client assumes that fluorescence sensitivity is sufficient for their application without having identified specific targets or markers."
+    ]
+  },
+  "clarification_questions": [
+    {
+      "priority": 1,
+      "question": "What specific fluorescent markers or targets are available for glucose and biomass in your fermentation process?",
+      "could_change": "method"
+    },
+    {
+      "priority": 2,
+      "question": "Are there any known fluorescent compounds naturally present or added in your fermentation process that correlate with glucose or biomass?",
+      "could_change": "method"
+    },
+    {
+      "priority": 3,
+      "question": "What are the expected concentration ranges for glucose and biomass during the fermentation process?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 4,
+      "question": "Is there a reference method currently used for measuring glucose and biomass in your process?",
+      "could_change": "experiment_design"
+    },
+    {
+      "priority": 5,
+      "question": "What are the physical and chemical characteristics of the fermentation media?",
+      "could_change": "probe_or_geometry"
+    }
+  ],
+  "recommendations": [],
+  "measurement_concept": {
+    "summary": "Cannot be defined yet due to lack of identified fluorescent targets or markers for glucose and biomass.",
+    "geometry": "undetermined",
+    "fiber_link_note": "Fluorescence requires a fluorescent target or marker to be effective.",
+    "needs_afs_confirmation": false,
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "Fluorescence requires a fluorescent component to respond."
+      }
+    ]
+  },
+  "spectral_range": [],
+  "risks": [
+    {
+      "risk": "Lack of a fluorescent target or marker may lead to ineffective measurements.",
+      "mitigation": "Identify specific fluorescent markers or targets for glucose and biomass.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Most chemicals do not fluoresce; a target is needed."
+        }
+      ]
+    }
+  ],
+  "feasibility_plan": {
+    "objective": "To determine the feasibility of using fluorescence spectroscopy for glucose and biomass measurement during fermentation.",
+    "samples_or_process_states": [
+      "Fermentation media at various stages."
+    ],
+    "reference_measurements": [
+      "To be agreed with the client."
+    ],
+    "comparisons": [
+      "Fluorescence measurements against reference methods."
+    ],
+    "steps": [
+      "Identify potential fluorescent markers for glucose and biomass.",
+      "Conduct preliminary tests to establish correlation between fluorescence signals and target concentrations.",
+      "Develop a calibration model if a suitable marker is found."
+    ],
+    "go_no_go_basis": "Identification of a suitable fluorescent marker and successful correlation with target concentrations."
+  },
+  "source_conflicts": [],
+  "premise_findings": [
+    {
+      "check_id": "sensitivity_without_target",
+      "severity": "wont_work",
+      "finding": "High sensitivity is not selectivity. Without a named target or reference relationship, there is no basis for reporting glucose or biomass from fluorescence.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "Fluorimetry sensitivity high, selectivity low."
+        },
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Most chemicals do not fluoresce."
+        },
+        {
+          "source_id": "S04",
+          "page": 4,
+          "supports": "Limited to samples with a fluorescent component."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "not_applicable",
+    "headline": "No method can be named yet due to lack of fluorescent targets.",
+    "method": "none_yet",
+    "probe": "undetermined",
+    "install_location": "undetermined",
+    "fiber_family": "not_yet_defined",
+    "test_against": "undetermined",
+    "not_final_because": "No fluorescent target or marker identified for glucose and biomass.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "Fluorescence requires a fluorescent component to respond."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [],
+    "key_spectral_features": "To be determined once a fluorescent target is identified.",
+    "path": "not_yet",
+    "path_reason": "A fluorescent target or marker must be identified before proceeding.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 5,
+        "supports": "Fluorescence requires a fluorescent component to respond."
+      }
+    ]
+  },
+  "meta": {
+    "model": "gpt-4o",
+    "kb_version": "kb-e5505ad92bbc",
+    "generated_at": "2026-10-17T21:51:53.103946+00:00",
+    "verification": {
+      "citations_ok": true,
+      "range_check_ok": true,
+      "unsupported_numbers": [],
+      "warnings": []
+    },
+    "premise_checks": [
+      {
+        "check_id": "sensitivity_without_target",
+        "severity": "wont_work",
+        "finding": "High sensitivity is not selectivity. The requested method is rated high in sensitivity but low in selectivity, and it only responds to species that fluoresce or absorb; with no named target or reference relationship there is no physical basis for reporting the requested variables from it.",
+        "evidence": [
+          {
+            "source_id": "S01",
+            "page": 6,
+            "why": "Table 1: fluorimetry sensitivity high, selectivity low"
+          },
+          {
+            "source_id": "S01",
+            "page": 5,
+            "why": "most chemicals do not fluoresce"
+          },
+          {
+            "source_id": "S04",
+            "page": 4,
+            "why": "limited to samples with a fluorescent component"
+          }
+        ],
+        "computed": {
+          "methods": [
+            "Fluorescence"
+          ]
+        },
+        "label": "Won't work"
+      }
+    ]
+  }
+}
