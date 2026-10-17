@@ -1,0 +1,240 @@
+{
+  "source_id": "S01",
+  "page": 6,
+  "locator": "Table 1",
+  "scope": "AFS technical",
+  "kind": "xlsx_rows",
+  "source_file": "AFS_method_comparison_table.xlsx",
+  "columns": [
+    "method_no",
+    "method",
+    "measurement_technique",
+    "physical_phenomenon",
+    "sample_type",
+    "optical_path_or_depth",
+    "sensitivity",
+    "selectivity",
+    "cost"
+  ],
+  "rows": [
+    {
+      "method_no": "1",
+      "method": "IR spectroscopy",
+      "measurement_technique": "ATR platform",
+      "physical_phenomenon": "absorption",
+      "sample_type": "liquid, paste, soft",
+      "optical_path_or_depth": "1-6 um",
+      "sensitivity": "average",
+      "selectivity": "high",
+      "cost": "high"
+    },
+    {
+      "method_no": "1",
+      "method": "IR spectroscopy",
+      "measurement_technique": "ATR probe*",
+      "physical_phenomenon": "absorption",
+      "sample_type": "liquid, paste, soft",
+      "optical_path_or_depth": "1-6 um",
+      "sensitivity": "average",
+      "selectivity": "high",
+      "cost": "high"
+    },
+    {
+      "method_no": "1",
+      "method": "IR spectroscopy",
+      "measurement_technique": "cuvette",
+      "physical_phenomenon": "absorption",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "10-100 um",
+      "sensitivity": "high",
+      "selectivity": "high",
+      "cost": "average"
+    },
+    {
+      "method_no": "1",
+      "method": "IR spectroscopy",
+      "measurement_technique": "sample layer",
+      "physical_phenomenon": "absorption",
+      "sample_type": "solid film",
+      "optical_path_or_depth": "5-50 um",
+      "sensitivity": "high",
+      "selectivity": "high",
+      "cost": "average"
+    },
+    {
+      "method_no": "1",
+      "method": "IR spectroscopy",
+      "measurement_technique": "sample surface",
+      "physical_phenomenon": "diffuse reflection",
+      "sample_type": "solid",
+      "optical_path_or_depth": "10 um",
+      "sensitivity": "average",
+      "selectivity": "high",
+      "cost": "average"
+    },
+    {
+      "method_no": "2",
+      "method": "NIR spectroscopy",
+      "measurement_technique": "cuvette",
+      "physical_phenomenon": "transmission",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "1-5 mm",
+      "sensitivity": "average",
+      "selectivity": "average",
+      "cost": "average"
+    },
+    {
+      "method_no": "2",
+      "method": "NIR spectroscopy",
+      "measurement_technique": "transmission or transflection probe",
+      "physical_phenomenon": "transmission",
+      "sample_type": "liquid, colloidal",
+      "optical_path_or_depth": "1-10 mm",
+      "sensitivity": "average",
+      "selectivity": "average",
+      "cost": "average"
+    },
+    {
+      "method_no": "2",
+      "method": "NIR spectroscopy",
+      "measurement_technique": "diffuse reflection probe",
+      "physical_phenomenon": "diffuse reflection",
+      "sample_type": "scattering media, powder",
+      "optical_path_or_depth": "0.5-1 mm",
+      "sensitivity": "average",
+      "selectivity": "average",
+      "cost": "average"
+    },
+    {
+      "method_no": "2",
+      "method": "NIR spectroscopy",
+      "measurement_technique": "integrating sphere",
+      "physical_phenomenon": "diffuse reflection",
+      "sample_type": "solid, powder",
+      "optical_path_or_depth": "5-10 mm",
+      "sensitivity": "average",
+      "selectivity": "average",
+      "cost": "average"
+    },
+    {
+      "method_no": "2",
+      "method": "NIR spectroscopy",
+      "measurement_technique": "surface at a distance",
+      "physical_phenomenon": "diffuse reflection",
+      "sample_type": "solid, powder",
+      "optical_path_or_depth": "2-5 mm",
+      "sensitivity": "average",
+      "selectivity": "average",
+      "cost": "average"
+    },
+    {
+      "method_no": "3",
+      "method": "Raman spectroscopy",
+      "measurement_technique": "cuvette 90 deg",
+      "physical_phenomenon": "Raman scattering (emission)",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "2-5 mm",
+      "sensitivity": "average",
+      "selectivity": "high",
+      "cost": "high"
+    },
+    {
+      "method_no": "3",
+      "method": "Raman spectroscopy",
+      "measurement_technique": "Raman probe",
+      "physical_phenomenon": "Raman scattering (emission)",
+      "sample_type": "liquid, powder, solid",
+      "optical_path_or_depth": "2-5 mm",
+      "sensitivity": "average",
+      "selectivity": "high",
+      "cost": "high"
+    },
+    {
+      "method_no": "4",
+      "method": "UV/Visible spectroscopy",
+      "measurement_technique": "cuvette",
+      "physical_phenomenon": "absorption",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "1-5 mm",
+      "sensitivity": "high",
+      "selectivity": "low",
+      "cost": "low"
+    },
+    {
+      "method_no": "4",
+      "method": "UV/Visible spectroscopy",
+      "measurement_technique": "ATR probe",
+      "physical_phenomenon": "absorption",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "0.1-1 um",
+      "sensitivity": "low",
+      "selectivity": "low",
+      "cost": "average"
+    },
+    {
+      "method_no": "4",
+      "method": "UV/Visible spectroscopy",
+      "measurement_technique": "diffuse reflection probe",
+      "physical_phenomenon": "diffuse reflection",
+      "sample_type": "solid, pill",
+      "optical_path_or_depth": "1-5 mm",
+      "sensitivity": "low",
+      "selectivity": "low",
+      "cost": "low"
+    },
+    {
+      "method_no": "4",
+      "method": "UV/Visible spectroscopy",
+      "measurement_technique": "transmission or transflection probe",
+      "physical_phenomenon": "transmission",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "1-10 mm",
+      "sensitivity": "low",
+      "selectivity": "low",
+      "cost": "low"
+    },
+    {
+      "method_no": "4",
+      "method": "UV/Visible spectroscopy",
+      "measurement_technique": "probe, lens",
+      "physical_phenomenon": "emission of an external source",
+      "sample_type": "radiating sample",
+      "optical_path_or_depth": "any",
+      "sensitivity": "high",
+      "selectivity": "low",
+      "cost": "low"
+    },
+    {
+      "method_no": "5",
+      "method": "Fluorimetry",
+      "measurement_technique": "cuvette 90 deg",
+      "physical_phenomenon": "fluorescence (emission)",
+      "sample_type": "liquid",
+      "optical_path_or_depth": "10 mm",
+      "sensitivity": "high",
+      "selectivity": "low",
+      "cost": "low"
+    },
+    {
+      "method_no": "5",
+      "method": "Fluorimetry",
+      "measurement_technique": "fluorimetric probe",
+      "physical_phenomenon": "fluorescence (emission)",
+      "sample_type": "liquid, solid",
+      "optical_path_or_depth": "1-5 mm",
+      "sensitivity": "high",
+      "selectivity": "low",
+      "cost": "low"
+    }
+  ],
+  "notes": [
+    "Source: \"Multispectral Laboratory of Optical Analysis Methods\", Table 1, page 6 (file S01).",
+    "Transcribed from the rendered page because PDF text extraction interleaves the columns.",
+    "\"mu\" in the original means micrometres; written here as \"um\".",
+    "Merged cells of the original are expanded, so each row is independent.",
+    "sensitivity / selectivity / cost are the original qualitative ratings (low / average / high), not measured values.",
+    "\"ATR probe*\" carries an asterisk in the original; no footnote is printed on that page.",
+    "Status: transcription for AFS review. Ratings are the source document's, not an AFS product specification."
+  ],
+  "text": "method_no=1 method=IR spectroscopy measurement_technique=ATR platform physical_phenomenon=absorption sample_type=liquid, paste, soft optical_path_or_depth=1-6 um sensitivity=average selectivity=high cost=high ; method_no=1 method=IR spectroscopy measurement_technique=ATR probe* physical_phenomenon=absorption sample_type=liquid, paste, soft optical_path_or_depth=1-6 um sensitivity=average selectivity=high cost=high ; method_no=1 method=IR spectroscopy measurement_technique=cuvette physical_phenomenon=absorption sample_type=liquid optical_path_or_depth=10-100 um sensitivity=high selectivity=high cost=average ; method_no=1 method=IR spectroscopy measurement_technique=sample layer physical_phenomenon=absorption sample_type=solid film optical_path_or_depth=5-50 um sensitivity=high selectivity=high cost=average ; method_no=1 method=IR spectroscopy measurement_technique=sample surface physical_phenomenon=diffuse reflection sample_type=solid optical_path_or_depth=10 um sensitivity=average selectivity=high cost=average ; method_no=2 method=NIR spectroscopy measurement_technique=cuvette physical_phenomenon=transmission sample_type=liquid optical_path_or_depth=1-5 mm sensitivity=average selectivity=average cost=average ; method_no=2 method=NIR spectroscopy measurement_technique=transmission or transflection probe physical_phenomenon=transmission sample_type=liquid, colloidal optical_path_or_depth=1-10 mm sensitivity=average selectivity=average cost=average ; method_no=2 method=NIR spectroscopy measurement_technique=diffuse reflection probe physical_phenomenon=diffuse reflection sample_type=scattering media, powder optical_path_or_depth=0.5-1 mm sensitivity=average selectivity=average cost=average ; method_no=2 method=NIR spectroscopy measurement_technique=integrating sphere physical_phenomenon=diffuse reflection sample_type=solid, powder optical_path_or_depth=5-10 mm sensitivity=average selectivity=average cost=average ; method_no=2 method=NIR spectroscopy measurement_technique=surface at a distance physical_phenomenon=diffuse reflection sample_type=solid, powder optical_path_or_depth=2-5 mm sensitivity=average selectivity=average cost=average ; method_no=3 method=Raman spectroscopy measurement_technique=cuvette 90 deg physical_phenomenon=Raman scattering (emission) sample_type=liquid optical_path_or_depth=2-5 mm sensitivity=average selectivity=high cost=high ; method_no=3 method=Raman spectroscopy measurement_technique=Raman probe physical_phenomenon=Raman scattering (emission) sample_type=liquid, powder, solid optical_path_or_depth=2-5 mm sensitivity=average selectivity=high cost=high ; method_no=4 method=UV/Visible spectroscopy measurement_technique=cuvette physical_phenomenon=absorption sample_type=liquid optical_path_or_depth=1-5 mm sensitivity=high selectivity=low cost=low ; method_no=4 method=UV/Visible spectroscopy measurement_technique=ATR probe physical_phenomenon=absorption sample_type=liquid optical_path_or_depth=0.1-1 um sensitivity=low selectivity=low cost=average ; method_no=4 method=UV/Visible spectroscopy measurement_technique=diffuse reflection probe physical_phenomenon=diffuse reflection sample_type=solid, pill optical_path_or_depth=1-5 mm sensitivity=low selectivity=low cost=low ; method_no=4 method=UV/Visible spectroscopy measurement_technique=transmission or transflection probe physical_phenomenon=transmission sample_type=liquid optical_path_or_depth=1-10 mm sensitivity=low selectivity=low cost=low ; method_no=4 method=UV/Visible spectroscopy measurement_technique=probe, lens physical_phenomenon=emission of an external source sample_type=radiating sample optical_path_or_depth=any sensitivity=high selectivity=low cost=low ; method_no=5 method=Fluorimetry measurement_technique=cuvette 90 deg physical_phenomenon=fluorescence (emission) sample_type=liquid optical_path_or_depth=10 mm sensitivity=high selectivity=low cost=low ; method_no=5 method=Fluorimetry measurement_technique=fluorimetric probe physical_phenomenon=fluorescence (emission) sample_type=liquid, solid optical_path_or_depth=1-5 mm sensitivity=high selectivity=low cost=low Source: \"Multispectral Laboratory of Optical Analysis Methods\", Table 1, page 6 (file S01). Transcribed from the rendered page because PDF text extraction interleaves the columns. \"mu\" in the original means micrometres; written here as \"um\". Merged cells of the original are expanded, so each row is independent. sensitivity / selectivity / cost are the original qualitative ratings (low / average / high), not measured values. \"ATR probe*\" carries an asterisk in the original; no footnote is printed on that page. Status: transcription for AFS review. Ratings are the source document's, not an AFS product specification."
+}

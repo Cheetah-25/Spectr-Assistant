@@ -1,0 +1,57 @@
+{
+  "kb_version": "kb-b53b100b1fcc",
+  "generated_at": "2026-10-17T07:04:06.398819+00:00",
+  "scopes": {
+    "S01": "AFS technical",
+    "S02": "AFS slides",
+    "S03": "research paper",
+    "S04": "research paper",
+    "S05": "business context"
+  },
+  "sources": {
+    "S01.json": {
+      "source_id": "S01",
+      "scope": "AFS technical",
+      "kind": "pdf_page",
+      "page_count": 19,
+      "file": "S01.json"
+    },
+    "S03.json": {
+      "source_id": "S03",
+      "scope": "research paper",
+      "kind": "pdf_page",
+      "page_count": 17,
+      "file": "S03.json"
+    },
+    "S04.json": {
+      "source_id": "S04",
+      "scope": "research paper",
+      "kind": "pdf_page",
+      "page_count": 6,
+      "file": "S04.json"
+    },
+    "S05.json": {
+      "source_id": "S05",
+      "scope": "business context",
+      "kind": "pdf_page",
+      "page_count": 2,
+      "file": "S05.json"
+    },
+    "method_table.json": {
+      "source_id": "S01",
+      "scope": "AFS technical",
+      "kind": "xlsx_rows",
+      "locator": "Table 1",
+      "page": 6,
+      "row_count": 19,
+      "file": "method_table.json"
+    },
+    "S02_slides.json": {
+      "source_id": "S02",
+      "scope": "AFS slides",
+      "kind": "slide_notes",
+      "page_count": 20,
+      "file": "S02_slides.json"
+    }
+  }
+}
