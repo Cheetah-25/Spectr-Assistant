@@ -1,5 +1,27 @@
-# Object file
-*.o
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
 
-# Ada Library Information
-*.ali
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets / config
+.env
+.env.*
+!.env.example
+
+# Temp render/ingest artifacts
+*.tmp
+.cache/
+_slides_png/
+
+# OS
+.DS_Store
