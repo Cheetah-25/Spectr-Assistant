@@ -40,26 +40,30 @@
     `test_no_leakage.py`. LLM-free; 43 pass, 1 skipped (final-scenario leakage, opt-in via env).
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 7.1_
 
-- [ ] 3. Ingestion (`ingest.py`)  *(PR 2)*
-- [ ] 3.1 Text PDFs + xlsx
-  - Extract per-page text for S01/S03/S04/S05 (1-based pages) and write page-tagged entries with scope.
-  - Load the xlsx as structured rows + notes sheet; tag as S01 Table 1, p.6.
-  - Write `knowledge/manifest.json` with `kb_version`, page counts, scopes. Fail fast on missing files.
+- [x] 3. Ingestion (`ingest.py`)  *(PR 2)*
+- [x] 3.1 Text PDFs + xlsx
+  - Per-page extraction for S01/S03/S04/S05 (1-based) via pypdf→pdfminer fallback; page-tagged
+    entries with scope. xlsx loaded as structured rows + notes sheet (openpyxl, with a stdlib
+    fallback that runs offline), tagged S01 Table 1 p.6. Writes `knowledge/<Sxx>.json`,
+    `method_table.json`, `manifest.json` (kb_version, page counts, scopes). Fails clearly on missing
+    files (`--check` validates inputs without writing).
   - _Requirements: 1.1, 1.2, 1.4, 1.5, 1.6, 1.7, 9.1_
-- [ ] 3.2 S02 slides (no vision)
-  - Load the committed `knowledge/S02_slides.json` and write each slide as `S02 p.N`, scope
-    "AFS slides". No vision call, no `--force-vision`. (`kb.py` already reads this file.)
+- [x] 3.2 S02 slides (no vision)
+  - Loads/validates the committed `knowledge/S02_slides.json` (20 slides) and records it in the
+    manifest as `S02`, scope "AFS slides". No vision call, no `--force-vision`.
   - _Requirements: 1.3, 8.2, 9.1_
 
-- [ ] 5. Assessment (`assess.py`)  *(PR 2)*
-  - `extract_facts(enquiry)`; generic system prompt with hard rules; user prompt with full KB.
-  - Schema-constrained call + local re-validation; one repair pass fed concrete verify errors.
-  - Populate `meta.*`; treat `insufficient_information` as valid.
+- [x] 5. Assessment (`spectro/assess.py` + top-level `assess.py` CLI)  *(PR 2)*
+  - `extract_facts(enquiry)`; generic prompts in `spectro/prompts.py` carry only hard rules 1–11;
+    assessment user prompt includes the full page-tagged KB. Schema-constrained call + local
+    re-validation; exactly one repair pass fed the concrete verify errors. Populates `meta.*`;
+    treats `insufficient_information` as valid. Tested with a mocked LLM (no network).
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.4a, 2.5, 2.6, 7.1, 7.2_
 
-- [ ] 7. Batch runner (`run_scenarios.py`)  *(PR 2)*
-  - CLI over a scenario file; per case write `outputs/<id>.json` + `.md`, unedited; never pass
-    `useful_sources`; stdout verification summary.
+- [x] 7. Batch runner (`run_scenarios.py`)  *(PR 2)*
+  - CLI over a scenario file; per case writes `outputs/<id>.json` + `.md`, unedited; forwards only
+    id/enquiry (never `useful_sources`); prints a per-case verification summary. Tested with assess
+    monkeypatched.
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 7.3, 9.2, 9.3_
 
 - [ ] 8. Streamlit UI (`app.py`)  *(PR 3)*
