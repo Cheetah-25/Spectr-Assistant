@@ -3,7 +3,7 @@
     "stated": [
       {
         "item": "material",
-        "value": "tumor tissue (kidney study concept) during live surgery"
+        "value": "kidney tumor tissue, as in the supplied LED NIR kidney study"
       },
       {
         "item": "target",
@@ -15,7 +15,7 @@
       },
       {
         "item": "conditions",
-        "value": "the same concept as the supplied LED NIR kidney study, using the proposed sensor"
+        "value": "the same concept as the LED NIR kidney study"
       },
       {
         "item": "constraint",
@@ -27,51 +27,50 @@
       },
       {
         "item": "goal",
-        "value": "Can we quote its findings as proof that the proposed sensor is ready for that use? What assessment and next feasibility steps are appropriate?"
+        "value": "quote its findings as proof that the proposed sensor is ready for that use; learn what assessment and next feasibility steps are appropriate"
       }
     ],
     "missing": [
-      "Organ and cancer type(s) the proposed sensor is meant for",
-      "Design of the proposed sensor (LED wavelengths, probe geometry) and how it differs from the study prototypes",
-      "Available tissue samples and the independent reference (histology) for labelling them",
-      "Required sensitivity/specificity and acceptable false-negative rate, set by the client's clinical team",
-      "Regulatory and ethics framework planned for any in vivo study"
+      "Design of the proposed sensor (LED wavelengths, probe geometry, contact or non-contact) and whether it is identical to the study prototypes",
+      "Organ and cancer types the sensor is meant for",
+      "Access to paired tumour/normal samples with independent histology on the client's own setup",
+      "Acceptable false-negative rate and other go/no-go criteria",
+      "Surgical constraints at the probe (sterilisation, probe size, measurement time)"
     ]
   },
   "status": "outside_supported_scope",
-  "status_reason": "No: the kidney study is an in vitro proof of concept on 14 samples from 7 patients with very high variance in cancer tissue and unacceptable false negatives, so it cannot be quoted as proof of surgical readiness, and decisions on patients need validation far beyond a first assessment.",
-  "answer": "The study may only be quoted as an in vitro proof of concept that an LED-based NIR sensor captured tumour-related variance in thawed kidney biopsies, not as proof that your sensor is ready for live surgery. Its authors state much work remains, the LED set must be adapted to each tissue and cancer type, and thorough validation is needed, so the appropriate next step is a laboratory feasibility study of your own sensor on tissue samples with histological reference. The S01 surgical scenario is an application concept without validation data.",
+  "status_reason": "No: the kidney study is an in vitro proof of concept on 14 thawed samples from 7 patients with very high variance in cancer tissue and unacceptable false negatives, so it cannot be quoted as proof that a sensor is ready for live surgical decisions, which need clinical validation beyond a first assessment.",
+  "answer": "The study can only be quoted as an in vitro proof of concept that an LED-based NIR sensor captured tumour-related variance in kidney samples, not as proof of surgical readiness of your sensor. Its authors report very high variance in cancer tissue, state that false negatives are unacceptable and that much work remains, and the samples were thawed biopsies whose spectra can differ from in vivo. The appropriate next step is a laboratory feasibility study on your own setup with full NIR spectra, independent histology and patient-segmented validation, comparing a combined MIR ATR + fluorescence probe.",
   "answer_cites": [
     "S03-1-scope",
     "S03-3-exvivo",
     "S03-14-limits",
     "P:S03-p14-6",
-    "P:S03-p14-5",
     "S01-13-surgery-concept"
   ],
   "inline": {
     "mode": "laboratory_study",
-    "headline": "Test NIR diffuse reflectance (LED-based, 900-1500 nm) on ex vivo tissue with histology reference before any surgical use",
+    "headline": "Test NIR diffuse reflection on paired ex vivo tumour/normal samples on your own setup before any surgical claim",
     "method": "NIR",
-    "probe": "silica fiber diffuse-reflection probe, with a full-spectrum NIR laboratory spectrometer to select and simulate the LED channels",
-    "install": "laboratory bench on ex vivo tumour and normal tissue samples, not in the operating theatre",
-    "fiber": "Vis-NIR silica (350-2400 nm), covering the 900-1500 nm LED range",
-    "test_against": "MIR ATR + fluorescence combined probe",
-    "not_final_because": "No in vivo data, no validation on the client's own setup, the study's frozen/thawed biopsies can differ from in vivo spectra, the cancer-tissue variance was very high and the LED set must be adapted to the client's tissue type.",
+    "probe": "silica fiber NIR diffuse reflection probe in contact with the tissue",
+    "install": "laboratory bench on ex vivo tissue samples, not in the operating room",
+    "fiber": "Vis-NIR silica (350–2400 nm), covering the 900–1500 nm LED region of the study",
+    "test_against": "combined MIR ATR + fluorescence probe on the same samples",
+    "not_final_because": "The study is an in vitro proof of concept on thawed samples with high variance and unacceptable false negatives, the LED set must be adapted to each tissue and set-up, and no in vivo or own-setup data exist.",
     "cites": [
       "S03-2-aim",
-      "S01-10-nir",
+      "S03-14-limits",
+      "S03-3-exvivo",
+      "S01-T1",
       "S02-6-fibers",
       "S02-11-refl",
-      "S01-9-oms",
-      "S03-3-exvivo",
-      "S03-14-limits"
+      "P:S03-p14-5"
     ]
   },
   "problems": [
     {
       "severity": "wont_work",
-      "text": "The kidney study is not proof of surgical readiness: it tested two prototypes on 14 in vitro samples from 7 patients, measured thawed frozen biopsies whose spectra can differ from in vivo, and its authors call it a proof of concept with very high variance in cancer tissue, unacceptable false negatives and much work remaining.",
+      "text": "The kidney study is not proof of surgical readiness: it tested two prototypes on 14 in vitro samples from 7 patients, used thawed frozen biopsies whose spectra can differ from in vivo, and the authors call it a proof of concept with very high variance in cancer tissue, unacceptable false negatives and much work remaining.",
       "cites": [
         "S03-1-scope",
         "S03-3-exvivo",
@@ -81,25 +80,24 @@
     },
     {
       "severity": "wrong_assumption",
-      "text": "The study can only be quoted as an in vitro proof of concept that an LED-based NIR sensor captured tumour-related variance in kidney samples, the S01 surgical scenario is only an application concept, and neither applies to a different sensor, organ or set-up without new data.",
+      "text": "The study may only be quoted as an in vitro proof of concept that an LED-based NIR sensor captured tumour-related variance in kidney samples; the surgical scenario in S01 is an application concept, not validation, and neither applies to a different sensor, organ or set-up without new data.",
       "cites": [
         "S03-1-scope",
-        "S01-13-surgery-concept",
-        "P:S03-p14-5"
+        "P:S03-p2-7",
+        "S01-13-surgery-concept"
       ]
     },
     {
       "severity": "check_first",
-      "text": "The LED wavelengths of the proposed sensor must be re-selected for the client's tissue and cancer type from full-spectrum laboratory data, because the optimal LED set differs per case.",
+      "text": "The LED number and wavelengths must be adapted to each tissue and cancer type, so check whether your sensor matches the study prototypes and your target organ before reusing any of its results.",
       "cites": [
         "P:S03-p14-5",
-        "S01-9-oms",
-        "P:S03-p10-1"
+        "S03-14-limits"
       ]
     },
     {
       "severity": "check_first",
-      "text": "With limited samples, models need sample-based segmented cross-validation and randomisation tests against independent histology before any performance can be claimed.",
+      "text": "With few patients, any model on your setup needs thorough validation such as segmented cross-validation and randomisation tests before its discrimination can be trusted.",
       "cites": [
         "S03-14-limits",
         "P:S03-p9-6"
@@ -108,148 +106,165 @@
   ],
   "methods": [
     {
-      "method": "NIR diffuse reflectance (LED / full spectrum)",
+      "method": "NIR diffuse reflection (LED or full spectrum)",
       "role": "main",
-      "why": "It is the method of the kidney study, penetrates tissue up to about 3 mm and works with remote silica fiber probes.",
+      "why": "It is the method of the cited study, penetrates tissue up to about 3 mm and four simulated LED channels kept the diagnostic capability of full spectra in vitro.",
       "cites": [
         "S03-2-aim",
-        "S01-5-nir-online",
-        "S01-10-nir"
+        "P:S03-p10-1",
+        "S03-2-fewwl"
       ]
     },
     {
-      "method": "MIR ATR",
+      "method": "MIR ATR + fluorescence combined probe",
       "role": "compare",
-      "why": "Its well-defined absorption bands of thin soft-tissue layers (e.g. amide and ester carbonyl bands) add specificity, and NIR+IR showed benefits for tumour boundaries.",
+      "why": "Combined fluorimetry and ATR IR has been reported to detect tumour boundaries and a single probe measures both at the same spot.",
       "cites": [
-        "S01-5-mir-thin",
-        "S04-3-amide",
-        "S04-3-design",
+        "P:S04-p4-6",
+        "S04-1-probe",
         "S01-7-synergy"
       ]
     },
     {
-      "method": "Fluorescence",
-      "role": "compare",
-      "why": "It is highly sensitive to intrinsic biological fluorophores such as FAD and porphyrins and can be combined with MIR or NIR.",
+      "method": "Fluorescence alone",
+      "role": "only_if_needed",
+      "why": "It is sensitive for biological fluorophores such as FAD but has low selectivity and alone did not separate all tissue classes.",
       "cites": [
         "S01-5-fluo",
         "S04-3-fad",
-        "S01-12-fluo-bio"
+        "S04-4-result",
+        "S01-T1"
       ]
     },
     {
       "method": "Raman",
       "role": "only_if_needed",
-      "why": "It has high selectivity but weak signals often masked by fluorescence in organic samples, so it needs special probes and filters.",
+      "why": "It carries information complementary to MIR but its weak signal is often masked by much stronger fluorescence of organic compounds.",
       "cites": [
-        "S01-T1",
+        "S01-5-raman-comp",
         "S01-11-raman"
       ]
     }
   ],
   "questions": [
     {
-      "q": "Which organ and cancer type will the sensor be used on, and is it the same kidney tumour type as in the study?",
-      "why": "The LED set must be adapted to each tissue and cancer type and results do not transfer to another organ.",
+      "q": "Is your proposed sensor identical to the study prototypes (same four NIR LEDs, probe and measurement geometry), and if not, what are its wavelengths and design?",
+      "why": "The LED set must be adapted to each case, so results do not transfer to a different sensor.",
+      "cites": [
+        "P:S03-p14-5"
+      ]
+    },
+    {
+      "q": "Which organ and cancer types do you want to address?",
+      "why": "The study covers kidney only, and other tissues need their own wavelength selection.",
       "cites": [
         "P:S03-p14-5",
         "S03-14-limits"
       ]
     },
     {
-      "q": "What are the LED wavelengths, probe geometry and spectrometer of your proposed sensor?",
-      "why": "The study prototypes cannot represent a different sensor design without new data.",
-      "cites": [
-        "S03-1-scope",
-        "S03-14-limits"
-      ]
-    },
-    {
-      "q": "How many paired tumour and normal tissue samples with histological diagnosis can you provide, from how many patients?",
-      "why": "Histology is the independent reference, and validation with limited data needs patient-based segmented cross-validation.",
+      "q": "Can you provide paired tumour and normal samples from several patients with independent histology?",
+      "why": "The study discrimination was judged against histology with patient-segmented cross-validation.",
       "cites": [
         "P:S03-p9-6",
         "S03-14-limits"
       ]
     },
     {
-      "q": "Can samples be measured fresh rather than frozen and thawed?",
-      "why": "Spectra of frozen/thawed biopsies can differ from real in vivo measurements.",
+      "q": "What false-negative rate would be acceptable for a boundary decision?",
+      "why": "False negatives are unacceptable in oncology, so a go/no-go threshold must come from you.",
       "cites": [
-        "S03-3-exvivo"
+        "P:S03-p14-6"
       ]
     },
     {
-      "q": "What false-negative rate and specificity would your clinical team accept for a boundary decision?",
-      "why": "False negatives are unacceptable in oncology, so go/no-go criteria must come from the client.",
+      "q": "What surgical constraints apply at the probe (size, sterilisation, contact, time per measurement)?",
+      "why": "Measurement conditions and probe construction still need optimisation for the intended use.",
       "cites": [
         "S03-14-limits"
       ]
     }
   ],
+  "technical": {
+    "spectral_window": "900–1500 nm (LED region of the study) within the 350–2400 nm Vis-NIR silica fiber range; for comparison MIR ATR bands near 1740, 1640 and 1548 cm-1 and fluorescence at 520–530 nm and 613 nm",
+    "probe": "NIR diffuse reflection probe in contact with tissue (sampling depth 0.5–1 mm per table, NIR tissue penetration up to about 3 mm); tip material unknown – ask",
+    "fiber": "Vis-NIR silica; length and routing unknown – ask",
+    "process_conditions": "unknown – ask (laboratory ex vivo first; surgical sterilisation and handling not yet defined)",
+    "sampling": "several points per sample on paired tumour/normal tissue; sampling rate and response time unknown – ask",
+    "reference_method": "independent histology of each measured sample",
+    "calibration": "paired tumour/normal samples from multiple patients, PLS-DA with patient-segmented cross-validation and randomisation tests; number of samples unknown – ask",
+    "cites": [
+      "S03-2-aim",
+      "S02-6-fibers",
+      "S01-T1",
+      "S04-3-design",
+      "S04-3-amide",
+      "S04-3-fad",
+      "P:S03-p9-6",
+      "S03-14-limits"
+    ]
+  },
   "experiment": {
-    "objective": "Establish in the laboratory whether the client's NIR sensor concept discriminates tumour from normal tissue of the target organ, before any in vivo work.",
+    "objective": "Establish on your own setup whether NIR reflectance, alone or reduced to a few LED channels, separates histologically confirmed tumour from normal tissue ex vivo, and whether a combined MIR ATR + fluorescence probe does better.",
     "steps": [
-      "Collect paired tumour and normal ex vivo samples from several patients with histology as the independent reference, preferably measured fresh.",
-      "Measure each sample at several points with a full-spectrum NIR diffuse-reflectance fiber probe and, for comparison, a combined MIR ATR + fluorescence probe.",
-      "Select the informative wavelengths and simulate the LED sensor channels from the full spectra using the real LED emission spectra as weights.",
-      "Build PCA and PLS-DA models and validate them with patient-based segmented cross-validation and randomisation tests.",
-      "Compare false negatives and variance in cancer tissue against the client's go/no-go criteria before planning any in vivo study."
+      "Collect paired tumour and normal ex vivo samples from several patients, each with independent histology, and record how samples were stored and thawed.",
+      "Measure full NIR diffuse reflectance spectra at several points per sample on your own probe and spectrometer.",
+      "Simulate your sensor's LED channels from the full spectra by weighting with the real LED emission spectra and compare full-spectrum and reduced models.",
+      "Measure the same points with a combined MIR ATR + fluorescence probe and build single-method and fused models on the same data.",
+      "Validate all models with patient-segmented cross-validation and randomisation tests and report false negatives against your go/no-go criteria."
     ],
     "references": [
-      "Histopathological diagnosis of each sample (independent laboratory analysis)"
+      "Independent histology of each sample"
     ],
-    "go_no_go": "criteria come from the client",
+    "go_no_go": "Acceptable false-negative rate and specificity to be defined by the client; in vivo or surgical use requires separate clinical validation.",
     "cites": [
       "P:S03-p10-1",
-      "P:S03-p9-6",
       "S03-14-limits",
       "S03-3-exvivo",
-      "S01-9-oms",
-      "S05-pathway"
+      "S04-2-samespot",
+      "S02-20-pathway"
     ]
   },
   "pathway": {
     "lab_test": [
-      "NIR diffuse reflectance (main)",
-      "MIR ATR (compare)",
-      "Fluorescence (compare)",
+      "NIR diffuse reflection (main)",
+      "MIR ATR + fluorescence combined probe (compare)",
       "Raman (only if needed)"
     ],
-    "key_features": "No spectral analysis given; the study used four NIR LED channels in 900-1500 nm, and tissue features reported elsewhere include the ester carbonyl band near 1740 cm-1, amide bands near 1640/1548 cm-1, FAD fluorescence at 520-530 nm and porphyrin at 613 nm.",
+    "key_features": "No client spectra yet; in the cited studies four NIR LED channels in 900–1500 nm kept tumour discrimination in vitro, and 1743 cm-1 (IR ester carbonyl) and 613 nm (porphyrin fluorescence) separated tissue classes.",
     "path": "not_yet",
-    "path_reason": "Key spectral features for the client's tissue and sensor must first be found in a multi-method laboratory test.",
+    "path_reason": "Key spectral features must first be identified in multi-method lab trials on your own samples before any model or sensor is chosen.",
     "later": "C",
     "cites": [
-      "S03-2-aim",
-      "S04-3-design",
-      "S04-3-amide",
-      "S04-3-fad",
+      "S02-20-pathway",
       "S05-pathway",
-      "S02-20-pathway"
+      "P:S03-p10-1",
+      "S02-15-combi",
+      "S04-3-design"
     ]
   },
   "multispectral": {
     "worth_testing": true,
-    "combination": "MIR ATR + fluorescence (with NIR as the single-method baseline)",
-    "why": "IR bands give molecular structure (fat ester carbonyl, protein amides) while fluorescence sees biological fluorophores, and only the fused data separated all three tissue classes in the combi-probe study.",
+    "combination": "MIR ATR + fluorescence (compared against NIR alone)",
+    "why": "MIR ATR sees molecular bands such as the ester carbonyl and amide bands while fluorescence sees intrinsic fluorophores such as porphyrin and FAD, and in model tissue neither alone separated all classes while the fused data did.",
     "probe": "combined probe (same spot)",
-    "fusion": "low-level fusion of synchronised spectra",
-    "test": "The fused model must give fewer false negatives than the best single method (NIR) on the same patient-based cross-validation data, using dedicated fusion algorithms rather than normalisation alone.",
+    "fusion": "low-level fusion of synchronised spectra with a dedicated data-fusion algorithm",
+    "test": "The fused model must beat the best single method (NIR, MIR ATR or fluorescence) on the same patient-segmented validation data with fewer false negatives.",
     "cites": [
       "S04-4-result",
-      "S04-2-samespot",
-      "P:S04-p4-6",
+      "S04-3-design",
+      "S04-3-fad",
       "S01-8-same-spot",
+      "S04-2-samespot",
       "S01-9-fusion",
-      "S01-7-synergy",
-      "S02-15-combi"
+      "P:S04-p4-6",
+      "S01-7-synergy"
     ]
   },
   "assumptions": [
-    "The proposed sensor is an LED-based NIR diffuse-reflectance sensor similar in concept to the study prototypes.",
-    "Ex vivo tissue samples with histological diagnosis can be obtained for laboratory tests."
+    "The intended organ is kidney, as in the supplied study, until the client states otherwise.",
+    "The proposed sensor is an LED-based NIR diffuse reflectance sensor similar to the study prototypes.",
+    "Initial work is ex vivo in the laboratory; no decisions on patients are made from it."
   ],
   "changed": ""
 }

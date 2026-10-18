@@ -27,49 +27,48 @@
       }
     ],
     "missing": [
-      "Organism and medium composition",
-      "Glucose concentration range and required accuracy",
-      "How viable biomass is defined and measured in the laboratory (reference method)",
-      "Bioreactor type, probe port, temperature and sterilisation requirements",
-      "Model and spectral range of the existing fluorescence spectrometer and excitation source"
+      "Organism and medium composition of the fermentation",
+      "Expected glucose concentration range and required accuracy",
+      "Definition of 'viable biomass' and the laboratory method used to measure it",
+      "Process conditions at the probe point (temperature, pressure, sterilisation/cleaning, port size)",
+      "Specification of the existing fluorescence spectrometer (excitation source, wavelength range)"
     ]
   },
   "status": "provisional_assessment",
-  "status_reason": "Material (fermentation), quantities (glucose, viable biomass) and location (during fermentation) are stated, but the fluorescence concept for both targets is not supported by the sources, so only a provisional assessment with an alternative method to test is possible.",
-  "answer": "Sensitivity alone does not justify fluorescence: it is rated low in selectivity, works only for fluorescent components, and in the supplied bioprocess material glucose is assigned to NIR and Raman while fluorescence targets NADH, tryptophan and riboflavin. Test Raman (with NIR as comparison) for glucose first, and treat your fluorescence spectrometer at most as a supporting signal for biomass combined with NIR, validated against an independent viable-cell reference.",
+  "status_reason": "Material (fermentation), quantities (glucose, viable biomass) and location (in the fermenter) are known, but fluorescence alone cannot be approved for glucose because the sources assign glucose to Raman and NIR, and viable biomass still needs a defined signal and an independent viability reference.",
+  "answer": "Fluorescence is sensitive but not selective, and in the supplied bioprocess material it measures intrinsic fluorophores such as NADH, tryptophan and riboflavin, not glucose, so your spectrometer should not be used to report glucose. Glucose should be tested with Raman (direct metabolite detection in aqueous media) against NIR, while your fluorescence spectrometer may contribute to a biomass estimate in combination with NIR, which improved biomass determination in yeast fermentation. Viable biomass first needs an independent viability reference before any spectroscopic model can be built.",
   "answer_cites": [
     "S01-T1",
     "S01-5-fluo",
-    "S04-4-result",
     "S01-16-bio-fluo",
     "S01-16-bio-raman",
     "S01-16-bio-nir",
-    "S01-7-synergy"
+    "S01-7-synergy",
+    "P:S01-p7-2",
+    "P:S01-p16-3"
   ],
   "inline": {
     "mode": "lab_first",
-    "headline": "Test Raman for glucose in the fermentation broth, compared with NIR, before any in-line installation.",
+    "headline": "Test Raman for glucose in fermentation samples first, compared with NIR, before any in-line installation.",
     "method": "Raman",
-    "probe": "Raman fiber probe with filters designed to suppress laser scatter and fluorescence",
-    "install": "Initially on laboratory fermentation samples, later in a bioreactor port once the client defines it",
-    "fiber": "Vis-NIR silica (350-2400 nm), preferably Al/Cu-coated to avoid polymer-jacket fluorescence; excitation wavelength and Raman shift range to be defined in the test",
+    "probe": "Raman fiber probe in contact with the broth",
+    "install": "unknown – ask (port in the fermenter or a bypass loop, to be defined with the client)",
+    "fiber": "Vis-NIR silica (350–2400 nm), Al/Cu-coated to avoid polymer-jacket fluorescence",
     "test_against": "NIR transmission/transflection probe",
-    "not_final_because": "The organism, medium, glucose range, accuracy requirement, bioreactor port and a viable-biomass reference are unknown, Raman can be masked by fluorescence of organic compounds, and a published application is only a reason to test.",
+    "not_final_because": "Organism, medium, glucose range, required accuracy, probe-point conditions and the viable-biomass reference are unknown, Raman can be masked by strong fluorescence of organic compounds, and a published application is only a reason to test.",
     "cites": [
       "S01-16-bio-raman",
+      "S01-16-bio-nir",
       "S01-11-raman",
-      "S01-5-raman-comp",
       "S02-6-fibers",
       "S02-7-silica-long",
-      "S01-16-bio-nir",
-      "S01-T1",
       "S01-3-unknown"
     ]
   },
   "problems": [
     {
       "severity": "wont_work",
-      "text": "High sensitivity is not selectivity: fluorimetry is rated high in sensitivity but low in selectivity and only works when the sample has a fluorescent component, which you have not identified.",
+      "text": "High sensitivity is not selectivity: fluorescence is rated high in sensitivity but low in selectivity, works only for substances that fluoresce (most chemicals do not), and combined-probe work is limited to samples with at least one fluorescent component.",
       "cites": [
         "S01-T1",
         "S01-5-fluo",
@@ -82,12 +81,13 @@
       "cites": [
         "S01-16-bio-fluo",
         "S01-16-bio-nir",
-        "S01-16-bio-raman"
+        "S01-16-bio-raman",
+        "P:S01-p16-3"
       ]
     },
     {
       "severity": "check_first",
-      "text": "Viable biomass needs a defined signal and reference: the sources link biomass to turbidity (cell density) and report better biomass estimates from NIR plus fluorescence, but describe no viable-cell measurement, so an independent viability reference is required.",
+      "text": "Viable biomass needs a defined signal and reference: the sources link biomass to turbidity (cell density) and report NIR plus fluorescence improving biomass in yeast fermentation, but describe no viable-cell measurement, so an independent viability reference is required.",
       "cites": [
         "S01-16-bio-uv",
         "S01-7-synergy",
@@ -96,7 +96,7 @@
     },
     {
       "severity": "check_first",
-      "text": "Fluorescence, NIR and UV give broad overlapping spectra, so any quantitative result needs a chemometric model built and validated against reference analyses.",
+      "text": "Any fluorescence or Raman result will need a chemometric model built and validated against independent laboratory references, because fluorescence spectra are broad and overlapping.",
       "cites": [
         "S01-5-chemometrics"
       ]
@@ -106,7 +106,7 @@
     {
       "method": "Raman",
       "role": "main",
-      "why": "Raman gives direct detection of glucose, acetate or lactate and suits aqueous media because water absorbs weakly.",
+      "why": "Gives direct detection of glucose, acetate or lactate and suits aqueous media because water absorbs weakly.",
       "cites": [
         "S01-16-bio-raman"
       ]
@@ -114,89 +114,105 @@
     {
       "method": "NIR",
       "role": "compare",
-      "why": "NIR tracks major components such as glucose in the millimolar range and is the most common online fiber-probe method, but may lack sensitivity below 0.1 %.",
+      "why": "Tracks major components such as glucose in the millimolar range and, combined with fluorescence, improved biomass estimates in yeast fermentation.",
       "cites": [
         "S01-16-bio-nir",
-        "S01-10-nir",
-        "P:S01-p16-3"
-      ]
-    },
-    {
-      "method": "UV-Vis",
-      "role": "only_if_needed",
-      "why": "UV/Vis turbidity correlates with cell density and can be a low-cost biomass indicator, with probe choice depending on optical density.",
-      "cites": [
-        "S01-16-bio-uv",
-        "S01-16-uv-od"
+        "S01-7-synergy"
       ]
     },
     {
       "method": "Fluorescence",
       "role": "only_if_needed",
-      "why": "Fluorescence is suitable for intrinsic fluorophores such as NADH, tryptophan and riboflavin and may support biomass only in combination with NIR, not as a stand-alone glucose or viability measurement.",
+      "why": "Your existing spectrometer can follow intrinsic fluorophores such as NADH, tryptophan and riboflavin as a contribution to a biomass/metabolic-state model, not as a glucose sensor.",
       "cites": [
         "S01-16-bio-fluo",
-        "S01-7-synergy",
         "S01-12-fluo-bio"
+      ]
+    },
+    {
+      "method": "UV-Vis",
+      "role": "compare",
+      "why": "Can be a low-cost biomass indicator because turbidity correlates with cell density, which is total cells rather than viable cells.",
+      "cites": [
+        "S01-16-bio-uv",
+        "S01-16-uv-od"
       ]
     }
   ],
   "questions": [
     {
-      "q": "How do you measure viable biomass in the laboratory today, and can you provide those reference values for fermentation samples?",
-      "why": "The sources describe no viable-cell measurement, so a model needs an independent viability reference.",
+      "q": "Which organism and medium do you ferment, and what glucose range do you need to measure?",
+      "why": "NIR may lack sensitivity below 0.1 %, so the range decides between NIR and Raman.",
+      "cites": [
+        "S01-16-bio-nir",
+        "S01-3-unknown"
+      ]
+    },
+    {
+      "q": "How do you define viable biomass and which laboratory method measures it today?",
+      "why": "The sources describe no viable-cell measurement, so an independent reference is needed to build any model.",
       "cites": [
         "S01-16-bio-uv",
         "S01-5-chemometrics"
       ]
     },
     {
-      "q": "Which organism and medium do you use, and what glucose concentration range must be reported with what accuracy?",
-      "why": "NIR tracks glucose in the millimolar range but may lack sensitivity below 0.1 %, which decides between NIR and Raman.",
-      "cites": [
-        "S01-16-bio-nir",
-        "S01-16-bio-raman"
-      ]
-    },
-    {
-      "q": "Which excitation wavelength and spectral range does your fluorescence spectrometer cover?",
-      "why": "Fluorescence only helps if an intrinsic fluorophore such as NADH, tryptophan or riboflavin is excited and detected.",
+      "q": "What excitation source and wavelength range does your fluorescence spectrometer have?",
+      "why": "Fluorescence targets such as NADH, tryptophan and riboflavin must be excitable and the fiber must transmit the range.",
       "cites": [
         "S01-16-bio-fluo",
-        "S01-12-fluo-bio"
+        "S02-6-fibers"
       ]
     },
     {
-      "q": "Which bioreactor port, temperature and sterilisation conditions must an in-line probe withstand?",
-      "why": "Each method needs its own probe interface and the task decides the technique.",
+      "q": "Where could a probe be installed and what temperature, pressure and cleaning/sterilisation does it face?",
+      "why": "Probe and fiber choice depend on the interface and conditions; coated silica fibers offer high-temperature resistance.",
       "cites": [
-        "S01-4-interfaces"
+        "S01-4-interfaces",
+        "S02-7-silica-long"
       ]
     },
     {
-      "q": "How turbid is the broth at the end of fermentation?",
-      "why": "Optical density decides between transmission/transflection and other probe types.",
+      "q": "What accuracy and response time would make the measurement useful for you?",
+      "why": "These go/no-go criteria are needed to judge whether a validated model is good enough.",
       "cites": [
-        "S01-16-uv-od",
-        "S01-T1"
+        "S01-5-chemometrics"
       ]
     }
   ],
+  "technical": {
+    "spectral_window": "Raman: excitation 785 nm (as used in AFS examples), Raman shift range unknown – ask/determine in lab test; NIR 780–2500 nm; fluorescence under UV/visible excitation, range unknown – ask",
+    "probe": "Raman fiber probe and NIR transmission/transflection probe (1–10 mm path); tip/window material unknown – ask",
+    "fiber": "Vis-NIR silica 350–2400 nm (UV-Vis silica 190–1200 nm for fluorescence), Al/Cu-coated for Raman/fluorescence; length and routing unknown – ask",
+    "process_conditions": "unknown – ask",
+    "sampling": "unknown – ask",
+    "reference_method": "Independent laboratory glucose analysis and a viable-cell reference method; both unknown – ask",
+    "calibration": "Fermentation samples spanning the client's glucose and biomass ranges with independent reference values; ranges unknown – ask",
+    "cites": [
+      "S01-14-pharma",
+      "S02-16-combi-raman",
+      "S01-10-nir",
+      "S01-T1",
+      "S02-6-fibers",
+      "S02-7-silica-long",
+      "S01-5-chemometrics"
+    ]
+  },
   "experiment": {
-    "objective": "Find out whether Raman or NIR sees glucose changes in your fermentation broth and whether NIR plus fluorescence tracks biomass against an independent reference.",
+    "objective": "Determine whether Raman or NIR sees glucose changes in the client's fermentation samples and whether fluorescence adds information for biomass.",
     "steps": [
-      "Collect fermentation samples across the run, covering the expected glucose and biomass ranges.",
-      "Measure each sample with Raman and NIR fiber probes and record fluorescence with your existing spectrometer at the same time.",
-      "Analyse every sample independently in the laboratory for glucose and for viable biomass with your reference method.",
-      "Build chemometric models per method and for the NIR plus fluorescence combination, and validate them on samples not used for calibration."
+      "Collect fermentation samples across the run covering the expected glucose and biomass ranges, each with independent laboratory glucose and viable-cell references.",
+      "Record Raman, NIR and fluorescence spectra of the same samples with fiber probes in the AFS multi-method lab test.",
+      "Identify key spectral features that change with glucose and with biomass by multivariate analysis.",
+      "Build and validate single-method chemometric models and a fused NIR + fluorescence biomass model on the same validation data."
     ],
     "references": [
-      "Independent laboratory glucose analysis",
-      "Independent laboratory viable-biomass analysis defined by the client"
+      "Independent laboratory glucose analysis (method to be named by the client)",
+      "Independent viable-cell measurement (method to be named by the client)"
     ],
-    "go_no_go": "criteria come from the client",
+    "go_no_go": "Accuracy and response-time criteria come from the client (unknown – ask).",
     "cites": [
-      "S02-20-pathway",
+      "S02-3-select",
       "S05-pathway",
       "S01-5-chemometrics",
       "S01-3-unknown"
@@ -206,37 +222,35 @@
     "lab_test": [
       "Raman (main)",
       "NIR (compare)",
-      "Fluorescence (only if needed)",
-      "UV-Vis (only if needed)"
+      "Fluorescence (only if needed)"
     ],
-    "key_features": "No spectra were supplied; key spectral features for glucose and biomass must be identified by multivariate analysis of the laboratory test data.",
+    "key_features": "No spectra supplied; key features for glucose and biomass are to be identified in the lab test.",
     "path": "not_yet",
-    "path_reason": "The multi-method lab test and key-feature selection must come before a chemometric model, customised system or sensor.",
+    "path_reason": "The method and the viable-biomass reference are not yet established, so no tailored solution can be chosen before the multi-method lab test.",
     "later": "A",
     "cites": [
-      "S02-20-pathway",
       "S05-pathway",
-      "S02-3-select"
+      "S02-20-pathway"
     ]
   },
   "multispectral": {
     "worth_testing": true,
-    "combination": "NIR + Fluorescence",
-    "why": "NIR tracks major components while fluorescence detects intrinsic fluorophores reflecting the metabolic state, and this combination gave more accurate biomass in yeast fermentation.",
-    "probe": "separate synchronised probes, unless the broth proves heterogeneous, in which case a combined multispectral probe is needed to see the same spot",
-    "fusion": "low-level fusion of synchronised spectra with a dedicated data-fusion algorithm, compared with a model per method",
-    "test": "The fused model must predict the biomass reference better than the best single-method model on the same independent validation samples.",
+    "combination": "NIR + fluorescence",
+    "why": "NIR tracks major components while fluorescence follows intrinsic fluorophores of the cells' metabolic state, and the combination gave more accurate biomass in yeast fermentation.",
+    "probe": "separate synchronised probes (a combined same-spot probe is needed only if the broth proves heterogeneous)",
+    "fusion": "model per method first, then data fusion with dedicated algorithms",
+    "test": "The fused model must predict the independent biomass reference better than the best single method on the same validation data.",
     "cites": [
       "S01-7-synergy",
+      "P:S01-p7-2",
       "P:S01-p16-3",
       "S01-8-same-spot",
-      "S01-9-fusion",
-      "S01-15-fusion-gain"
+      "S01-9-fusion"
     ]
   },
   "assumptions": [
-    "The fermentation broth is an aqueous medium.",
-    "Independent laboratory reference analyses for glucose and viable biomass can be provided by the client."
+    "The fermentation broth is an aqueous liquid medium.",
+    "The client can provide samples with independent laboratory references for glucose and viable cells."
   ],
   "changed": "",
   "enquiry": "We already have a fluorescence spectrometer and would like to use it to report glucose concentration and viable biomass directly during fermentation. Our only justification is that fluorescence can be very sensitive. We have not identified a fluorescent target, marker or reference relationship. What should the assistant tell us?",
@@ -253,12 +267,6 @@
       "label": "S01 p.5",
       "source": "S01_Multispectral_Laboratory.pdf",
       "text": "Fluorimetry is highly sensitive but relies on secondary emission of certain substances, mostly of biological origin; most chemicals do not fluoresce."
-    },
-    {
-      "id": "S04-4-result",
-      "label": "S04 p.4",
-      "source": "S04_Combi_MIR_Fluorescence_2021.pdf",
-      "text": "Neither method alone separated all three tissue classes in PCA; the fused data did. The approach is limited to samples with at least one fluorescent component and to samples suitable for ATR (liquids, soft solids)."
     },
     {
       "id": "S01-16-bio-fluo",
@@ -285,16 +293,22 @@
       "text": "Complex media (oil, milk, fermentation media, tissue) may need two or more methods; examples: NIR+fluorescence gave more accurate biomass in yeast fermentation and distinguished intra- and extracellular metabolites; NIR+IR showed benefits for tumour boundaries; fluorescence+IR was needed to classify tissues; NIR+Raman gave the best results for pellet coating."
     },
     {
+      "id": "P:S01-p7-2",
+      "label": "S01 p.7",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially. Thus, the combination of NIR spectroscopy with fluorescence spectroscopy demonstrated the possibility of more accurately determining the biomass content during yeast fermentation, as well as distinguishing between their intra- and extracellular metabolites. The combination of NIR and IR spectroscopy showed benefits in determining tumor boundaries in medical diagnostics. The combination of fluorescence and IR spectroscopy also proved necessary for classifying biological tissues."
+    },
+    {
+      "id": "P:S01-p16-3",
+      "label": "S01 p.16",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "- Precision Monitoring Across Concentration Ranges: labs equipped with both Near-Infrared (NIR) and Fluorescence spectroscopy can solve the problem of monitoring analytes at widely varying concentrations. NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimola r range but may lack the sensitivity to detect trace compounds below 0.1 percent. To fill this gap, Fluorescence spectroscopy can be used for high- sensitivity detection (down to the nM -µM range) of critical c ofactors and amino acids like NADH, tryptophan, and riboflavin. By using both, a researcher can maintain high -precision control over both the main carbon source and the delicate metabolic state of the cells."
+    },
+    {
       "id": "S01-11-raman",
       "label": "S01 p.11",
       "source": "S01_Multispectral_Laboratory.pdf",
       "text": "Raman signals are weak and often masked by laser scatter and, for many organic compounds, by much stronger fluorescence; special filters and probe designs are needed. The Raman shift (cm⁻¹) is the spectral axis."
-    },
-    {
-      "id": "S01-5-raman-comp",
-      "label": "S01 p.5",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Raman needs special probes, is recorded in the visible/NIR region, and carries information complementary to MIR."
     },
     {
       "id": "S02-6-fibers",
@@ -315,58 +329,16 @@
       "text": "For samples of incompletely known composition it is not always possible to predict which method will work; testing several optical approaches is the way to select the most suitable method or combination."
     },
     {
-      "id": "S01-16-bio-uv",
-      "label": "S01 p.16",
+      "id": "S01-14-pharma",
+      "label": "S01 p.14–15",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Bioprocess: UV/Vis can be a low-cost tool for real-time biomass monitoring because cell-suspension turbidity correlates with cell density."
+      "text": "Pharmaceutical example: NIR reflection probe and Raman probe (785 nm excitation) inserted into the feed frame of a rotary tablet press for blend potency; NIR sees hydrogen bonds/polar groups, Raman the molecular backbone/non-polar groups; low-level fusion of synchronised spectra with PLS."
     },
     {
-      "id": "S01-5-chemometrics",
-      "label": "S01 p.5",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Mid-IR spectra contain well-defined absorption peaks, while NIR, UV and fluorescence give broad overlapping spectra; quantitative use requires chemometric calibration or classification models that are built, validated and then applied."
-    },
-    {
-      "id": "S01-12-fluo-bio",
-      "label": "S01 p.12",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Fluorimetry measures broad emission from certain samples under UV/visible excitation; it is frequently used in biology and biotechnology and can be combined with MIR or NIR."
-    },
-    {
-      "id": "S01-4-interfaces",
-      "label": "S01 p.4",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "NIR, MIR and Raman differ in absorption and penetration depth, so each needs its own interface (ATR, transmission, transflection, reflection probes); the task decides the method and technique."
-    },
-    {
-      "id": "S01-16-uv-od",
-      "label": "S01 p.16",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "UV-Vis probe choice follows optical density: transmission/transflection (1–10 mm path) for transparent liquids; UV-ATR for opaque, turbid or concentrated media where transmission saturates."
-    },
-    {
-      "id": "S02-20-pathway",
-      "label": "S02 p.20",
+      "id": "S02-16-combi-raman",
+      "label": "S02 p.16",
       "source": "S02_AFS_Process_Control_Slides.pdf",
-      "text": "AFS pathway: multi-method lab trials on the customer process, then identification of key spectral features, then a chemometric model, a customised system or IoT sensors."
-    },
-    {
-      "id": "S05-pathway",
-      "label": "S05 p.1",
-      "source": "S05_AFS_Flyer.pdf",
-      "text": "AFS guided pathway: (1) multi-method lab test with the AFS multi-spectral fiber system, (2) selection of key spectral features by multivariate analysis and fusion, (3) tailored solution: Path A AI-driven chemometric model (spectra to real-time composition), Path B customised MSF system (tailored spectrometer set for the customer's own R&D), Path C customised spectral fiber sensors (SFS) for a specific process with remote/cloud control."
-    },
-    {
-      "id": "S02-3-select",
-      "label": "S02 p.3",
-      "source": "S02_AFS_Process_Control_Slides.pdf",
-      "text": "AFS multispectral fiber systems test four methods (Raman, FTIR, fluorescence, NIR) in 0.3–16 µm on the customer process; comparing the spectral data is used to select the process-control solution."
-    },
-    {
-      "id": "P:S01-p7-2",
-      "label": "S01 p.7",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "This often provides a synergistic effect, allowing one to solve a problem that either method alone cannot handle or only partially. Thus, the combination of NIR spectroscopy with fluorescence spectroscopy demonstrated the possibility of more accurately determining the biomass content during yeast fermentation, as well as distinguishing between their intra- and extracellular metabolites. The combination of NIR and IR spectroscopy showed benefits in determining tumor boundaries in medical diagnostics. The combination of fluorescence and IR spectroscopy also proved necessary for classifying biological tissues."
+      "text": "Combi probe with 2 IR fibers to an FTIR and 2 silica fibers to fluorescence or Raman spectrometers (680 nm and 785 nm lasers)."
     },
     {
       "id": "S01-10-nir",
@@ -375,10 +347,58 @@
       "text": "NIR (780–2500 nm) is the most common online fiber-probe method; its broad overlapping overtone/combination bands require chemometrics; diffuse reflectance allows measurements on scattering samples."
     },
     {
-      "id": "P:S01-p16-3",
+      "id": "S01-5-chemometrics",
+      "label": "S01 p.5",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Mid-IR spectra contain well-defined absorption peaks, while NIR, UV and fluorescence give broad overlapping spectra; quantitative use requires chemometric calibration or classification models that are built, validated and then applied."
+    },
+    {
+      "id": "S01-16-bio-uv",
       "label": "S01 p.16",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "- Precision Monitoring Across Concentration Ranges: labs equipped with both Near-Infrared (NIR) and Fluorescence spectroscopy can solve the problem of monitoring analytes at widely varying concentrations. NIR spectroscopy is effective for tracking major components like glucose or glycerol in the millimola r range but may lack the sensitivity to detect trace compounds below 0.1 percent. To fill this gap, Fluorescence spectroscopy can be used for high- sensitivity detection (down to the nM -µM range) of critical c ofactors and amino acids like NADH, tryptophan, and riboflavin. By using both, a researcher can maintain high -precision control over both the main carbon source and the delicate metabolic state of the cells."
+      "text": "Bioprocess: UV/Vis can be a low-cost tool for real-time biomass monitoring because cell-suspension turbidity correlates with cell density."
+    },
+    {
+      "id": "S01-4-interfaces",
+      "label": "S01 p.4",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "NIR, MIR and Raman differ in absorption and penetration depth, so each needs its own interface (ATR, transmission, transflection, reflection probes); the task decides the method and technique."
+    },
+    {
+      "id": "S02-3-select",
+      "label": "S02 p.3",
+      "source": "S02_AFS_Process_Control_Slides.pdf",
+      "text": "AFS multispectral fiber systems test four methods (Raman, FTIR, fluorescence, NIR) in 0.3–16 µm on the customer process; comparing the spectral data is used to select the process-control solution."
+    },
+    {
+      "id": "S05-pathway",
+      "label": "S05 p.1",
+      "source": "S05_AFS_Flyer.pdf",
+      "text": "AFS guided pathway: (1) multi-method lab test with the AFS multi-spectral fiber system, (2) selection of key spectral features by multivariate analysis and fusion, (3) tailored solution: Path A AI-driven chemometric model (spectra to real-time composition), Path B customised MSF system (tailored spectrometer set for the customer's own R&D), Path C customised spectral fiber sensors (SFS) for a specific process with remote/cloud control."
+    },
+    {
+      "id": "S02-20-pathway",
+      "label": "S02 p.20",
+      "source": "S02_AFS_Process_Control_Slides.pdf",
+      "text": "AFS pathway: multi-method lab trials on the customer process, then identification of key spectral features, then a chemometric model, a customised system or IoT sensors."
+    },
+    {
+      "id": "S04-4-result",
+      "label": "S04 p.4",
+      "source": "S04_Combi_MIR_Fluorescence_2021.pdf",
+      "text": "Neither method alone separated all three tissue classes in PCA; the fused data did. The approach is limited to samples with at least one fluorescent component and to samples suitable for ATR (liquids, soft solids)."
+    },
+    {
+      "id": "S01-12-fluo-bio",
+      "label": "S01 p.12",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Fluorimetry measures broad emission from certain samples under UV/visible excitation; it is frequently used in biology and biotechnology and can be combined with MIR or NIR."
+    },
+    {
+      "id": "S01-16-uv-od",
+      "label": "S01 p.16",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "UV-Vis probe choice follows optical density: transmission/transflection (1–10 mm path) for transparent liquids; UV-ATR for opaque, turbid or concentrated media where transmission saturates."
     },
     {
       "id": "S01-8-same-spot",
@@ -391,12 +411,6 @@
       "label": "S01 p.9",
       "source": "S01_Multispectral_Laboratory.pdf",
       "text": "Fused data blocks differ in noise and information content; normalisation alone does not fix this, so dedicated data-fusion algorithms are needed."
-    },
-    {
-      "id": "S01-15-fusion-gain",
-      "label": "S01 p.15",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "The cited feed-frame study reports that fused NIR+Raman PLS models predicted API potency more accurately than single-method models (in that study)."
     }
   ],
   "removed_uncited": []

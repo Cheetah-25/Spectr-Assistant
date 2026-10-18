@@ -899,5 +899,166 @@
         "status": "outside_supported_scope"
       }
     ]
+  },
+  "strong_v2": {
+    "runs": 1,
+    "answers": 6,
+    "valid_json_pct": 100,
+    "trap_caught_pct": 100,
+    "trap_caught_of_valid_pct": 100,
+    "method_named_pct": 100,
+    "needed_repair": 0,
+    "uncited_removed_total": 0,
+    "answers_with_unsupported_numbers_pct": 17,
+    "avg_unsupported_numbers": 0.2,
+    "avg_sources": 25.8,
+    "perCase": {
+      "H01": {
+        "trap": "Old NIR calibration is not valid for the new formulation; Raman does not keep it valid",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR + Raman"
+        ]
+      },
+      "H02": {
+        "trap": "Clear whey and opaque concentrate need different interfaces (transmission/transflection vs reflection)",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR"
+        ]
+      },
+      "H03": {
+        "trap": "Fluorescence has no selectivity for glucose / viable biomass without a named fluorophore",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "Raman"
+        ]
+      },
+      "H04": {
+        "trap": "Silica fiber cannot carry MIR; concept not approved as proposed",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "MIR ATR"
+        ]
+      },
+      "H05": {
+        "trap": "Target and contaminant undefined: no exact configuration, screen first",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "MIR ATR"
+        ]
+      },
+      "H06": {
+        "trap": "Kidney in-vitro study is not proof for live surgery; outside supported scope",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR"
+        ]
+      }
+    },
+    "rows": [
+      {
+        "run": "run1",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 19,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 4,
+        "method": "NIR + Raman",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 26,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 26,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 4,
+        "method": "Raman",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 24,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 30,
+        "unsupported_numbers": 1,
+        "questions": 5,
+        "steps": 4,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 30,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      }
+    ]
   }
 }

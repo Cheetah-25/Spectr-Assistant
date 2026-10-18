@@ -3,15 +3,11 @@
     "stated": [
       {
         "item": "material",
-        "value": "a relatively clear whey stream"
-      },
-      {
-        "item": "material",
-        "value": "an opaque milk concentrate"
+        "value": "a relatively clear whey stream and an opaque milk concentrate"
       },
       {
         "item": "target",
-        "value": "composition monitoring"
+        "value": "composition monitoring; protein and fat where those variables are relevant"
       },
       {
         "item": "reference",
@@ -24,73 +20,81 @@
       {
         "item": "constraint",
         "value": "We can compare different measurement interfaces before choosing the installation"
-      },
-      {
-        "item": "location",
-        "value": "our dairy process (installation point not yet chosen)"
       }
     ],
     "missing": [
-      "Which composition variables are required per stream (protein, fat, others) and their expected ranges",
-      "Fat content and solids level of the concentrate",
-      "Process conditions at candidate points: temperature, pressure, flow, pipe or vat dimensions, cleaning regime",
-      "Required accuracy, measurement frequency and response time for the pilot",
-      "Reference laboratory methods and how reference samples will be taken and time-matched to spectra"
+      "Installation location / measurement points for each stream (pipe, vat, line section)",
+      "Expected protein and fat ranges in whey and in the concentrate",
+      "Which composition variables apply to which stream",
+      "Process conditions at the probe (temperature, pressure, flow, cleaning/CIP)",
+      "Number of samples and laboratory reference methods available for calibration"
     ]
   },
   "status": "provisional_assessment",
-  "status_reason": "Materials (whey and opaque concentrate), target (composition, with laboratory protein and fat as reference) and the process are known, so a provisional first assessment is possible; a dairy NIR application is a reason to test, not proof that it works in this process.",
-  "answer": "Test NIR on both streams with a separate interface per stream: a transmission/transflection probe with controlled path length for the clear whey and a flush-mounted diffuse-reflection probe for the opaque concentrate, both on the same NIR spectrometer. Compare transmission/transflection and reflection on both streams in a lab trial against independent laboratory protein and fat analyses, and build a separate scatter-corrected PLS calibration per stream. Fluorescence, Raman or MIR ATR can be screened alongside as possible additions for molecular specificity.",
+  "status_reason": "Material (whey and milk concentrate) and target quantities (protein, fat) are stated and dairy inline NIR is an AFS application example, but the installation points and ranges are unknown, so this is a provisional first assessment, not an approval [S01-17-dairy-refl; S01-18-dairy-trans].",
+  "answer": "Test inline NIR with two interfaces: a transmission/transflection probe on the clear whey stream and a flush-mounted diffuse-reflection probe on the opaque concentrate, each with its own calibration against laboratory protein and fat results. Run both interfaces on both streams in a side-by-side comparison, including whether one transflection probe can serve both products, and screen MIR ATR (and Raman) as additional molecular-specific methods. A combination of methods is only kept if it beats the best single method on the same validation data.",
   "answer_cites": [
+    "P:S01-p17-2",
+    "P:S01-p18-2",
     "S01-17-dairy-refl",
     "S01-18-dairy-trans",
     "S01-18-dairy-both",
     "S01-18-dairy-other",
-    "P:S01-p18-2",
-    "P:S01-p17-2"
+    "S01-3-unknown"
   ],
   "inline": {
-    "mode": "lab_first",
-    "headline": "Test NIR transmission/transflection on the whey and NIR diffuse reflection on the concentrate, each with its own calibration",
+    "mode": "in_line",
+    "headline": "Test NIR transmission/transflection on the whey stream and NIR diffuse reflection on the milk concentrate, with a separate calibration per stream",
     "method": "NIR",
-    "probe": "Transmission/transflection probe (path usually 1-10 mm) for whey; flush-mounted diffuse-reflection probe for concentrate",
-    "install": "Separate measuring points in the whey line and in the concentrate pipe or vat, chosen after the interface comparison",
-    "fiber": "Vis-NIR silica (350-2400 nm), low-OH silica for long remote cables",
-    "test_against": "A single transflection probe used on both streams",
-    "not_final_because": "Variables, ranges, process conditions, installation points and accuracy needs are unknown, and published dairy NIR use only justifies testing; the method must be proven against independent laboratory analyses on the client's own streams.",
+    "probe": "Whey: NIR transmission/transflection probe with controlled path length (usually 1–10 mm); concentrate: flush-mounted NIR diffuse-reflection probe",
+    "install": "In the pipe or vat of each stream, flush-mounted for reflection (exact points unknown – ask)",
+    "fiber": "Vis-NIR low-OH silica (350–2400 nm)",
+    "test_against": "A single transflection probe on both streams",
+    "not_final_because": "Installation points, protein/fat ranges, process conditions and reference data are not yet known, reflection is sensitive to surface characteristics and fat globule size, and the dairy application is a reason to test, not proof for this process.",
     "cites": [
-      "S01-18-dairy-trans",
+      "P:S01-p17-2",
+      "P:S01-p18-2",
       "S01-17-dairy-refl",
+      "S01-18-dairy-trans",
       "S01-18-dairy-both",
       "S02-6-fibers",
-      "S02-7-silica-long",
-      "S01-10-nir"
+      "S02-7-silica-long"
     ]
   },
   "problems": [
     {
       "severity": "check_first",
-      "text": "The clear whey and the opaque concentrate behave differently optically: transmission/transflection suits the clear whey and reflection suits the opaque concentrate, so plan a separate interface decision and a separate calibration per stream, and treat one shared interface as a hypothesis to test.",
+      "text": "The clear whey and the opaque concentrate are two optical regimes: transmission/transflection suits clear liquids and fails on thick or fat-rich product, reflection suits opaque product but is less representative for clear liquids, so plan a separate interface decision and calibration per stream and treat one shared interface as a hypothesis to test.",
       "cites": [
-        "P:S01-p17-2",
         "P:S01-p18-2",
+        "P:S01-p17-2",
+        "S01-18-dairy-trans",
         "S01-18-dairy-both"
       ]
     },
     {
       "severity": "check_first",
-      "text": "Transmission needs a controlled path length and fails if the product becomes too thick or fat-rich, so check whether the concentrate can be measured this way at all.",
+      "text": "NIR reflection on the concentrate is sensitive to surface characteristics and fat globule size, so scatter correction (MSC/SNV) before PLS and variation of these properties in the calibration set are needed.",
       "cites": [
-        "S01-18-dairy-trans",
-        "P:S01-p18-2"
+        "P:S01-p17-2",
+        "S01-17-dairy-refl"
       ]
     },
     {
       "severity": "check_first",
-      "text": "Reflection sees only a shallow layer and is sensitive to surface characteristics and fat globule size, so scatter correction (MSC/SNV) and a flush mount in flowing product are needed.",
+      "text": "NIR gives broad overlapping bands and may lack sensitivity below about 0.1 %, so low protein or fat levels in whey need a chemometric model checked against independent laboratory results.",
       "cites": [
-        "S01-17-dairy-refl",
-        "P:S01-p17-2"
+        "S01-10-nir",
+        "S01-16-bio-nir",
+        "S01-5-chemometrics"
+      ]
+    },
+    {
+      "severity": "check_first",
+      "text": "Vis-NIR silica fiber transmits 350–2400 nm while NIR is defined to 2500 nm, so the last part of the NIR range is not covered and the usable window must be checked.",
+      "cites": [
+        "S02-6-fibers",
+        "S01-10-nir"
       ]
     }
   ],
@@ -98,7 +102,7 @@
     {
       "method": "NIR transmission/transflection",
       "role": "main",
-      "why": "Preferred for transparent or semi-transparent liquids such as whey, and the volume sampled gives a representative signature for dilute streams.",
+      "why": "Preferred for transparent or semi-transparent dairy liquids such as whey, with controlled 1–10 mm path length.",
       "cites": [
         "S01-18-dairy-trans",
         "P:S01-p18-2"
@@ -107,136 +111,176 @@
     {
       "method": "NIR diffuse reflection",
       "role": "main",
-      "why": "Used inline for opaque or concentrated dairy products, with scatter correction before PLS for fat and protein.",
+      "why": "Used inline for opaque or concentrated dairy products with a flush-mounted probe, followed by scatter correction and PLS for fat and protein.",
       "cites": [
         "S01-17-dairy-refl",
         "P:S01-p17-2"
       ]
     },
     {
-      "method": "Fluorescence",
+      "method": "MIR ATR",
       "role": "compare",
-      "why": "Low-cost and highly sensitive for intrinsic fluorophores of biological origin, and can be combined with NIR to add specificity.",
+      "why": "Adds molecular specificity NIR might miss, with protein amide bands near 1640/1548 cm-1 and the ester carbonyl band near 1740 cm-1, but samples only a 1–6 µm layer.",
       "cites": [
         "S01-18-dairy-other",
-        "S01-12-fluo-bio",
+        "S04-3-amide",
+        "S04-3-design",
         "S01-T1"
       ]
     },
     {
-      "method": "Raman or MIR ATR",
+      "method": "Raman (e.g. 785 nm excitation; Raman shift range unknown – ask)",
       "role": "only_if_needed",
-      "why": "They add molecular specificity NIR may miss, but Raman can be masked by fluorescence and MIR ATR samples only a few micrometres.",
+      "why": "Can add molecular specificity for dairy but signals are weak and may be masked by fluorescence of organic compounds.",
       "cites": [
         "S01-18-dairy-other",
         "S01-11-raman",
-        "S01-5-mir-thin"
+        "S01-14-pharma"
       ]
     }
   ],
   "questions": [
     {
-      "q": "Which composition variables do you need for each stream, and over what ranges?",
-      "why": "The target variable and range set the spectral region, the interface and the calibration design.",
-      "cites": [
-        "S01-5-select",
-        "S02-18-bands"
-      ]
-    },
-    {
-      "q": "How much fat and how many solids does the concentrate contain at the planned measuring point?",
-      "why": "Transmission fails in thick or fat-rich product, so this decides whether reflection is required.",
-      "cites": [
-        "S01-18-dairy-trans"
-      ]
-    },
-    {
-      "q": "What are the temperature, pressure, flow and pipe or vat geometry at the candidate installation points?",
-      "why": "Reflection probes are flush-mounted in pipe or vat, and transflection needs a controlled path length.",
+      "q": "Where exactly would each probe be installed (pipe, vat, line section, diameter) for the whey and the concentrate?",
+      "why": "Reflection probes are flush-mounted in pipe or vat and transmission needs a controlled path length, so the location decides the interface.",
       "cites": [
         "S01-17-dairy-refl",
         "S01-18-dairy-trans"
       ]
     },
     {
-      "q": "Which independent laboratory methods produce your protein and fat results, and can samples be time-matched to the spectra?",
-      "why": "Chemometric calibration models must be built and validated against reference values.",
+      "q": "What protein and fat ranges occur in the whey and in the concentrate, and which variables matter for each stream?",
+      "why": "Transmission fails when product is too thick or fat-rich and NIR may lack sensitivity below about 0.1 %.",
+      "cites": [
+        "S01-18-dairy-trans",
+        "S01-16-bio-nir"
+      ]
+    },
+    {
+      "q": "Which independent laboratory methods produce your protein and fat results, and how many paired samples per stream can you provide?",
+      "why": "Quantitative NIR needs chemometric models that are built and validated against reference values.",
       "cites": [
         "S01-5-chemometrics"
       ]
     },
     {
-      "q": "What accuracy and measurement frequency does the pilot need?",
-      "why": "These are the go/no-go criteria for choosing between the interfaces.",
+      "q": "What temperature, pressure, flow and cleaning (CIP) conditions apply at the candidate measurement points?",
+      "why": "Probe and fiber choice must withstand the process conditions at the measuring point.",
       "cites": [
-        "S01-3-unknown"
+        "S02-7-silica-long",
+        "S01-15-fiber-remote"
+      ]
+    },
+    {
+      "q": "Does fat globule size or concentrate solids content vary between batches?",
+      "why": "NIR reflection is sensitive to surface characteristics and fat globule size, which must be covered in the calibration.",
+      "cites": [
+        "S01-17-dairy-refl"
       ]
     }
   ],
+  "technical": {
+    "spectral_window": "NIR 780–2500 nm limited by Vis-NIR silica fiber to about 780–2400 nm; fat/protein/moisture bands at 0.85–1.1 µm; MIR ATR comparison 4000–400 cm-1 region with amide bands near 1640/1548 cm-1 and ester carbonyl near 1740 cm-1",
+    "probe": "Whey: NIR transmission/transflection probe, path length usually 1–10 mm; concentrate: flush-mounted NIR diffuse-reflection probe (0.5–1 mm depth); tip/window material unknown – ask",
+    "fiber": "Vis-NIR low-OH silica fiber (350–2400 nm), robust cables up to 100–300 m possible; length and routing unknown – ask",
+    "process_conditions": "unknown – ask",
+    "sampling": "In pipe or vat of each stream; sampling rate and response time unknown – ask",
+    "reference_method": "Independent laboratory protein and fat results supplied by the client (method unknown – ask)",
+    "calibration": "Separate PLS model per stream with MSC/SNV scatter correction for reflection; sample number and ranges unknown – ask",
+    "cites": [
+      "S01-10-nir",
+      "S02-6-fibers",
+      "S02-7-silica-long",
+      "S02-18-bands",
+      "S01-T1",
+      "S01-9-mir",
+      "S04-3-amide",
+      "S04-3-design",
+      "S01-17-dairy-refl",
+      "S01-18-dairy-trans"
+    ]
+  },
   "experiment": {
-    "objective": "Compare NIR transmission/transflection and NIR diffuse reflection on whey and concentrate samples and decide one interface and one calibration per stream.",
+    "objective": "Compare NIR transmission/transflection and NIR diffuse reflection (with MIR ATR as comparison) on whey and milk concentrate samples against independent laboratory protein and fat results to choose the interface per stream.",
     "steps": [
-      "Collect whey and concentrate samples that cover the expected composition range, and analyse each one independently in the laboratory for protein and fat.",
-      "Measure each sample with a transflection probe at a controlled path length and with a diffuse-reflection probe, on the same NIR spectrometer.",
-      "Optionally record fluorescence on the same samples to screen whether it adds information.",
-      "Apply MSC/SNV scatter correction, build a PLS model per stream and per interface, and validate on independent samples.",
-      "Compare validated performance per stream against the client's criteria and choose the interface and installation point."
+      "Collect paired samples from each stream covering the expected protein and fat range and send them for independent laboratory protein and fat analysis.",
+      "Measure every sample with an NIR transflection probe and an NIR diffuse-reflection probe on the same NIR spectrometer, and with an MIR ATR probe as comparison.",
+      "Apply scatter correction (MSC/SNV) where needed and build separate PLS models per stream and per interface.",
+      "Test whether a single transflection probe gives acceptable models for both streams versus the stream-specific interfaces.",
+      "Compare single-method models with an NIR + MIR ATR fused model on the same validation data before deciding on an inline pilot."
     ],
     "references": [
-      "Independent laboratory protein analysis of each sample",
-      "Independent laboratory fat analysis of each sample"
+      "Independent laboratory protein results per sample",
+      "Independent laboratory fat results per sample"
     ],
-    "go_no_go": "criteria come from the client",
+    "go_no_go": "Acceptance criteria for prediction error per variable and stream must come from the client.",
     "cites": [
+      "S01-3-unknown",
       "S01-18-dairy-both",
       "S01-17-dairy-refl",
-      "S01-3-unknown",
       "S01-5-chemometrics",
-      "S02-20-pathway"
+      "S02-20-pathway",
+      "S05-pathway"
     ]
   },
   "pathway": {
     "lab_test": [
       "NIR transmission/transflection (main)",
       "NIR diffuse reflection (main)",
-      "Fluorescence (compare)",
-      "Raman or MIR ATR (only if needed)"
+      "MIR ATR (compare)",
+      "Raman (only if needed)"
     ],
-    "key_features": "No spectra have been supplied yet; the band chart places fat/protein/moisture at 0.85-1.1 µm, a candidate region to confirm in the lab test.",
+    "key_features": "No spectra supplied yet; candidate features are NIR fat/protein bands at 0.85–1.1 µm and MIR amide bands near 1640/1548 cm-1 and the ester carbonyl band near 1740 cm-1, to be confirmed in the lab test.",
     "path": "not_yet",
-    "path_reason": "The AFS pathway starts with multi-method lab trials and key-feature selection before choosing a model, a system or sensors.",
+    "path_reason": "The multi-method lab test and key-feature selection must come before choosing a chemometric model, customised system or sensors.",
     "later": "A",
     "cites": [
-      "S05-pathway",
       "S02-20-pathway",
-      "S02-18-bands"
+      "S05-pathway",
+      "S02-18-bands",
+      "S04-3-amide",
+      "S04-3-design"
     ]
   },
   "multispectral": {
     "worth_testing": true,
-    "combination": "NIR + Fluorescence",
-    "why": "Milk is a complex medium that may need two methods, and fluorescence can add molecular specificity to NIR's broad bands for major components; in a cited fermentation example, NIR+fluorescence gave more accurate biomass.",
-    "probe": "Separate time-synchronised probes for the flowing liquid, unless the concentrate turns out to be heterogeneous at the probe scale, in which case a combined same-spot probe is needed",
-    "fusion": "Model per method first, then low-level fusion of synchronised spectra using dedicated data-fusion algorithms",
-    "test": "The fused model must beat the best single NIR model per stream on the same independent validation samples.",
+    "combination": "NIR + MIR ATR",
+    "why": "Complex media such as milk may need two methods, and MIR ATR adds well-defined molecular bands (protein amide, fat ester carbonyl) to the broad overlapping NIR overtones.",
+    "probe": "separate synchronised probes",
+    "fusion": "model per method first, then low-level fusion of synchronised spectra with dedicated data-fusion algorithms",
+    "test": "Keep the combination only if the fused model predicts laboratory protein and fat better than the best single NIR model on the same validation samples.",
     "cites": [
       "S01-7-synergy",
       "S01-18-dairy-other",
-      "S01-12-fluo-bio",
+      "S01-5-chemometrics",
       "S01-8-same-spot",
       "S01-9-fusion",
-      "S01-14-pharma"
+      "S04-3-amide",
+      "S04-3-design",
+      "S01-15-fusion-gain"
     ]
   },
   "assumptions": [
-    "Protein and fat are the main composition variables for both streams.",
-    "Both streams flow in pipes or vats where a flush-mounted or inserted probe can be installed.",
-    "Reference samples can be taken at the same time and place as the spectra."
+    "The flowing whey and concentrate are homogeneous enough at the measuring point that time-synchronised separate probes are sufficient, without a combined same-spot probe.",
+    "Laboratory protein and fat results can be paired with spectra from the same samples.",
+    "One NIR spectrometer can serve both transmission and reflection probes."
   ],
   "changed": "",
   "enquiry": "Our dairy process handles both a relatively clear whey stream and an opaque milk concentrate. We want a pilot for composition monitoring, using laboratory protein and fat results where those variables are relevant. We can compare different measurement interfaces before choosing the installation. What first measurement concepts and comparison experiment would make sense for these two streams?",
   "engine": "claude+rag",
   "sources": [
+    {
+      "id": "P:S01-p17-2",
+      "label": "S01 p.17",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Maintaining both NIR Reflection and NIR Transmission techniques in a lab environment provides a comprehensive analytical suite capable of handling the diverse physical properties of dairy products. - NIR Reflection: Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates. The main equipment includes a fiber optic probe where one set of fibers delivers light to the sample and the other collects the \"backscattered\" light. Experimentally, the probe is flush -mounted into a pipe or vat to interact directly with the flowing medium. Because the light does not penetrate deeply, the method is sensitive to the surface characteristics and fat globule size."
+    },
+    {
+      "id": "P:S01-p18-2",
+      "label": "S01 p.18",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "This technique generally offers higher accuracy for low -concentration components because the light interacts with the entir e volume of the sampled cross-section, providing a more representative chemical signature. - The Advantage of Dual-Technique Availability: having both fiber optic techniques available in a lab rather than relying on one provides the flexibility needed to monitor the entire production chain. While transmission is superior for the high-precision analysis of dilute process streams (like whey filtration), it fails when the milk becomes too \"thick\" or fat -rich, as the light cannot penetrate the sample. Conversely, reflection can work well in hig hly scattering environments but can be less representative for clear liquids."
+    },
     {
       "id": "S01-17-dairy-refl",
       "label": "S01 p.17",
@@ -262,16 +306,10 @@
       "text": "Dairy: fluorescence, Raman and MIR ATR can add molecular specificity that NIR might miss."
     },
     {
-      "id": "P:S01-p18-2",
-      "label": "S01 p.18",
+      "id": "S01-3-unknown",
+      "label": "S01 p.3",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "This technique generally offers higher accuracy for low -concentration components because the light interacts with the entir e volume of the sampled cross-section, providing a more representative chemical signature. - The Advantage of Dual-Technique Availability: having both fiber optic techniques available in a lab rather than relying on one provides the flexibility needed to monitor the entire production chain. While transmission is superior for the high-precision analysis of dilute process streams (like whey filtration), it fails when the milk becomes too \"thick\" or fat -rich, as the light cannot penetrate the sample. Conversely, reflection can work well in hig hly scattering environments but can be less representative for clear liquids."
-    },
-    {
-      "id": "P:S01-p17-2",
-      "label": "S01 p.17",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Maintaining both NIR Reflection and NIR Transmission techniques in a lab environment provides a comprehensive analytical suite capable of handling the diverse physical properties of dairy products. - NIR Reflection: Inline NIR Reflection is primarily used for opaque or highly concentrated dairy products, such as yogurt, butter, or whole milk concentrates. The main equipment includes a fiber optic probe where one set of fibers delivers light to the sample and the other collects the \"backscattered\" light. Experimentally, the probe is flush -mounted into a pipe or vat to interact directly with the flowing medium. Because the light does not penetrate deeply, the method is sensitive to the surface characteristics and fat globule size."
+      "text": "For samples of incompletely known composition it is not always possible to predict which method will work; testing several optical approaches is the way to select the most suitable method or combination."
     },
     {
       "id": "S02-6-fibers",
@@ -292,16 +330,40 @@
       "text": "NIR (780–2500 nm) is the most common online fiber-probe method; its broad overlapping overtone/combination bands require chemometrics; diffuse reflectance allows measurements on scattering samples."
     },
     {
-      "id": "S01-5-select",
-      "label": "S01 p.5",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Selecting a spectral method for a specific analytical problem requires considering many factors and specialised knowledge."
-    },
-    {
       "id": "S02-18-bands",
       "label": "S02 p.18",
       "source": "S02_AFS_Process_Control_Slides.pdf",
       "text": "Band chart: fat/protein/moisture 0.85–1.1 µm; moisture/polymers/API/ethanol 1.3–1.7, 1.5–2.0, 1.7–2.2 µm; hydrocarbons 3.0–3.7 µm; ethanol/glucose/organic acids 6.0–8.0, 8.0–10.5 µm. A central analyzer with long fibers to many points is contrasted with distributed IoT sensors."
+    },
+    {
+      "id": "S01-T1",
+      "label": "S01 Table 1 (p.6)",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Table 1 rates methods qualitatively: MIR ATR (liquid/paste/soft, depth 1–6 µm, sensitivity average, selectivity high, cost high); NIR transmission/transflection probe (liquid/colloidal, 1–10 mm); NIR diffuse reflection probe (scattering media/powder, 0.5–1 mm); Raman probe (liquid/powder/solid, 2–5 mm, selectivity high, cost high); UV/Vis probes (selectivity low); fluorimetric probe (liquid/solid, 1–5 mm, sensitivity high, selectivity low, cost low)."
+    },
+    {
+      "id": "S01-9-mir",
+      "label": "S01 p.9",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Mid-IR vibrational spectroscopy covers 4000–400 cm⁻¹ and is one of the most informative methods for chemical analysis."
+    },
+    {
+      "id": "S04-3-amide",
+      "label": "S04 p.3",
+      "source": "S04_Combi_MIR_Fluorescence_2021.pdf",
+      "text": "Protein amide I and amide II bands appear near 1640 and 1548 cm⁻¹ in the IR spectra of the tissues."
+    },
+    {
+      "id": "S04-3-design",
+      "label": "S04 p.3",
+      "source": "S04_Combi_MIR_Fluorescence_2021.pdf",
+      "text": "Chicken breast, fat and liver: 3 samples per tissue × 5 points (45 spectra); fat recognised by the ester carbonyl band near 1740 cm⁻¹ (IR), liver by a porphyrin band at 613 nm (fluorescence)."
+    },
+    {
+      "id": "S01-16-bio-nir",
+      "label": "S01 p.16",
+      "source": "S01_Multispectral_Laboratory.pdf",
+      "text": "Bioprocess: NIR tracks major components such as glucose or glycerol in the millimolar range but may lack sensitivity below 0.1 %."
     },
     {
       "id": "S01-5-chemometrics",
@@ -310,10 +372,10 @@
       "text": "Mid-IR spectra contain well-defined absorption peaks, while NIR, UV and fluorescence give broad overlapping spectra; quantitative use requires chemometric calibration or classification models that are built, validated and then applied."
     },
     {
-      "id": "S01-3-unknown",
-      "label": "S01 p.3",
+      "id": "S01-15-fiber-remote",
+      "label": "S01 p.15",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "For samples of incompletely known composition it is not always possible to predict which method will work; testing several optical approaches is the way to select the most suitable method or combination."
+      "text": "Fiber optics let spectrometers sit away from the vibration and dust of the manufacturing floor."
     },
     {
       "id": "S02-20-pathway",
@@ -328,28 +390,16 @@
       "text": "AFS guided pathway: (1) multi-method lab test with the AFS multi-spectral fiber system, (2) selection of key spectral features by multivariate analysis and fusion, (3) tailored solution: Path A AI-driven chemometric model (spectra to real-time composition), Path B customised MSF system (tailored spectrometer set for the customer's own R&D), Path C customised spectral fiber sensors (SFS) for a specific process with remote/cloud control."
     },
     {
-      "id": "S01-12-fluo-bio",
-      "label": "S01 p.12",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Fluorimetry measures broad emission from certain samples under UV/visible excitation; it is frequently used in biology and biotechnology and can be combined with MIR or NIR."
-    },
-    {
-      "id": "S01-T1",
-      "label": "S01 Table 1 (p.6)",
-      "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Table 1 rates methods qualitatively: MIR ATR (liquid/paste/soft, depth 1–6 µm, sensitivity average, selectivity high, cost high); NIR transmission/transflection probe (liquid/colloidal, 1–10 mm); NIR diffuse reflection probe (scattering media/powder, 0.5–1 mm); Raman probe (liquid/powder/solid, 2–5 mm, selectivity high, cost high); UV/Vis probes (selectivity low); fluorimetric probe (liquid/solid, 1–5 mm, sensitivity high, selectivity low, cost low)."
-    },
-    {
       "id": "S01-11-raman",
       "label": "S01 p.11",
       "source": "S01_Multispectral_Laboratory.pdf",
       "text": "Raman signals are weak and often masked by laser scatter and, for many organic compounds, by much stronger fluorescence; special filters and probe designs are needed. The Raman shift (cm⁻¹) is the spectral axis."
     },
     {
-      "id": "S01-5-mir-thin",
-      "label": "S01 p.5",
+      "id": "S01-14-pharma",
+      "label": "S01 p.14–15",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Strong mid-IR absorption limits MIR to very thin layers (usually <50 µm), which is why MIR is used with ATR attachments and probes."
+      "text": "Pharmaceutical example: NIR reflection probe and Raman probe (785 nm excitation) inserted into the feed frame of a rotary tablet press for blend potency; NIR sees hydrogen bonds/polar groups, Raman the molecular backbone/non-polar groups; low-level fusion of synchronised spectra with PLS."
     },
     {
       "id": "S01-7-synergy",
@@ -370,10 +420,10 @@
       "text": "Fused data blocks differ in noise and information content; normalisation alone does not fix this, so dedicated data-fusion algorithms are needed."
     },
     {
-      "id": "S01-14-pharma",
-      "label": "S01 p.14–15",
+      "id": "S01-15-fusion-gain",
+      "label": "S01 p.15",
       "source": "S01_Multispectral_Laboratory.pdf",
-      "text": "Pharmaceutical example: NIR reflection probe and Raman probe (785 nm excitation) inserted into the feed frame of a rotary tablet press for blend potency; NIR sees hydrogen bonds/polar groups, Raman the molecular backbone/non-polar groups; low-level fusion of synchronised spectra with PLS."
+      "text": "The cited feed-frame study reports that fused NIR+Raman PLS models predicted API potency more accurately than single-method models (in that study)."
     }
   ],
   "removed_uncited": []

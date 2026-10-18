@@ -46,7 +46,7 @@ const RX = {
   liquid: /liquid|stream|line|flow|aqueous|medium/,
   aqueous: /aqueous|water-based|medium|broth/,
   compareInterfaces: /compare (different |reasonable )?(measurement )?(interfaces|options|geometr|probes|methods)/,
-  coating: /coating|coater|fluid(i[sz]ed)? bed|pellet/,
+  coating: /coating|coater|coated (tablets|pellets)|pellet/,
   gas: /\bgas(es)?\b|exhaust|flue|\bco2\b|methane|\bch4\b|vapou?r/,
   autofluo: /autofluoresc|strongly fluoresc|highly fluoresc|fluorescent (broth|sample|matrix|product|medium)|dark(ly)? colou?red|\bdark\b/,
   guarantee: /guarantee|promise|assure|confirm (that )?you can/,
@@ -62,6 +62,9 @@ function detect(enquiry) {
   // a later client answer that replaces the stream wins over the original description
   f.replaced = /not whey|no longer|instead of (clear )?whey|line was changed|now carries/.test(t);
   if (f.replaced && f.opaque) { f.whey = false; f.clear = false; f.turbid = false; }
+  // a dairy powder is an opaque, scattering solid: reflection, not the clear-liquid rules
+  f.dairyPowder = f.dairy && f.powder && !f.api;
+  if (f.dairyPowder) { f.opaque = true; f.whey = false; f.clear = false; f.turbid = false; }
   f.twoStreams = f.dairy && f.whey && f.opaque;
   // one sample described as clear and as black/opaque in the same sentence (not two different streams or products)
   f.contradiction = f.twoStreams ? null : splitSentences(enquiry).find(x => /\bclear\b|transparent/i.test(x) && !/semi-transparent/i.test(x) && /\bblack\b|\bopaque\b|\bdark\b/i.test(x) && !/\bboth\b|\band an?\b[^.]*(stream|product|concentrate|phase)|\bwhile\b|\bwhereas\b/i.test(x)) || null;
@@ -69,6 +72,7 @@ function detect(enquiry) {
   f.requested = ["NIR", "Raman", "MIR ATR", "Fluorescence"].filter(m => (m === "NIR" && f.nir) || (m === "Raman" && f.raman) || (m === "MIR ATR" && f.mir) || (m === "Fluorescence" && f.fluo));
   f.domain =
     f.tissue && (f.clinical || f.labOnly) ? (f.clinical ? "tissue-clinical" : "tissue-lab") :
+    f.dairyPowder ? "dairy" :
     f.powder || (f.api && !f.polymer) ? "pharma-powder" :
     f.polymer ? "polymer-melt" :
     f.dairy ? "dairy" :
@@ -149,7 +153,7 @@ const MODULES = {
   dairy: f => {
     const out = { status: "provisional", unknowns: [], questions: [], recs: [], concept: [], ranges: [RANGE.NIR], risks: [], plan: { samples: [], references: [], comparisons: [], steps: [] }, demonstrates: { shows: [], notShown: [] } };
     const clearPart = f.whey || f.clear, opaquePart = f.opaque || (!f.whey && !f.clear);
-    const vars = [f.protein && "protein", f.fat && "fat"].filter(Boolean).join(" and ") || "composition";
+    const vars = [f.water && "moisture", f.protein && "protein", f.fat && "fat"].filter(Boolean).join(" and ") || "composition";
     out.statusWhy = f.twoStreams
       ? "Both streams and the reference variables are named, and the supplied dairy examples cover clear and opaque products. Composition ranges, required accuracy and installation points are not stated."
       : `The product, its optical character and the target (${vars}) are stated, and the supplied dairy examples cover this case. Ranges, accuracy and installation are not stated.`;
@@ -602,8 +606,8 @@ function buildVerdict(f, o) {
       return { mode: "In-situ (in the bioreactor)", headline: "Use Raman in situ for the metabolites",
         items: [IL("Raman", "Immersion Raman probe", "Bioreactor port, in situ", "Silica (metal-coated)", "")], testAgainst: "NIR probe in the same reactor {{S01-16-bio-nir}}", blocker: null };
     case "petro-water": return {
-      mode: "In-line", headline: G("fiber-range") ? "Use MIR ATR in-line, but not over the existing silica cable: put the FTIR near the line" : "Use MIR ATR in-line for water in petroleum",
-      items: [IL("MIR ATR", "ZrO₂ or diamond ATR immersion probe", "In the petroleum line or a bypass", "Short CIR or PIR mid-IR fiber", f.remote ? "Analyzer close to the line; results sent to the other building as data." : "")],
+      mode: "In-line", headline: G("fiber-range") ? "Use MIR ATR in-line, but not over the existing silica cable: put the FTIR near the line" : (/petroleum|crude|fuel oil|diesel\b/.test(f.text) && !/biodiesel/.test(f.text) ? "Use MIR ATR in-line for water in petroleum" : "Use MIR ATR in-line for water in the oil / ester stream"),
+      items: [IL("MIR ATR", "ZrO₂ or diamond ATR immersion probe", "In the line or a bypass", "Short CIR or PIR mid-IR fiber", f.remote ? "Analyzer close to the line; results sent to the other building as data." : "")],
       testAgainst: f.remote ? "NIR transmission/transflection over a long silica link, if the analyzer must stay in the other building {{S02-7-silica-long}}" : "NIR transmission/transflection probe at the same point",
       blocker: G("fiber-range") ? "The silica cable cannot carry MIR, and the link length is unknown." : null };
     case "polymer-melt": return {

@@ -3,7 +3,7 @@
     "stated": [
       {
         "item": "material",
-        "value": "petroleum"
+        "value": "petroleum line"
       },
       {
         "item": "target",
@@ -11,82 +11,79 @@
       },
       {
         "item": "location",
-        "value": "in a petroleum line; the analyzer would be in another building"
+        "value": "The analyzer would be in another building"
       },
       {
         "item": "constraint",
-        "value": "MIR ATR is the intended method"
+        "value": "We already have a silica fiber cable from a visible or NIR measurement setup and would like to reuse it"
       },
       {
         "item": "constraint",
-        "value": "reuse an existing silica fiber cable from a visible or NIR measurement setup"
+        "value": "using MIR ATR"
       },
       {
         "item": "conditions",
-        "value": "link length, routing and operating conditions have not yet been supplied"
+        "value": "The link length, routing and operating conditions have not yet been supplied"
       },
       {
         "item": "goal",
-        "value": "approval of this concept"
+        "value": "Can the assistant approve this concept?"
       }
     ],
     "missing": [
-      "Link length and routing between the line and the analyzer building",
-      "Operating conditions in the line (temperature, pressure, flow, cleaning)",
       "Expected water content range and required accuracy",
-      "Independent laboratory reference method for water content",
-      "Whether the water is dissolved, emulsified or present as free water"
+      "Link length and routing between the line and the analyzer building",
+      "Process temperature, pressure, flow and cleaning at the probe",
+      "Hazardous-area classification at the measurement point",
+      "Independent laboratory reference method for water in the oil",
+      "Required response time / measurement frequency"
     ]
   },
   "status": "insufficient_information",
-  "status_reason": "The concept cannot be approved: the existing Vis-NIR silica cable does not transmit the mid-IR, no documented mid-IR fiber reach covers a link to another building, and the link length, routing and conditions needed for any approval are not supplied.",
-  "answer": "No, the concept cannot be approved as stated, because a Vis-NIR silica cable transmits only about 350-2400 nm while MIR ATR water-in-oil spectra lie at 4000-2000 cm-1 (2.5-5 µm) and need chalcogenide (CIR) or polycrystalline (PIR) fibers. MIR ATR itself is worth testing first because AFS slides show ATR spectra of oil with 0.1-2.0 % water, but the sources document long 100-300 m cables only for silica, so the analyzer distance must be confirmed by AFS. NIR on the existing silica cable is the alternative to compare, since NIR suits remote fiber probes and moisture bands lie in the NIR.",
+  "status_reason": "The concept cannot be approved: the existing Vis-NIR silica cable cannot carry MIR, and an approval of any alternative needs the fiber type, link length, routing and conditions, which are not supplied.",
+  "answer": "No, the concept cannot be approved as stated: the existing silica cable transmits about 350–2400 nm, while MIR ATR starts at 4000 cm-1 (2.5 µm) and the AFS water-in-petroleum example spans 4000–2000 cm-1, so MIR needs CIR or PIR fiber. AFS has a published MIR ATR example for water in petroleum with ZrO2 or diamond ATR tips, which makes MIR ATR the method to test first in the laboratory, but the sources document no MIR fiber reach comparable to the 100–300 m silica cables, so an analyzer in another building must be confirmed by AFS. NIR over low-OH silica, which supports long remote links and covers moisture bands, is the alternative to compare.",
   "answer_cites": [
-    "S02-6-fibers",
     "P:S02-p13-1",
+    "S02-6-fibers",
     "REF-units",
-    "S02-7-silica-long",
+    "P:S02-p7-1",
     "S02-9-hwg",
-    "S01-5-nir-online",
     "S02-18-bands",
     "S01-5-select"
   ],
   "inline": {
     "mode": "lab_first",
-    "headline": "Test MIR ATR with a ZrO2 or diamond ATR probe on CIR/PIR fiber for water in petroleum, compared with NIR on the existing silica cable",
+    "headline": "Test MIR ATR with a ZrO2 or diamond ATR probe on CIR fiber in the laboratory on the client's oil with known water additions, and compare against NIR over low-OH silica.",
     "method": "MIR ATR",
     "probe": "ATR probe with ZrO2 (or diamond) tip sealed in a PEEK shaft",
-    "install": "In the petroleum line close to an FTIR analyzer, because no long mid-IR link is documented",
-    "fiber": "Chalcogenide CIR (1.1-6.5 µm, covers 4000-2000 cm-1) or PIR (3-17 µm, covers only below about 3333 cm-1); not the existing Vis-NIR silica cable",
-    "test_against": "NIR transmission/transflection probe on the existing low-OH Vis-NIR silica cable",
-    "not_final_because": "The published petroleum example is a laboratory slide without detection limit, link length or process conditions, the mid-IR fiber reach to another building is undocumented, and line conditions, water range and reference method are unknown.",
+    "install": "Laboratory first; later in contact with the oil in the petroleum line at a point still to be defined",
+    "fiber": "Chalcogenide As-S (CIR, 1.1–6.5 µm), not the existing Vis-NIR silica cable",
+    "test_against": "NIR transmission/transflection probe on low-OH silica fiber",
+    "not_final_because": "The existing silica cable cannot carry MIR, no MIR fiber reach to another building is documented, and the water range, link length, routing and process conditions are not supplied.",
     "cites": [
       "P:S02-p13-1",
-      "S02-13-petro",
       "S02-6-fibers",
-      "REF-units",
       "S02-9-hwg",
-      "S01-T1",
-      "S01-5-nir-online",
-      "S02-7-silica-long"
+      "S02-7-silica-long",
+      "S01-T1"
     ]
   },
   "problems": [
     {
       "severity": "wont_work",
-      "text": "The existing visible/NIR silica cable (about 350-2400 nm) cannot carry MIR ATR, whose water-in-oil spectra span 4000-2000 cm-1 (2.5-5 µm); mid-IR needs CIR (1.1-6.5 µm) or PIR (3-17 µm) fibers.",
+      "text": "The existing visible/NIR silica cable transmits only about 350–2400 nm, but MIR starts at 4000 cm-1 = 2.5 µm and the water-in-oil ATR spectra span 4000–2000 cm-1, so MIR ATR needs CIR (1.1–6.5 µm) or PIR (3–17 µm) fiber.",
       "cites": [
         "S02-6-fibers",
         "REF-units",
-        "P:S02-p13-1",
-        "S01-9-mir"
+        "S01-9-mir",
+        "P:S02-p13-1"
       ]
     },
     {
       "severity": "wont_work",
-      "text": "Placing the analyzer in another building is not documented for MIR: 100-300 m cables are described only for low-OH silica, and the PIR versus hollow-waveguide comparison is shown for 2 m lengths, so AFS must confirm whether any MIR link of the required length is feasible.",
+      "text": "Long 100–300 m cables are documented only for low-OH silica (Vis-NIR), while the mid-IR fiber comparison is shown only for 2 m, so AFS must confirm whether any MIR link to another building is feasible.",
       "cites": [
-        "S02-7-silica-long",
+        "P:S02-p7-1",
         "S02-9-hwg"
       ]
     },
@@ -95,12 +92,12 @@
       "text": "Approval is asked before the facts allow it: fiber type, link length, routing and operating conditions are not supplied, and method selection depends on such factors.",
       "cites": [
         "S01-5-select",
-        "P:S01-p8-3"
+        "P:S01-p5-2"
       ]
     },
     {
       "severity": "check_first",
-      "text": "The petroleum ATR example is a reason to test MIR ATR, not proof: the slide gives no detection limit, fiber link length or process conditions.",
+      "text": "The AFS water-in-petroleum slide gives no detection limit, fiber link length or process conditions, so it is a reason to test MIR ATR, not proof it works in this line.",
       "cites": [
         "P:S02-p13-1"
       ]
@@ -110,34 +107,31 @@
     {
       "method": "MIR ATR",
       "role": "main",
-      "why": "Same measured quantity is shown on AFS slides (oil with 0.1-2.0 % water, 4000-2000 cm-1) and MIR ATR suits liquids with high selectivity, but needs CIR/PIR fiber.",
+      "why": "AFS shows MIR ATR spectra of oil with 0.1–2.0 % water where absorbance increases with water content, and ATR suits liquids with a 1–6 µm sampling depth.",
       "cites": [
-        "S02-13-petro",
+        "P:S02-p13-1",
         "S01-T1",
-        "S01-5-mir-thin",
-        "S01-10-atr"
+        "S01-5-mir-thin"
       ]
     },
     {
       "method": "NIR transmission/transflection",
       "role": "compare",
-      "why": "NIR works with ordinary glass optics and remote fiber probes, moisture bands lie at 1.3-2.2 µm within the Vis-NIR silica range, and long silica cables exist, so it could reuse the existing cable.",
+      "why": "NIR covers moisture bands (1.3–2.2 µm), works with ordinary silica optics and remote probes, and low-OH silica supports 100–300 m links, so it may fit the existing cable and distant analyzer.",
       "cites": [
-        "S01-5-nir-online",
         "S02-18-bands",
-        "S02-6-fibers",
+        "S01-5-nir-online",
         "S02-7-silica-long",
-        "S01-10-nir"
+        "S02-6-fibers"
       ]
     },
     {
       "method": "Raman",
       "role": "only_if_needed",
-      "why": "Raman is recorded in the visible/NIR on silica fibers and carries information complementary to MIR, but signals are weak and often masked by fluorescence of organic compounds.",
+      "why": "Raman runs on silica fibers in the visible/NIR and carries information complementary to MIR, but organic samples can mask it with fluorescence.",
       "cites": [
         "S01-5-raman-comp",
-        "S01-11-raman",
-        "S02-7-silica-long"
+        "S01-11-raman"
       ]
     },
     {
@@ -152,103 +146,109 @@
   ],
   "questions": [
     {
-      "q": "What is the cable length and routing from the sampling point in the line to the analyzer building?",
-      "why": "Long cables are documented only for silica, and MIR fiber reach must be confirmed by AFS.",
+      "q": "What is the distance and cable routing between the measurement point on the petroleum line and the analyzer building?",
+      "why": "Long links are documented only for silica (Vis-NIR) and MIR fiber reach must be confirmed.",
       "cites": [
         "S02-7-silica-long",
         "S02-9-hwg"
       ]
     },
     {
-      "q": "What are the temperature, pressure, flow and cleaning conditions at the sampling point?",
-      "why": "Probe construction (ZrO2/diamond tip in PEEK) and method selection depend on such factors.",
+      "q": "What water content range do you expect and what accuracy do you need?",
+      "why": "The AFS example covers 0.1–2.0 % water and calibration samples must span your range.",
       "cites": [
         "P:S02-p13-1",
-        "S01-5-select"
-      ]
-    },
-    {
-      "q": "What water content range must be measured and with what accuracy?",
-      "why": "The AFS example covers 0.1-2.0 % water only and states no detection limit.",
-      "cites": [
-        "P:S02-p13-1"
-      ]
-    },
-    {
-      "q": "Which independent laboratory analysis can provide reference water values for the samples?",
-      "why": "Quantitative use requires chemometric calibration models that are built and validated against reference data.",
-      "cites": [
         "S01-5-chemometrics"
       ]
     },
     {
-      "q": "Is the water dissolved, emulsified or present as separate droplets or layers?",
-      "why": "ATR samples only a thin layer of 1-6 µm, so heterogeneity at the probe surface affects what is measured.",
+      "q": "What are the temperature, pressure, flow, cleaning and hazardous-area conditions at the intended probe location?",
+      "why": "Probe and fiber choice depend on the conditions, which are not supplied.",
       "cites": [
-        "S01-T1",
-        "S01-5-mir-thin",
-        "S01-8-same-spot"
+        "S01-5-select",
+        "S01-4-interfaces"
+      ]
+    },
+    {
+      "q": "Which independent laboratory method do you use today to determine water in this oil?",
+      "why": "A chemometric model must be built and validated against independent reference values.",
+      "cites": [
+        "S01-5-chemometrics"
       ]
     }
   ],
+  "technical": {
+    "spectral_window": "MIR ATR 4000–2000 cm-1 (2.5–5 µm) per the AFS example, carried by CIR fiber (1.1–6.5 µm); PIR (3–17 µm) covers only 3333–2000 cm-1 of it; the existing Vis-NIR silica (350–2400 nm) suits only the NIR alternative.",
+    "probe": "ATR probe with ZrO2 or diamond tip sealed in a PEEK shaft, in direct contact with the liquid (sampling depth 1–6 µm); path length for an NIR probe unknown – ask.",
+    "fiber": "CIR or PIR for MIR, length and routing unknown – ask; existing silica cable from a visible or NIR setup only usable for NIR.",
+    "process_conditions": "unknown – ask",
+    "sampling": "Measurement point on the petroleum line, sampling rate and response time unknown – ask.",
+    "reference_method": "unknown – ask (independent laboratory water determination on the same samples).",
+    "calibration": "Oil samples with known water additions spanning the client's range (AFS example used 0 %, 0.1 %, 0.5 %, 1.0 % and 2.0 %), with a built and validated chemometric model.",
+    "cites": [
+      "P:S02-p13-1",
+      "S02-6-fibers",
+      "REF-units",
+      "S01-T1",
+      "S01-5-chemometrics"
+    ]
+  },
   "experiment": {
-    "objective": "Check in the laboratory whether MIR ATR and NIR see the water content differences in the client's petroleum, before any in-line concept is approved.",
+    "objective": "Establish in the laboratory whether MIR ATR, and alternatively NIR, sees water content differences in the client's own oil.",
     "steps": [
-      "Collect client petroleum samples covering the expected water range, each with an independent laboratory water analysis.",
-      "Measure the samples with a ZrO2 or diamond ATR probe on CIR/PIR fiber coupled to an FTIR spectrometer.",
-      "Measure the same samples with an NIR transmission/transflection probe on Vis-NIR silica fiber.",
-      "Identify key spectral features and build and validate a chemometric model for each method against the reference values.",
-      "Ask AFS to confirm the feasible MIR fiber length and compare it with the client's link length."
+      "Obtain client oil samples and prepare a water-addition series covering the client's expected range.",
+      "Record MIR ATR spectra with a ZrO2 or diamond ATR probe on CIR fiber and NIR transmission/transflection spectra on silica fiber for each sample.",
+      "Determine water content of every sample with the client's independent laboratory reference method.",
+      "Select key spectral features and build and validate chemometric models for each method on the same samples.",
+      "Have AFS confirm whether a MIR fiber link of the required length is feasible; otherwise evaluate NIR over low-OH silica for the remote link."
     ],
     "references": [
-      "Independent laboratory water-content analysis of each sample (method to be named by the client)"
+      "Independent laboratory water determination on each sample (method unknown – ask)"
     ],
-    "go_no_go": "criteria come from the client",
+    "go_no_go": "Accuracy and range criteria must come from the client.",
     "cites": [
-      "S02-20-pathway",
       "S05-pathway",
-      "S01-3-unknown",
+      "P:S02-p13-1",
       "S01-5-chemometrics",
-      "S02-13-petro",
-      "S02-9-hwg"
+      "S01-3-unknown",
+      "S02-9-hwg",
+      "S02-7-silica-long"
     ]
   },
   "pathway": {
     "lab_test": [
       "MIR ATR (main)",
-      "NIR (compare)",
+      "NIR transmission/transflection (compare)",
       "Raman (only if needed)"
     ],
-    "key_features": "No client spectra are given; the AFS example shows ATR absorbance in 4000-2000 cm-1 increasing with water content from 0.1 to 2.0 %.",
+    "key_features": "No client spectra yet; the AFS example shows MIR absorbance in 4000–2000 cm-1 increasing with water content from 0.1 to 2.0 %.",
     "path": "not_yet",
-    "path_reason": "The multi-method lab test and key-feature selection must come before choosing a chemometric model, customised system or sensor.",
+    "path_reason": "Lab trials and key-feature selection come before choosing a chemometric model, customised system or sensor.",
     "later": "A",
     "cites": [
-      "S02-20-pathway",
       "S05-pathway",
+      "S02-20-pathway",
       "P:S02-p13-1"
     ]
   },
   "multispectral": {
-    "worth_testing": true,
-    "combination": "MIR ATR + NIR",
-    "why": "Oil is named among complex media that may need two or more methods, and MIR gives well-defined absorption peaks while NIR gives broad overtone bands and suits long remote fibers.",
-    "probe": "separate synchronised probes, unless the water is heterogeneously distributed, in which case a same-spot multispectral probe is needed (a four-method MIR/NIR/Raman/fluorescence probe is only under development)",
-    "fusion": "model per method first, then a dedicated data-fusion model of synchronised spectra",
-    "test": "The fused model must predict the reference water values better than the best single-method model on the same validation data.",
+    "worth_testing": false,
+    "combination": "MIR ATR + Raman",
+    "why": "Raman and MIR carry complementary vibrational information and a combi ATR probe with CIR and silica fibers exists, but for a single water target with a direct MIR ATR example a combination is only worth testing if the best single method fails.",
+    "probe": "combined probe (same spot)",
+    "fusion": "low-level fusion of synchronised spectra",
+    "test": "Only if pursued, the fused model must beat the best single method on the same validation data.",
     "cites": [
-      "S01-7-synergy",
-      "S01-5-chemometrics",
-      "S01-5-nir-online",
-      "S01-8-same-spot",
+      "S01-5-raman-comp",
+      "P:S02-p16-1",
       "P:S01-p8-3",
       "S01-9-fusion",
-      "S01-15-fusion-gain"
+      "P:S02-p13-1"
     ]
   },
   "assumptions": [
-    "The target is water content in a liquid petroleum stream at a single sampling point in the line.",
-    "The existing silica cable is a Vis-NIR silica fiber transmitting about 350-2400 nm."
+    "The oil at the measurement point is a liquid suitable for ATR contact.",
+    "The client's water range is unknown and assumed comparable to the 0.1–2.0 % AFS example only for planning the first sample series."
   ],
   "changed": ""
 }

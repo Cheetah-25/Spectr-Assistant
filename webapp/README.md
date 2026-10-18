@@ -20,6 +20,18 @@ It does not replace the expert: the output is a structured draft for the first c
 
 Each answer can be downloaded as Markdown or JSON. Attached spectra (CSV/TXT) are analysed in the browser (SNV, Savitzky–Golay, peaks, PCA, band matching to source-cited bands, fiber coverage) and fed into the assessment.
 
+## Long project documents (e.g. a 30-page project paper)
+
+Attach a PDF, DOCX or TXT longer than about 3,000 characters and the app switches to document mode:
+
+1. **Read and index.** pdf.js / mammoth extract the text per page (up to 80 pages); each page is split into ~700-character passages with ids `P:DOC-p<page>-<n>`, cited as `Doc p.N`.
+2. **Extract technical statements in code.** Regular expressions find temperatures, pressures, flows, concentration ranges, wavelengths, pipe sizes and distances, pH, viscosity, response times, ATEX zones, cleaning, materials, reference methods, optical state and methods already in use, each with its page. They appear as a table on the document card and as the requirements list of the instant answer.
+3. **Select what the model reads.** Every passage holding an extracted parameter (page order), topped up by BM25 hits, at most 16, plus the AFS passages. A 30-page paper becomes a prompt of about 44,000 characters instead of the whole document.
+4. **Assess in detail.** The prompt asks for concrete values with units and page refs, and a **technical specification**: spectral window, probe and window material, fiber family and length, process conditions per measurement point, sampling and response, reference method, first calibration design. The spectral window is also computed in code from the method and fiber ranges.
+5. **Check.** The client document is evidence only for facts about the client's process, never that a method works. Numbers must appear in the document, the enquiry or the AFS sources (unit conversions µm ↔ cm⁻¹, nm ↔ cm⁻¹ and ppm ↔ % are accepted); the technical specification must cite its sources or it is removed.
+
+Test (`tests/long_document/`): a synthetic 30-page project specification for a biodiesel line (three measurement points, ATEX Zone 1, analyzer house 45–60 m away, GC and Karl Fischer references, 900 retained samples, plus 20 pages of project-management text). The app extracts 55 technical statements; the model answers cite 9–10 document pages and 36–39 sources in total and report the measurement points, ranges, distances, reference methods and retained samples correctly. A first version missed the reference-method page because only the 8 best BM25 passages were sent; sending every parameter-bearing passage fixed it.
+
 ## Architecture
 
 ```
@@ -77,7 +89,7 @@ enquiry (chat, .txt/.pdf/.docx, optional spectra)
 | `generate.js` | Regenerates H01–H06 with the app's pipeline via the Anthropic API |
 | `bench/` | Repeated runs (strong, 5× fast, no-pipeline baseline) and the trap scorecard results |
 | `outputs/` | H01–H06 answers (`.md`, `.json`, raw model JSON) and `run_log.json` |
-| `tests/` | Engine check, 10 hard cases with model answers, `check_answers.js`, `scorecard.js` (trap scorecard) |
+| `tests/` | Engine check, 10 hard cases with model answers, `check_answers.js`, `scorecard.js` (trap scorecard), `long_document/` (30-page PDF test) |
 
 ## Setup
 
@@ -103,18 +115,18 @@ node tests/scorecard.js bench                                    # trap scorecar
 
 ## Results
 
-**H01–H06** (`outputs/`, Claude Opus, same prompt for every case, unedited; all passed every check without repair, nothing removed):
+**H01–H06** (`outputs/`, Claude Opus with the current prompt including the technical specification, same prompt for every case, unedited; all passed every check without repair, nothing removed; one derived value in H05 is flagged for expert review):
 
 | Case | Method to test first | Status | Sources cited |
 |---|---|---|---|
-| H01 New formulation after NIR pilot | NIR with a new calibration for the new blend; fused NIR + Raman as comparison | Provisional | 18 |
-| H02 Two dairy streams | NIR: transmission/transflection for whey, reflection for concentrate | Provisional | 23 |
+| H01 New formulation after NIR pilot | NIR + Raman with a new calibration for the new blend, against NIR alone | Provisional | 19 |
+| H02 Two dairy streams | NIR: transmission/transflection for whey, diffuse reflection for concentrate | Provisional | 26 |
 | H03 Fluorescence for glucose and viable biomass | Raman for glucose, NIR as comparison; fluorescence not a direct readout | Provisional | 26 |
-| H04 Silica link for petroleum MIR ATR | MIR ATR with a mid-IR fiber; silica cable cannot carry MIR; not approved | Insufficient information | 26 |
-| H05 Undefined off-spec liquid | Multi-method lab screen led by MIR ATR | Insufficient information | 27 |
-| H06 Research sensor for surgery | NIR diffuse reflectance ex vivo only | Outside supported scope | 31 |
+| H04 Silica link for petroleum MIR ATR | MIR ATR on CIR fiber in the lab; silica cable cannot carry MIR; not approved | Insufficient information | 24 |
+| H05 Undefined off-spec liquid | MIR ATR lab screen of in-spec vs off-spec samples, against Raman and NIR | Insufficient information | 30 |
+| H06 Research sensor for surgery | NIR diffuse reflection on paired ex vivo samples only | Outside supported scope | 31 |
 
-**Benchmark** (`bench/README.md`): over 5 fast-tier runs and the strong run, every valid answer caught its case's trap and named a method. A no-pipeline baseline (same model, enquiry only) also caught the traps, but cited nothing and 78% of its answers contained figures found in neither the enquiry nor the AFS materials; with the pipeline: 0%.
+**Benchmark** (`bench/README.md`): over 5 fast-tier runs and two strong runs, every valid answer caught its case's trap and named a method. A no-pipeline baseline (same model, enquiry only) also caught the traps, but cited nothing and 78% of its answers contained figures found in neither the enquiry nor the AFS materials; with the pipeline: 0%.
 
 **Hard cases** (`tests/hard_cases.json`, 10 new enquiries: Raman on a fluorescent broth with a guarantee demand, 40 m chalcogenide link at 260 °C, contradictory sample description, vague request, prompt injection, intraoperative tumour margins, German enquiry, exhaust gas, tablet coating, follow-up that changes the stream). All answers named a method, gave no guarantee or invented detection limit, ignored the injection; one invented citation id was caught and fixed by the repair pass.
 

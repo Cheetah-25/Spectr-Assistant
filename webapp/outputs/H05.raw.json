@@ -6,12 +6,12 @@
         "value": "a liquid process"
       },
       {
-        "item": "target",
-        "value": "suspected contamination; we cannot yet name the contaminant or the affected quality variable"
+        "item": "conditions",
+        "value": "occasionally goes off specification"
       },
       {
-        "item": "conditions",
-        "value": "the process occasionally goes off specification"
+        "item": "target",
+        "value": "we suspect contamination, but we cannot yet name the contaminant or the affected quality variable"
       },
       {
         "item": "goal",
@@ -19,49 +19,53 @@
       },
       {
         "item": "goal",
-        "value": "what information and first experiment should come before that decision"
+        "value": "What information and first experiment should come before that decision?"
       }
     ],
     "missing": [
-      "identity or class of the suspected contaminant and which quality variable goes off specification",
-      "measurement location in the process (pipe, vessel, line) and process conditions (temperature, pressure, flow)",
-      "optical properties of the liquid (transparent, turbid, opaque, aqueous or organic)",
-      "retained good and off-specification samples and the independent laboratory analysis that defines off-specification",
-      "acceptance criteria (what difference must be detected, how fast)"
+      "Composition of the normal liquid (main components, solvent, water content)",
+      "Identity or class of the suspected contaminant and the quality variable that goes off specification",
+      "Measurement location in the process (pipe, vessel, line) and process conditions (temperature, pressure, flow, cleaning, hazardous area)",
+      "Optical properties of the liquid (transparent, turbid, opaque, fluorescent)",
+      "Available independent laboratory reference analysis and retained in-spec and off-spec samples",
+      "Required decision (detect/alarm vs. quantify), concentration range and response time"
     ]
   },
   "status": "insufficient_information",
-  "status_reason": "An exact configuration cannot be approved now because the contaminant and target variable are undefined, and method selection requires knowing the analytical problem; for incompletely known samples several optical methods must be tested first.",
-  "answer": "Do not fix a method or sensor configuration yet: with an unknown contaminant it is not possible to predict which method will work, so several optical methods should first be compared on good and off-specification samples of your liquid. The first experiment is a multi-method laboratory test (MIR ATR, NIR, Raman, fluorescence/UV-Vis) followed by selection of the key spectral features, and only then a chemometric model or a customised sensor. Before that we need the off-spec samples, an independent laboratory analysis of them, and the measurement location and process conditions.",
+  "status_reason": "An exact configuration cannot be approved now because the contaminant and quality variable are undefined, and method selection requires knowing the analytical problem; for samples of incompletely known composition several methods must be tested first.",
+  "answer": "No single method or exact sensor configuration can be recommended yet, because selecting a method requires knowing the analytical problem and for a liquid of incompletely known composition several optical methods must be tested first. The first step is a multi-method laboratory comparison (MIR ATR, NIR, Raman, fluorescence/UV-Vis) on retained in-spec and off-spec samples, followed by identifying key spectral features and only then choosing the method, probe and fiber. Before that, the client should supply the liquid composition, the off-spec quality variable, the measurement location and process conditions, and an independent laboratory reference.",
   "answer_cites": [
-    "S01-3-unknown",
     "S01-5-select",
+    "S01-3-unknown",
     "S02-3-select",
     "S05-pathway",
-    "S02-20-pathway"
+    "P:S02-p3-1"
   ],
   "inline": {
     "mode": "lab_first",
-    "headline": "Test MIR ATR first in a multi-method laboratory screening of good versus off-specification liquid samples before choosing any in-line configuration.",
+    "headline": "Test MIR ATR first in the laboratory on in-spec versus off-spec liquid samples, compared with Raman and NIR, before choosing any in-line configuration.",
     "method": "MIR ATR",
-    "probe": "MIR ATR fiber probe for liquids (immersion in the sample in the lab; process interface to be chosen later)",
-    "install": "laboratory first; in-line location to be defined once the method is proven and the client names the measurement point",
-    "fiber": "polycrystalline (PIR) fiber, 3-17 um",
-    "test_against": "NIR transmission/transflection probe on silica fiber",
-    "not_final_because": "The contaminant, target variable, liquid optical properties, location and process conditions are unknown, so MIR ATR is only the first screening candidate (well-defined absorption peaks, high selectivity for liquids) and must be compared with NIR, Raman and fluorescence on the same samples against independent laboratory analysis.",
+    "probe": "MIR ATR fiber probe in contact with the liquid (ATR element material to be selected once the liquid is known, e.g. ZrO2 or diamond as used in AFS examples)",
+    "install": "unknown – ask (laboratory samples first; in-line point to be defined after the method is selected)",
+    "fiber": "Polycrystalline (PIR) fiber, 3–17 µm",
+    "test_against": "Raman",
+    "not_final_because": "The contaminant, quality variable, liquid composition, optical properties, location and process conditions are unknown, so MIR ATR is only the first method to screen alongside NIR, Raman and fluorescence, and the ATR probe sees only a very thin layer (usually <50 µm) of the liquid.",
     "cites": [
+      "S01-9-mir",
       "S01-5-chemometrics",
       "S01-T1",
       "S01-10-atr",
       "S02-8-pir",
       "S02-6-fibers",
+      "S01-5-mir-thin",
+      "S02-13-petro",
       "S01-3-unknown"
     ]
   },
   "problems": [
     {
       "severity": "check_first",
-      "text": "An exact method and sensor configuration is requested before the contaminant or quality variable is known; choosing a method requires knowing the analytical problem, and for samples of unknown composition several methods must be tested first, so an immediate configuration would rest on invented facts.",
+      "text": "An exact configuration is asked before the target is known, but choosing a method requires knowing the analytical problem and for samples of unknown composition several methods are tested first, so an immediate exact configuration would rest on invented facts.",
       "cites": [
         "S01-5-select",
         "S01-3-unknown"
@@ -69,10 +73,25 @@
     },
     {
       "severity": "check_first",
-      "text": "Each method needs its own interface (ATR, transmission, transflection, reflection), and the task decides method and technique, so probe type and installation cannot be specified until the liquid's properties and the target are known.",
+      "text": "The interface (ATR, transmission, transflection or reflection probe) depends on the method and the liquid's properties, which are not yet known, so probe type and path length cannot be fixed now.",
       "cites": [
         "S01-4-interfaces",
         "S01-16-uv-od"
+      ]
+    },
+    {
+      "severity": "check_first",
+      "text": "Detecting a contaminant with broad-band methods (NIR, UV, fluorescence) needs chemometric models built and validated against independent references, so off-spec samples and a laboratory reference analysis are required before any decision.",
+      "cites": [
+        "S01-5-chemometrics"
+      ]
+    },
+    {
+      "severity": "check_first",
+      "text": "NIR may lack sensitivity below 0.1 % and most chemicals do not fluoresce, so the contaminant level and nature decide which methods can see it at all.",
+      "cites": [
+        "S01-16-bio-nir",
+        "S01-5-fluo"
       ]
     }
   ],
@@ -80,118 +99,133 @@
     {
       "method": "MIR ATR",
       "role": "main",
-      "why": "Mid-IR gives well-defined absorption peaks with high selectivity for liquids, which helps reveal what differs in an unknown contaminated sample, and ATR fiber probes analyse liquids without sampling.",
+      "why": "Mid-IR gives well-defined absorption peaks with high selectivity for liquids, which helps reveal an unknown chemical difference between in-spec and off-spec samples.",
       "cites": [
+        "S01-9-mir",
         "S01-5-chemometrics",
         "S01-T1",
-        "S01-10-atr",
-        "S01-9-mir"
-      ]
-    },
-    {
-      "method": "NIR (transmission/transflection)",
-      "role": "compare",
-      "why": "NIR is the most common online fiber-probe method and transmission/transflection suits liquids, but its broad overlapping bands need chemometrics and it may lack sensitivity below 0.1 %.",
-      "cites": [
-        "S01-10-nir",
-        "S01-T1",
-        "S01-16-bio-nir"
+        "S01-10-atr"
       ]
     },
     {
       "method": "Raman",
       "role": "compare",
-      "why": "Raman carries information complementary to MIR and suits aqueous media, but needs special probes and can be masked by fluorescence.",
+      "why": "Raman probes liquids with high selectivity and carries information complementary to MIR, but fluorescence of organic compounds can mask its weak signal.",
       "cites": [
+        "S01-T1",
         "S01-5-raman-comp",
-        "S01-16-bio-raman",
         "S01-11-raman"
+      ]
+    },
+    {
+      "method": "NIR",
+      "role": "compare",
+      "why": "NIR is the most common online fiber-probe method with long silica cables, but its broad overlapping bands need chemometrics and it may lack sensitivity below 0.1 %.",
+      "cites": [
+        "S01-10-nir",
+        "S02-7-silica-long",
+        "S01-16-bio-nir"
       ]
     },
     {
       "method": "Fluorescence / UV-Vis",
       "role": "only_if_needed",
-      "why": "Both are very sensitive but have low selectivity, and fluorescence only works if the contaminant fluoresces, so they are screened only to check whether the contaminant gives such a signal.",
+      "why": "Both are highly sensitive but have low selectivity and fluorescence only works if the contaminant or liquid contains fluorescing substances.",
       "cites": [
+        "S01-T1",
         "S01-5-fluo",
-        "S01-5-uv",
-        "S01-T1"
+        "S01-5-uv"
       ]
     }
   ],
   "questions": [
     {
-      "q": "Which quality variable goes off specification, and how is off-specification currently determined in your laboratory?",
-      "why": "Method selection requires a defined analytical problem and an independent reference analysis to build and validate models.",
+      "q": "What is the normal composition of the liquid and is it transparent, turbid or opaque?",
+      "why": "The liquid's composition and optical density decide the method and probe interface (ATR, transmission or reflection).",
       "cites": [
-        "S01-5-select",
+        "S01-4-interfaces",
+        "S01-16-uv-od"
+      ]
+    },
+    {
+      "q": "Which quality variable goes off specification, and what candidate contaminants or sources do you suspect?",
+      "why": "Selecting a spectral method requires knowing the analytical problem.",
+      "cites": [
+        "S01-5-select"
+      ]
+    },
+    {
+      "q": "Can you provide retained in-spec and off-spec samples together with independent laboratory analyses of them?",
+      "why": "Several methods must be compared on real samples and chemometric models need independent reference values to be built and validated.",
+      "cites": [
+        "S01-3-unknown",
         "S01-5-chemometrics"
       ]
     },
     {
-      "q": "Can you supply retained good and off-specification samples of the liquid, together with any suspected contaminant candidates?",
-      "why": "Comparing spectra of real samples with several methods is how the suitable method is selected for incompletely known compositions.",
+      "q": "Where would the probe be installed and what are the temperature, pressure, flow, cleaning and hazardous-area conditions there?",
+      "why": "Fiber probes allow remote in-line monitoring, but probe and fiber choice depend on the installation conditions.",
       "cites": [
-        "S01-3-unknown",
-        "S02-3-select"
+        "P:S02-p3-1",
+        "S02-7-silica-long"
       ]
     },
     {
-      "q": "Is the liquid transparent, turbid or opaque, and is it aqueous or organic?",
-      "why": "Optical density and medium decide between transmission/transflection, ATR or reflection probes and affect Raman suitability.",
+      "q": "Do you need an alarm when the liquid deviates, or a quantitative value, and how fast must it respond?",
+      "why": "The task decides the method and technique and whether a classification or quantitative model is built.",
       "cites": [
-        "S01-16-uv-od",
         "S01-4-interfaces",
-        "S01-16-bio-raman"
-      ]
-    },
-    {
-      "q": "Where would the sensor be installed and what are the temperature, pressure and distance to a possible analyzer location?",
-      "why": "Probe interface and fiber type (e.g. long silica cables or high-temperature coated fibers) depend on location and conditions.",
-      "cites": [
-        "S02-7-silica-long",
-        "S01-15-fiber-remote"
-      ]
-    },
-    {
-      "q": "How small a deviation must be detected, and how quickly must an off-spec event be flagged?",
-      "why": "Sensitivity differs strongly between methods (e.g. NIR may lack sensitivity below 0.1 %), so acceptance criteria drive the choice.",
-      "cites": [
-        "S01-16-bio-nir",
-        "S01-T1"
+        "S01-5-chemometrics"
       ]
     }
   ],
+  "technical": {
+    "spectral_window": "MIR ATR: mid-IR 4000–400 cm-1, of which PIR fiber transmits about 3–17 µm (approx. 3300–590 cm-1); Raman excitation and NIR window unknown – ask until screening",
+    "probe": "MIR ATR contact probe (ATR element material unknown – ask; ZrO2 or diamond tips are used in AFS examples); path length for transmission probes unknown – ask",
+    "fiber": "PIR fiber for MIR ATR; Vis-NIR silica for NIR/Raman; length and routing unknown – ask",
+    "process_conditions": "unknown – ask",
+    "sampling": "unknown – ask (laboratory samples first)",
+    "reference_method": "unknown – ask (independent laboratory analysis of the off-spec quality variable)",
+    "calibration": "unknown – ask (retained in-spec and off-spec samples first; design after the target variable is known)",
+    "cites": [
+      "S01-9-mir",
+      "S02-6-fibers",
+      "REF-units",
+      "S02-13-petro",
+      "S01-5-chemometrics"
+    ]
+  },
   "experiment": {
-    "objective": "Find out which optical method, or combination, sees a reproducible spectral difference between good and off-specification liquid samples.",
+    "objective": "Find out which optical method sees a spectral difference between retained in-spec and off-spec liquid samples, before selecting any in-line configuration.",
     "steps": [
-      "Collect retained good and off-specification samples and have each analysed independently in the client's laboratory to define its quality status.",
-      "Measure all samples with the multi-spectral fiber system: MIR ATR, NIR transmission/transflection, Raman and fluorescence/UV-Vis.",
-      "Compare spectra by multivariate analysis to see which method separates good from off-spec samples and identify the key spectral features.",
-      "If two methods show complementary differences, fuse their data and check whether the combination beats the best single method on the same validation samples.",
-      "Report the recommended method and only then define probe, fiber and in-line location for a process trial."
+      "Collect retained in-spec and off-spec liquid samples and have them analysed by an independent laboratory reference method chosen by the client.",
+      "Measure all samples with the AFS multi-spectral fiber system using MIR ATR, Raman, NIR and fluorescence/UV-Vis probes.",
+      "Compare the spectra by multivariate analysis to identify which method and which spectral regions separate in-spec from off-spec samples.",
+      "Use the identified key spectral features to propose the method, probe interface, fiber and measurement point for a first in-line trial."
     ],
     "references": [
-      "independent laboratory analysis of each sample's quality status / contaminant (method to be named by the client)"
+      "Independent laboratory analysis of each sample (method to be named by the client)",
+      "Client's own in-spec/off-spec classification of each sample"
     ],
-    "go_no_go": "criteria come from the client",
+    "go_no_go": "Criteria come from the client (required detection level and separation of off-spec samples).",
     "cites": [
+      "S02-3-select",
       "S05-pathway",
       "S02-20-pathway",
       "S01-3-unknown",
-      "S01-9-fusion"
+      "P:S02-p3-1"
     ]
   },
   "pathway": {
     "lab_test": [
       "MIR ATR (main)",
-      "NIR (compare)",
       "Raman (compare)",
+      "NIR (compare)",
       "Fluorescence / UV-Vis (only if needed)"
     ],
-    "key_features": "Not yet known; to be selected by multivariate analysis of good versus off-specification spectra.",
+    "key_features": "Not yet known; to be identified by multivariate analysis of in-spec versus off-spec spectra.",
     "path": "not_yet",
-    "path_reason": "The multi-method lab test and key-feature selection must come first before a chemometric model, customised system or sensor is chosen.",
+    "path_reason": "Path selection follows the multi-method lab test and key-feature selection, which have not been done.",
     "later": "A",
     "cites": [
       "S05-pathway",
@@ -201,22 +235,23 @@
   "multispectral": {
     "worth_testing": true,
     "combination": "MIR ATR + Raman",
-    "why": "Raman carries information complementary to MIR, and combining heterogeneous information from two methods is the basis of multispectral synergy in complex media.",
-    "probe": "separate synchronised probes for the lab screening; a combined probe (same spot) only if the liquid proves heterogeneous or rapidly changing",
-    "fusion": "model per method first, then low-level fusion of synchronised spectra with a dedicated data-fusion algorithm",
-    "test": "The fused model must separate good and off-spec samples better than the best single method on the same validation data.",
+    "why": "Raman carries information complementary to MIR, and combining heterogeneous information from two methods is the basis of the multispectral synergy effect.",
+    "probe": "Separate time-synchronised probes if the liquid is homogeneous at the measuring point; a combined multispectral probe if it is heterogeneous or changes rapidly.",
+    "fusion": "Low-level fusion of synchronised spectra with dedicated data-fusion algorithms, compared against a model per method.",
+    "test": "Build single-method and fused models on the same validation samples and accept the combination only if it beats the best single method.",
     "cites": [
       "S01-5-raman-comp",
       "P:S01-p7-3",
       "S01-8-same-spot",
       "P:S01-p14-1",
       "S01-9-fusion",
-      "S01-14-pharma"
+      "S01-14-pharma",
+      "S01-15-fusion-gain"
     ]
   },
   "assumptions": [
-    "The off-specification events are caused by a chemical contaminant or composition change that may be optically detectable; this is the client's suspicion, not confirmed.",
-    "Representative good and off-specification samples can be retained for laboratory testing."
+    "The process liquid can be sampled and retained in-spec and off-spec samples can be supplied for laboratory testing.",
+    "The contaminant is chemical in nature and may produce a spectral difference; this is unverified."
   ],
   "changed": ""
 }

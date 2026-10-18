@@ -13,7 +13,8 @@ Each final-evaluation case contains one central trap. `tests/scorecard.js` check
 
 ## Groups
 
-* **strong/** – our pipeline, Claude Opus (strongest tier). These are the submitted answers in `outputs/`.
+* **strong_v2/** – our pipeline, Claude Opus, current prompt (adds the technical specification). These are the submitted answers in `outputs/`.
+* **strong/** – our pipeline, Claude Opus, the earlier prompt.
 * **fast/** – our pipeline, Claude fast tier (the tier the live demo uses), 5 independent runs.
 * **baseline/** – the same fast model with only the enquiry and the six tasks of the brief: no premise checks, no retrieval, no AFS sources, no citation rule. 2 runs.
 
@@ -21,21 +22,21 @@ All groups use the identical prompt per case within the group; no answer was edi
 
 ## Results
 
-| | Our pipeline, strong | Our pipeline, fast (5 runs) | Baseline, fast (no pipeline) |
-|---|---|---|---|
-| Answers | 6 | 30 | 12 |
-| Valid structured answer | 100% | 97% | 75% |
-| Trap caught (all answers) | 100% | 97% | 75% |
-| Trap caught (valid answers) | 100% | 100% | 100% |
-| Method to test named | 100% | 97% | 75% |
-| AFS sources cited per answer | 25.2 | 19.5 | 0 |
-| Answers with numbers found in neither the enquiry nor the AFS materials | 0% | 0% | 78% (3 per answer) |
-| Needed the repair pass | 0 | 1 (invented citation id) | — |
+| | Pipeline, strong (submitted) | Pipeline, strong (earlier prompt) | Pipeline, fast (5 runs) | Baseline, fast (no pipeline) |
+|---|---|---|---|---|
+| Answers | 6 | 6 | 30 | 12 |
+| Valid structured answer | 100% | 100% | 97% | 75% |
+| Trap caught (all answers) | 100% | 100% | 97% | 75% |
+| Trap caught (valid answers) | 100% | 100% | 100% | 100% |
+| Method to test named | 100% | 100% | 97% | 75% |
+| AFS sources cited per answer (model-written) | 25.8 | 25.2 | 19.5 | 0 |
+| Answers with numbers found in neither the enquiry nor the AFS materials | 17% (1 derived, rounded unit conversion) | 0% | 0% | 78% (3 per answer) |
+| Needed the repair pass | 0 | 0 | 1 (invented citation id) | — |
 
 ## What this shows
 
 * Claude recognises these traps with or without our pipeline when it returns a valid answer. Catching them is necessary but not what sets the assistant apart.
-* The difference is **grounding and reliability**: with the pipeline every answer cites the AFS pages it relies on (20–25 sources) and contains no number that is not in the enquiry or the AFS materials. Without it, 78% of answers state figures such as band positions or reference methods from general knowledge, with nothing an AFS expert can check them against.
+* The difference is **grounding and reliability**: with the pipeline every answer cites the AFS pages it relies on (20–25 sources) and, apart from one rounded unit conversion that the checker flags for review, contains no number that is not in the enquiry or the AFS materials. Without it, 78% of answers state figures such as band positions or reference methods from general knowledge, with nothing an AFS expert can check them against.
 * In the app, an invalid model answer never reaches the user: the rule-engine answer, which also catches the trap, stays on screen.
 
 ## Reproduce

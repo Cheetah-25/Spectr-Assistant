@@ -1,15 +1,15 @@
 {
-  "generated": "2026-10-18T11:22:21.418Z",
+  "generated": "2026-10-18T14:12:58.835Z",
   "model": "Claude Opus (strongest tier); the live demo uses the fast tier for speed",
   "pipeline": "same prompt for every case (__afsPrompt: premise checks + BM25 retrieval + curated claims) -> Claude -> code checks (__afsScore) -> repair only on hard errors (none needed) -> export (__afsExport); unedited",
-  "benchmark": "bench/: 5 fast-tier runs, this strong run and a no-pipeline baseline, scored by tests/scorecard.js",
+  "benchmark": "bench/: strong_v2 = these answers (current prompt with the technical specification); strong = Opus with the earlier prompt; fast = 5 fast-tier runs; baseline = no pipeline. Scored by tests/scorecard.js",
   "cases": [
     {
       "id": "H01",
-      "method": "NIR",
+      "method": "NIR + Raman",
       "status": "provisional_assessment",
       "trap_caught": true,
-      "cited_sources": 18,
+      "cited_sources": 19,
       "needed_repair": false,
       "removed_uncited": [],
       "numbers_not_in_sources": 0
@@ -19,7 +19,7 @@
       "method": "NIR",
       "status": "provisional_assessment",
       "trap_caught": true,
-      "cited_sources": 23,
+      "cited_sources": 26,
       "needed_repair": false,
       "removed_uncited": [],
       "numbers_not_in_sources": 0
@@ -39,7 +39,7 @@
       "method": "MIR ATR",
       "status": "insufficient_information",
       "trap_caught": true,
-      "cited_sources": 26,
+      "cited_sources": 24,
       "needed_repair": false,
       "removed_uncited": [],
       "numbers_not_in_sources": 0
@@ -49,20 +49,21 @@
       "method": "MIR ATR",
       "status": "insufficient_information",
       "trap_caught": true,
-      "cited_sources": 27,
+      "cited_sources": 30,
       "needed_repair": false,
       "removed_uncited": [],
-      "numbers_not_in_sources": 0
+      "numbers_not_in_sources": 1
     },
     {
       "id": "H06",
       "method": "NIR",
       "status": "outside_supported_scope",
       "trap_caught": true,
-      "cited_sources": 31,
+      "cited_sources": 30,
       "needed_repair": false,
       "removed_uncited": [],
       "numbers_not_in_sources": 0
     }
-  ]
+  ],
+  "note": "H05 contains one derived number flagged by the checker for expert review: 'approx. 590 cm-1', i.e. 17 \u00b5m converted and rounded."
 }

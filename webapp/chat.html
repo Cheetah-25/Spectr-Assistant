@@ -39,6 +39,7 @@ nav h2 { font:600 11px var(--f-m); letter-spacing:.08em; text-transform:uppercas
 .bubble { min-width:0; max-width:100%; } .msg.user .bubble { background:var(--user); padding:10px 14px; border-radius:12px 12px 2px 12px; max-width:80%; white-space:pre-wrap; }
 .msg.bot .bubble { flex:1; overflow-wrap:anywhere; }
 .typing { color:var(--muted); font-style:italic; }
+.tech th { text-align:left; font-weight:600; vertical-align:top; } .tech td { font-size:14px; }
 .reqgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:14px; } .reqgrid small { display:block; font:600 11px var(--f-m); text-transform:uppercase; color:var(--muted); } .reqgrid ul { margin:2px 0 0; padding-left:18px; } .req { margin:0 0 10px; } @media (max-width:640px) { .reqgrid { grid-template-columns:1fr; } }
 .dlrow { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
 .refine { font-size:13px; padding:6px 10px; margin:0 0 10px; border:1px dashed var(--line); border-radius:8px; }
@@ -120,7 +121,7 @@ details { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; } 
       <div class="composer">
         <label for="inp" class="sr" hidden>Message</label>
         <textarea id="inp" placeholder="Describe the process (material, what to monitor, where, constraints) — or answer the questions. Drop a .txt / .pdf / .docx here."></textarea>
-        <div class="crow"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label class="filelbl">Attach enquiry<input type="file" id="file" accept=".txt,.md,.pdf,.docx"></label><label class="filelbl">Attach spectra<input type="file" id="spfile" multiple accept=".csv,.txt,.tsv,.dat,.prn"></label><span id="fmsg"></span></div>
+        <div class="crow"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label class="filelbl">Attach enquiry or project document<input type="file" id="file" accept=".txt,.md,.pdf,.docx"></label><label class="filelbl">Attach spectra<input type="file" id="spfile" multiple accept=".csv,.txt,.tsv,.dat,.prn"></label><span id="fmsg"></span></div>
         <span style="display:flex;gap:8px"><button class="btn ghost" id="stop" type="button" hidden>Stop</button><button class="btn" id="send" type="button">Send</button></span></div>
       </div>
     </section>
@@ -178,7 +179,7 @@ function retrieveExt(query, k = 2) {
   return hit.map(p => ({ ...p, score:rank[p.id] || 0 })).sort((x, y) => y.score - x.score).slice(0, k);
 }
 const known = id => !!(KB.CLAIMS[id] || PID[id]);
-const label = id => PID[id] ? (PID[id].page === "web" ? `${PID[id].src} (web)` : `${PID[id].src} p.${PID[id].page}`) : E.citeText(id);
+const label = id => PID[id] ? (PID[id].page === "web" ? `${PID[id].src} (web)` : PID[id].src === "DOC" ? `Doc ${PID[id].page}` : `${PID[id].src} p.${PID[id].page}`) : E.citeText(id);
 
 // ---------- evidence chips
 const chips = ids => { ids = [...new Set((ids||[]).filter(known))]; if (!ids.length) return "";
@@ -211,10 +212,21 @@ function fromEngine(o) {
     multispectral:(() => { const r = o.recs.find(x => /\+/.test(x.method));
       return r ? { worth_testing:true, combination:r.method, why:E.plain(r.reason).replace(/\[[^\]]*\]/g,"").trim(), probe:/same spot|combined/i.test(r.geometry) ? "Combined probe on the same spot" : r.geometry, fusion:"Low-level fusion of synchronised spectra; compare with single-method models", test:E.plain(r.conditions).replace(/\[[^\]]*\]/g,"").trim(), cites:["S01-7-synergy","S01-8-same-spot"] }
         : { worth_testing:false, why:"The rule engine found no source-backed combination for this case; test single methods first.", cites:["S01-7-synergy"] }; })(),
-    requirements:{ stated:(o.facts||[]).map(x => ({ item:"stated", value:x })), missing:(o.unknowns||[]).map(u => strip(u.item)) },
+    requirements:{ stated:convo.doc ? (() => { const seen = new Set(); return convo.doc.params.filter(p => !/Existing equipment|Optical state/.test(p.kind) || true).map(p => ({ item:p.kind, value:`${p.value} (${p.page}): ${p.text.slice(0, 140)}` })).filter(x => { const k = x.item + x.value.split(" (")[0]; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 30); })()
+      : (o.facts||[]).map(x => ({ item:"stated", value:x })), missing:(o.unknowns||[]).map(u => strip(u.item)).filter(stillMissing) },
+    technical:{ probe:strip(it.probe), fiber:strip(it.fiber), process_conditions:(convo.doc ? [...new Set(convo.doc.params.filter(p => /Temperature|Pressure|Flow|Hazardous|Cleaning/.test(p.kind)).map(p => `${p.kind}: ${p.value} (${p.page})`))].slice(0, 6).join("; ") : "") || "unknown – ask",
+      reference_method:strip((o.plan.references||[])[0] || "") || "unknown – ask", calibration:strip((o.plan.samples||[]).join("; ")) || "unknown – ask", cites:ids((o.ranges||[]).map(r => r.text).join(" ")) },
     assumptions:o.assumptions, _engine:"rules" };
 }
 
+// an "unknown" from the rule engine is dropped when the attached document already states every kind of value it asks for
+const MISSING_NEEDS = [[/temperature|pressure|hazard/i, ["Temperature", "Pressure", "Hazardous area"]], [/response time|accuracy/i, ["Time / response", "Concentration"]],
+  [/distance|routing|link length/i, ["Distance / size"]], [/\brange\b/i, ["Concentration"]], [/optical|opaque|clear|turbid|colou?r|density|state/i, ["Optical state"]], [/reference/i, ["Reference method"]]];
+function stillMissing(item) {
+  if (!convo.doc) return true; const kinds = new Set(convo.doc.params.map(p => p.kind));
+  const needs = MISSING_NEEDS.filter(([rx]) => rx.test(item)).flatMap(([, k]) => k);
+  return !needs.length || !needs.every(k => kinds.has(k));
+}
 // ---------- verifier for Claude's JSON
 const TOK = /\{\{([A-Za-z0-9\-]+)\}\}/g;
 const FIBER_RX = [["Vis-NIR silica",/silica|quartz/i],["CIR (As-S chalcogenide)",/chalcogenide|\bCIR\b/i],["PIR (polycrystalline AgHal)",/polycrystalline|\bPIR\b|silver halide/i],["Hollow glass waveguide",/hollow/i]];
@@ -222,12 +234,12 @@ const METHOD_NM = m => /MIR|ATR|FTIR|mid/i.test(m) ? [2500,25000] : /NIR|near/i.
 function walk(o, fn) { if (typeof o === "string") fn(o); else if (Array.isArray(o)) o.forEach(x => walk(x, fn)); else if (o && typeof o === "object") for (const k in o) if (k !== "cites" && k[0] !== "_") walk(o[k], fn); }
 // repair citation ids the model writes slightly wrong, and move ids written into prose into the cites
 function normId(id) { id = String(id||"").trim().replace(/^\[|\]$/g,""); if (known(id)) return id; if (known("P:" + id)) return "P:" + id; return id; }
-const RAWID = /\(?\b((?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+)\b(?:,\s*)?\)?/g;
+const RAWID = /\(?\b((?:P:)?(?:S0\d|X0\d|REF|DOC)-[A-Za-z0-9\-]+)\b(?:,\s*)?\)?/g;
 function normalize(a) {
   const fixObj = o => { if (!o || typeof o !== "object") return;
     if (Array.isArray(o.cites)) o.cites = [...new Set(o.cites.map(normId))];
     for (const k of Object.keys(o)) { if (k === "cites" || k[0] === "_") continue; const v = o[k];
-      if (typeof v === "string") { const found = []; const cleaned = v.replace(/\((?:\s*(?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+\s*[,;]?)+\)/g, m => { (m.match(/(?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+/g)||[]).forEach(x => found.push(normId(x))); return ""; }).replace(/\s+([.,;])/g, "$1").trim();
+      if (typeof v === "string") { const found = []; const cleaned = v.replace(/\((?:\s*(?:P:)?(?:S0\d|X0\d|REF|DOC)-[A-Za-z0-9\-]+\s*[,;]?)+\)/g, m => { (m.match(/(?:P:)?(?:S0\d|X0\d|REF|DOC)-[A-Za-z0-9\-]+/g)||[]).forEach(x => found.push(normId(x))); return ""; }).replace(/\s+([.,;])/g, "$1").trim();
         const good = found.filter(known); if (good.length) { o[k] = cleaned; const tgt = (k === "answer" || k === "status_reason") ? "answer_cites" : "cites"; if (o === a && tgt === "cites") a.answer_cites = [...new Set((a.answer_cites||[]).concat(good))]; else o[tgt] = [...new Set((o[tgt]||[]).concat(good))]; } }
       else if (Array.isArray(v)) v.forEach(fixObj); else if (v && typeof v === "object") fixObj(v); } };
   if (Array.isArray(a.answer_cites)) a.answer_cites = [...new Set(a.answer_cites.map(normId))];
@@ -243,10 +255,10 @@ function check(a, enquiry) {
   walk(a, s => { let m; TOK.lastIndex = 0; while ((m = TOK.exec(s))) { total++; if (!KB.CLAIMS[m[1]]) bad.add(m[1]); } });
   if (bad.size) issues.push("unknown citation ids: " + [...bad].join(", "));
   // numbers
-  const nums = s => (s.replace(TOK,"").replace(/\b(P:)?[SX]0\d(-[A-Za-z0-9\-]+)?\b/g,"").replace(/\b[SDHC]0\d\b/g,"").replace(/\bp\.\s?\d+/g,"").match(/\d+(?:[.,]\d+)?/g)||[]).map(n=>n.replace(",","."));
-  const allowed = new Set(nums(enquiry)); Object.values(KB.CLAIMS).forEach(c => nums(c.text).forEach(n => allowed.add(n))); PASS.forEach(p => nums(p.text).forEach(n => allowed.add(n))); ["0","1","2","3","4","5"].forEach(n=>allowed.add(n));
+  const nums = s => (s.replace(TOK,"").replace(/\b(P:)?([SX]0\d|DOC)(-[A-Za-z0-9\-]+)?\b/g,"").replace(/\b[SDHC]0\d\b/g,"").replace(/\bp\.\s?\d+/g,"").match(/\d+(?:[.,]\d+)?/g)||[]).map(n=>n.replace(",","."));
+  const allowed = new Set(nums(enquiry)); Object.values(KB.CLAIMS).forEach(c => nums(c.text).forEach(n => allowed.add(n))); PASS.forEach(p => nums(p.text).forEach(n => allowed.add(n))); if (convo.doc) convo.doc.chunks.forEach(p => nums(p.text).forEach(n => allowed.add(n))); ["0","1","2","3","4","5"].forEach(n=>allowed.add(n));
   // unit conversions of source numbers (µm <-> cm-1, nm <-> cm-1) are allowed: 10000/x and 1e7/x, rounded
-  [...allowed].forEach(n => { const x = parseFloat(n); if (x > 0) [1e4 / x, 1e7 / x].forEach(v => { if (v >= 1 && v < 1e6) { allowed.add(String(Math.round(v))); allowed.add(String(+v.toFixed(1))); allowed.add(String(+v.toFixed(2))); } }); });
+  [...allowed].forEach(n => { const x = parseFloat(n); if (x > 0) [1e4 / x, 1e7 / x, x / 1e4, x * 1e4].forEach(v => { if (v >= 0.0001 && v < 1e7) { allowed.add(String(Math.round(v))); allowed.add(String(+v.toFixed(1))); allowed.add(String(+v.toFixed(2))); } }); });
   const unsup = new Set(); walk(a, s => nums(s).forEach(n => { if (!allowed.has(n)) unsup.add(n); }));
   if (unsup.size) issues.push("numbers not found in the enquiry or sources: " + [...unsup].join(", "));
   // fiber
@@ -265,6 +277,7 @@ function check(a, enquiry) {
   (a.problems||[]).forEach((p, i) => { if (!has(p)) unc.push("problem " + (i + 1)); });
   (a.methods||[]).forEach((m, i) => { if (!has(m)) unc.push("method " + (i + 1)); });
   if (a.multispectral && !has(a.multispectral)) unc.push("multispectral option");
+  if (a.technical && Object.keys(a.technical).some(k => k !== "cites" && a.technical[k]) && !has(a.technical)) unc.push("technical specification");
   if (unc.length) issues.push("uncited statements (cite a passage or claim id, or remove them): " + unc.join(", "));
   if (!(a.questions||[]).length && a.status !== "provisional_assessment") notes.push("no clarification questions");
   return { issues, notes, total, bad:[...bad], unsup:[...unsup], fiber:fiberRes, uncited:unc };
@@ -278,6 +291,8 @@ function buildPrompt(enquiry, findings, prev, passages) {
 RULES
 - Use ONLY the retrieved passages and the knowledge-base claims below as technical evidence. Cite them by id (passage ids start with "P:") in "cites" arrays. Scope "business" is context, never evidence; "clinical-research" is never proof of clinical or process readiness.
 - Scope "external-imaging" (ids P:X01..P:X05) are external research web pages on multispectral IMAGING (cameras, MSOT, OCT, hyperspectral imaging). Cite them only when the enquiry concerns imaging, tissue or multispectral cameras, or to name a research group worth consulting; never as evidence that an in-line fiber spectroscopy method works in the client's process, and say they are external, not AFS.
+- Passages with scope "customer-document" (ids P:DOC-…) come from the client's own project document. Cite them for facts about the client's process (materials, targets, ranges, conditions, constraints, existing equipment) and use those facts in requirements and technical; they are never evidence that a spectroscopy method works. Where the document and the enquiry disagree, say so in problems.
+- "technical": fill every field with concrete values taken from the enquiry, the client document or the AFS sources, each sourced; write "unknown – ask" where none exists. Never invent values.
 - STRICT CITATION RULE: every statement you make must be supported by a cited passage or claim from the supplied documents (AFS sources or the listed external research pages). "answer", "status_reason", "inline", every "problems" item, every "methods" item and "multispectral" must each carry at least one id in their cites ("answer_cites" for answer and status_reason). If a statement cannot be cited, leave it out. Never add knowledge that is not in the passages or claims.
 - Anything the client did not state is unknown: ask about it or state it as an assumption. Never invent spectra, accuracy, detection limits, response times, fiber lengths, prices or product codes. Use only numbers that appear in the enquiry or the claims.
 - A published application is a reason to test a method, not proof. Look for an application example of the same measured quantity first and use its method.
@@ -290,14 +305,14 @@ RULES
 - Status: provisional_assessment when material, quantity and location are known; insufficient_information when the target is undefined or the concept is blocked and the alternative depends on missing facts; outside_supported_scope when the use needs validation beyond a first assessment (e.g. decisions on patients). Even then, name methods worth screening and concrete laboratory steps.
 - At most 5 questions, highest impact first, answerable by the client. If the enquiry contains the client's answers, treat them as facts, do not ask again, and update the assessment.${prev ? "\n- This is a follow-up: fill \"changed\" with one sentence on what changed versus the previous answer and why." : ""}
 - If a spectral analysis is given: say what it shows for the method choice (does the method see the difference?), put the key spectral features into pathway.key_features, check that the fiber covers the measured range, and never derive accuracy or concentrations from a few spectra.
-- Be concise: one sentence per field; at most 4 problems, 4 methods and 4 questions; 3-5 experiment steps.
+- ${convo.doc ? "A project document is attached: be specific and technical. Use one to three sentences per field, put concrete values (with units and the Doc page) into \"technical\" and \"requirements\", at most 6 problems, 5 methods and 5 questions, 4-7 experiment steps." : "Be concise: one sentence per field; at most 4 problems, 4 methods and 4 questions; 3-5 experiment steps."}
 
 PREMISE CHECKS COMPUTED IN CODE
 ${findings.length ? findings.map(f => `- [${SEV_MAP[f.severity]}] ${E.plain(f.title)}: ${E.plain(f.text)}`).join("\n") : "- none"}
 ${prev ? `\nPREVIOUS ANSWER (summary)\nstatus=${prev.status}; method=${prev.inline?.method}; headline=${prev.inline?.headline}\n` : ""}
 ENQUIRY (with any client answers)
 ${enquiry}
-${convo.spectra ? `\nSPECTRAL ANALYSIS OF THE CLIENT'S MEASURED SPECTRA (computed in code; use these results as given, do not invent other band assignments, and use it in the method choice, problems, key spectral features and the experiment):\n${E.plain(convo.spectra.text)}\n` : ""}
+${convo.doc ? `\nTECHNICAL PARAMETERS FOUND IN THE CLIENT DOCUMENT BY CODE (kind | value | page | sentence):\n${convo.doc.params.slice(0, 40).map(p => `${p.kind} | ${p.value} | ${p.page} | ${p.text}`).join("\n")}\n` : ""}${convo.spectra ? `\nSPECTRAL ANALYSIS OF THE CLIENT'S MEASURED SPECTRA (computed in code; use these results as given, do not invent other band assignments, and use it in the method choice, problems, key spectral features and the experiment):\n${E.plain(convo.spectra.text)}\n` : ""}
 
 RETRIEVED SOURCE PASSAGES (RAG, BM25 top ${passages.length} for this enquiry; id | page | scope | text). Prefer these for case-specific evidence and cite them by id:
 ${passages.map(p => `${p.id} | ${label(p.id)} | scope=${p.scope} | ${p.text}`).join("\n")}
@@ -312,6 +327,7 @@ Reply with ONLY one JSON object:
  "problems":[{"severity":"wont_work|wrong_assumption|check_first","text":"...","cites":["id"]}],
  "methods":[{"method":"...","role":"main|compare|only_if_needed|not_suitable","why":"...","cites":["id"]}],
  "questions":[{"q":"...","why":"...","cites":["id"]}],
+ "technical":{"spectral_window":"range in nm / µm / cm-1 for the method and fiber","probe":"probe type, tip / window material, contact or path length","fiber":"fiber family, length, routing","process_conditions":"temperature, pressure, flow, cleaning, hazardous area at the probe","sampling":"measurement point, sampling rate, response time","reference_method":"independent laboratory reference","calibration":"samples, ranges and design for the first model","cites":["id"]},
  "experiment":{"objective":"...","steps":["..."],"references":["..."],"go_no_go":"criteria come from the client","cites":["id"]},
  "pathway":{"lab_test":["method (main|compare|only if needed)"],"key_features":"...","path":"A|B|C|not_yet","path_reason":"...","later":"A|B|C|none","cites":["id"]},
  "multispectral":{"worth_testing":true,"combination":"e.g. NIR + Raman","why":"complementary information","probe":"combined probe (same spot) | separate synchronised probes","fusion":"low-level fusion of synchronised spectra | model per method","test":"how to prove the gain","cites":["id"]},
@@ -325,7 +341,7 @@ function cardHTML(a, v) {
   const pw = a.pathway || {};
   const exp = a.experiment || {};
   const rq = a.requirements || {};
-  const reqHTML = ((rq.stated||[]).length || (rq.missing||[]).length) ? `<div class="sec req"><b>Requirements and constraints (from the enquiry)</b><div class="reqgrid"><div><small>Stated by the client</small><ul>${(rq.stated||[]).map(x => `<li>${x.item && x.item !== "stated" ? `<i>${esc(x.item)}:</i> ` : ""}${esc(x.value || x)}</li>`).join("") || "<li>—</li>"}</ul></div><div><small>Still missing</small><ul>${(rq.missing||[]).map(x => `<li>${esc(x)}</li>`).join("") || "<li>Nothing critical</li>"}</ul></div></div></div>` : "";
+  const reqHTML = ((rq.stated||[]).length || (rq.missing||[]).length) ? `<div class="sec req"><b>Requirements and constraints (from the enquiry)</b><div class="reqgrid"><div><small>Stated by the client</small><ul>${(rq.stated||[]).map(x => `<li>${x.item && x.item !== "stated" ? `<i>${esc(x.item)}:</i> ` : ""}${esc(x.value || x)}</li>`).join("") || "<li>—</li>"}</ul></div><div><small>Still missing</small><ul>${(rq.missing||[]).map(x => `<li>${esc(x)}</li>`).join("") || "<li>No standard item open; see the questions</li>"}</ul></div></div></div>` : "";
   return `${a.changed ? `<div class="changed">What changed: ${esc(a.changed)}</div>` : ""}${reqHTML}
   <div class="card"><div class="mode">Recommended in-line method · ${esc(MODE[inl.mode] || inl.mode || "")}</div><h3>${esc(inl.headline || "")}</h3>
    <div class="cells">${cells}</div>
@@ -335,6 +351,7 @@ function cardHTML(a, v) {
   ${a.answer ? `<p style="margin:8px 0 0">${esc(a.answer)}${chips(a.answer_cites)}</p>` : ""}
   ${(a.problems||[]).length ? `<div class="sec"><b>Risks and problems with the request</b>${a.problems.map(p => `<div class="prob ${esc(p.severity)}"><i>${esc(SEV[p.severity] || p.severity)}</i>${esc(p.text)}${chips(p.cites)}</div>`).join("")}</div>` : ""}
   ${msHTML(a.multispectral)}
+  ${techHTML(a)}
   ${(a.questions||[]).length ? `<div class="sec"><b>To sharpen this, tell me</b><ol class="q">${a.questions.map(q => `<li>${esc(q.q)}${q.why ? `<small>${esc(q.why)}${chips(q.cites)}</small>` : ""}</li>`).join("")}</ol></div>` : ""}
   <details><summary>Methods, first experiment, AFS pathway, checks</summary>
    ${(a.methods||[]).length ? `<div class="sec"><b>Methods worth testing</b><div class="tiles">${a.methods.map(m => `<div class="tile ${esc(m.role)}"><span class="r">${esc(ROLE[m.role] || m.role)}</span><div class="n">${esc(m.method)}</div>${R(m.why)}${chips(m.cites)}</div>`).join("")}</div></div>` : ""}
@@ -352,10 +369,16 @@ function cardHTML(a, v) {
     <div class="muted" style="color:var(--muted)">Generated by ${a._engine === "rules" ? "the offline rule engine (Claude unavailable in this view)" : "Claude with retrieval-augmented generation over the AFS sources, then checked in code"}${a._repaired ? " · one repair pass" : ""}.</div></div>
   </details>`;
 }
-function citedIds(a) {
+function techHTML(a) {
+  const t = a.technical || {}, w = specWindow((a.inline||{}).method, (a.inline||{}).fiber);
+  const rows = [["Spectral window (computed)", w.text, w.cites], ["Spectral window (answer)", t.spectral_window], ["Probe / interface", t.probe], ["Fiber", t.fiber], ["Process conditions", t.process_conditions], ["Sampling / response", t.sampling], ["Reference method", t.reference_method], ["First calibration", t.calibration]].filter(r => r[1]);
+  if (!rows.length) return "";
+  return `<div class="sec"><b>Technical specification (draft for the expert)</b><table class="pk tech"><tbody>${rows.map(([k, v, c]) => `<tr><th style="width:28%">${esc(k)}</th><td>${esc(v)}${c ? chips(c) : ""}</td></tr>`).join("")}</tbody></table>${(t.cites||[]).length ? `<div style="font-size:13px">${chips(t.cites)}</div>` : ""}</div>`;
+}
+function citedIds(a, modelOnly) {
   const ids = [];
   const add = arr => (arr||[]).forEach(id => { if (known(id) && !ids.includes(id)) ids.push(id); });
-  add(a.answer_cites); add(a.inline?.cites); (a.questions||[]).forEach(q => add(q.cites)); add(a.experiment?.cites); add(a.pathway?.cites); (a.problems||[]).forEach(p => add(p.cites)); (a.methods||[]).forEach(m => add(m.cites)); add(a.multispectral?.cites);
+  add(a.answer_cites); add(a.inline?.cites); add(a.technical?.cites); if (!modelOnly) add(specWindow(a.inline?.method, a.inline?.fiber).cites); (a.questions||[]).forEach(q => add(q.cites)); add(a.experiment?.cites); add(a.pathway?.cites); (a.problems||[]).forEach(p => add(p.cites)); (a.methods||[]).forEach(m => add(m.cites)); add(a.multispectral?.cites);
   const walkTok = s => { if (typeof s === "string") { let m; TOK.lastIndex = 0; while ((m = TOK.exec(s))) add([m[1]]); } else if (Array.isArray(s)) s.forEach(walkTok); else if (s && typeof s === "object") Object.entries(s).forEach(([k, v]) => { if (k[0] !== "_") walkTok(v); }); };
   walkTok(a);
   return ids;
@@ -367,6 +390,7 @@ function answerMd(a) {
   L.push(`## Requirements and constraints`, ``, ...(rq.stated||[]).map(x => `- ${x.item && x.item !== "stated" ? x.item + ": " : ""}${x.value || x}`), ``, `Missing:`, ...(rq.missing||[]).map(x => `- ${x}`), ``);
   L.push(`## Recommended in-line method`, ``, `**${inl.headline || ""}**${cs(inl.cites)}`, ``, `| Method | Probe / interface | Install | Fiber |`, `|---|---|---|---|`, `| ${inl.method||""} | ${inl.probe||""} | ${inl.install||""} | ${inl.fiber||""} |`, ``, inl.test_against ? `Test against: ${inl.test_against}` : "", inl.not_final_because ? `Not final yet: ${inl.not_final_because}` : "", ``);
   L.push(`Status: ${STATUS[a.status] || a.status}. ${a.status_reason || ""}`, ``, a.answer ? a.answer + cs(a.answer_cites) : "", ``);
+  { const t = a.technical || {}, w = specWindow(inl.method, inl.fiber); L.push(`## Technical specification (draft)`, ``, `| Item | Value |`, `|---|---|`, `| Spectral window (computed) | ${w.text}${cs(w.cites)} |`, ...[["Spectral window (answer)", t.spectral_window], ["Probe / interface", t.probe], ["Fiber", t.fiber], ["Process conditions", t.process_conditions], ["Sampling / response", t.sampling], ["Reference method", t.reference_method], ["First calibration", t.calibration]].filter(r => r[1]).map(([k, v]) => `| ${k} | ${String(v).replace(/\|/g, "/")} |`), ``, (t.cites||[]).length ? `Sources: ${c(t.cites)}` : "", ``); }
   if ((a.problems||[]).length) L.push(`## Risks and problems with the request`, ``, ...a.problems.map(p => `- **${SEV[p.severity] || p.severity}:** ${p.text}${cs(p.cites)}`), ``);
   if ((a.methods||[]).length) L.push(`## Methods worth testing`, ``, ...a.methods.map(m => `- **${m.method}** (${ROLE[m.role] || m.role}): ${m.why}${cs(m.cites)}`), ``);
   if (ms) L.push(`## Multispectral option`, ``, ms.worth_testing === false ? `No combination justified yet. ${ms.why || ""}${cs(ms.cites)}` : `**${ms.combination}**: ${ms.why}. Probe: ${ms.probe}. Fusion: ${ms.fusion}. Prove the gain: ${ms.test}${cs(ms.cites)}`, ``);
@@ -431,35 +455,125 @@ function finalize(a, eng, passages, prev, followup) {
   a.problems = (a.problems||[]).filter(p => cited(p) || (dropped.push("a problem statement"), false));
   a.methods = (a.methods||[]).filter(m => cited(m) || (dropped.push("a method statement"), false));
   if (a.multispectral && !cited(a.multispectral)) { a.multispectral = null; dropped.push("the multispectral option"); }
+  if (a.technical && a._engine !== "rules" && !cited(a.technical)) { a.technical = null; dropped.push("the model's technical specification (the computed spectral window is kept)"); }
   if (a._engine !== "rules" && !(a.answer_cites||[]).some(known)) { a.answer = ""; a.status_reason = ""; dropped.push("the summary"); }
   if (a.inline && !cited(a.inline) && a._engine !== "rules") a.inline.not_final_because = ((a.inline.not_final_because || "") + " No source was cited for this card; treat it as unverified.").trim();
   a._dropped = dropped;
   return cardHTML(a, v) + sourcesHTML(a);
 }
+
+// ---------- customer document (long attachment, e.g. a 30-page project paper)
+KB.SOURCES.DOC = { file:"customer document", title:"Customer document", kind:"Client's own document: facts about the client's process only" };
+const DOC_MIN = 3000;   // characters; shorter attachments are pasted into the message as before
+const UNIT_RX = [
+  ["Temperature", /(?:-?\d+(?:[.,]\d+)?\s?(?:to|–|-|and)\s?)?-?\d+(?:[.,]\d+)?\s?(?:°\s?C|℃|deg\.? ?C)/g],
+  ["Pressure", /(?:\d+(?:[.,]\d+)?\s?(?:to|–|-|and)\s?)?\d+(?:[.,]\d+)?\s?(?:barg|bara|bar|mbar|MPa|kPa|psi)\b/gi],
+  ["Flow", /\d+(?:[.,]\d+)?\s?(?:m³\/h|m3\/h|L\/h|l\/h|L\/min|l\/min|kg\/h|t\/h|mL\/min)/g],
+  ["Concentration", /(?:\d+(?:[.,]\d+)?\s?(?:to|–|-|and)\s?)?\d+(?:[.,]\d+)?\s?(?:wt\s?%|vol\s?%|%|g\/L|g\/l|mg\/L|mg\/l|ppm|ppb|mmol\/L|mol\/L)/g],
+  ["Wavelength / wavenumber", /(?:\d+(?:[.,]\d+)?\s?(?:to|–|-)\s?)?\d+(?:[.,]\d+)?\s?(?:nm|µm|μm|cm-1|cm⁻¹|cm\^-1)/g],
+  ["Distance / size", /\bDN\s?\d+|\b\d+(?:[.,]\d+)?\s?(?:mm|m)\b(?![\/³3])/g],
+  ["pH", /\bpH\s?(?:of\s)?\d+(?:[.,]\d+)?(?:\s?[–-]\s?\d+(?:[.,]\d+)?)?/g],
+  ["Viscosity", /\d+(?:[.,]\d+)?\s?(?:mPa·?s|mPas|cP)\b/g],
+  ["Time / response", /\d+(?:[.,]\d+)?\s?(?:seconds|sec|s|minutes|min|hours|h)\b(?![\/])/g],
+];
+const FLAG_RX = [["Hazardous area", /\bATEX\b|\bEx[- ]?zone|\bzone [012]\b|explosion/i], ["Cleaning", /\bCIP\b|\bSIP\b|clean[- ]in[- ]place|sterili[sz]/i],
+  ["Methods mentioned", /\bNIR\b|\bMIR\b|\bFTIR\b|Raman|fluorescen|UV[- ]?Vis|\bATR\b/i], ["Existing equipment", /\bexisting\b|already (have|installed|use)|currently (use|installed)/i],
+  ["Reference method", /gas chromatograph|\bGC\b|Karl Fischer|\bKF\b|\bHPLC\b|titration|\b(EN|ISO|ASTM|DIN)\s?(ISO\s?)?\d{3,5}/],
+  ["Materials", /stainless|\b1\.4\d{3}\b|\bPTFE\b|\bPEEK\b|Hastelloy|sapphire|borosilicate/i],
+  ["Optical state", /\b(turbid|hazy|opaque|clear|transparent|coloured|colored|dark|foaming|bubbles)\b/i]];
+function sentencesOf(t) { return t.replace(/\s+/g, " ").split(/(?<=[.!?;])\s+(?=[A-Z0-9(])/).filter(x => x.length > 15); }
+function extractParams(pages) {
+  const rows = [];
+  pages.forEach(pg => sentencesOf(pg.text).forEach(sn => {
+    UNIT_RX.forEach(([kind, rx]) => { rx.lastIndex = 0; const m = sn.match(rx); if (m) rows.push({ kind, value:[...new Set(m.map(x => x.trim()))].slice(0, 4).join(", "), page:pg.label, text:sn.slice(0, 220) }); });
+    FLAG_RX.forEach(([kind, rx]) => { if (rx.test(sn)) rows.push({ kind, value:(sn.match(rx) || [""])[0], page:pg.label, text:sn.slice(0, 220) }); });
+  }));
+  const seen = new Set(); return rows.filter(r => { const k = r.kind + r.value + r.page; if (seen.has(k)) return false; seen.add(k); return true; });
+}
+function setDoc(name, pages) {
+  Object.keys(PID).forEach(k => { if (PID[k].src === "DOC") delete PID[k]; });
+  const chunks = [];
+  pages.forEach(pg => { const ss = sentencesOf(pg.text); let cur = "", i = 1;
+    const push = () => { if (cur.trim()) { const id = `P:DOC-${pg.label.replace(/[^A-Za-z0-9]/g, "")}-${i++}`; const c = { id, src:"DOC", page:pg.label, scope:"customer-document", text:cur.trim() }; chunks.push(c); PID[id] = c; } cur = ""; };
+    ss.forEach(x => { if (cur.length + x.length > 700) push(); cur += " " + x; }); push(); });
+  KB.SOURCES.DOC = { file:name, title:"Customer document: " + name, kind:"Client's own document: facts about the client's process only" };
+  convo.doc = { name, pages, chunks, params:extractParams(pages), used:false };
+  return convo.doc;
+}
+// document passages for the prompt: every passage holding an extracted technical parameter (page order), then BM25 hits, at most k
+function docPassages(query, k = 16) {
+  const d = convo.doc; if (!d) return [];
+  const keys = d.params.map(p => p.text.slice(0, 60)), out = [];
+  d.chunks.forEach(c => { if (out.length < k && keys.some(t => c.text.includes(t))) out.push({ ...c, score:"param" }); });
+  retrieveDoc(query, k).forEach(c => { if (out.length < k && !out.some(o => o.id === c.id)) out.push(c); });
+  return out;
+}
+function retrieveDoc(query, k = 8) {
+  const d = convo.doc; if (!d || !d.chunks.length) return [];
+  const D = d.chunks.map(c => toks(c.text)), avg = D.reduce((a, x) => a + x.length, 0) / D.length, df = {};
+  D.forEach(x => new Set(x).forEach(t => df[t] = (df[t] || 0) + 1));
+  const q = [...new Set(toks(query + " temperature pressure flow concentration range accuracy probe pipe line process sample measurement spectroscopy"))], N = D.length;
+  const withParam = new Set(d.params.map(p => p.text.slice(0, 60)));
+  return D.map((x, i) => { const tf = {}; x.forEach(t => tf[t] = (tf[t] || 0) + 1); let sc = 0;
+    q.forEach(t => { if (tf[t]) { const idf = Math.log(1 + (N - df[t] + 0.5) / (df[t] + 0.5)); sc += idf * tf[t] * 2.4 / (tf[t] + 1.4 * (0.25 + 0.75 * x.length / avg)); } });
+    withParam.forEach(t => { if (d.chunks[i].text.includes(t)) sc += 0.6; });
+    return [sc, i]; }).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, k).map(([sc, i]) => ({ ...d.chunks[i], score:+sc.toFixed(2) }));
+}
+function docDigest() {
+  const d = convo.doc; if (!d) return "";
+  const lines = [...new Set(d.params.map(p => `${p.text} [${p.page}]`))].slice(0, 25);
+  return `\n\nFrom the attached project document "${d.name}" (${d.pages.length} ${d.paged ? "pages" : "sections"}; statements with technical parameters, found in code):\n- ` + lines.join("\n- ").slice(0, 3500);
+}
+function paramTable(params, max = 40) {
+  if (!params.length) return `<p style="font-size:13px;color:var(--muted)">No technical parameters with units were found.</p>`;
+  return `<table class="pk"><thead><tr><th>Parameter</th><th>Value</th><th>Where</th></tr></thead><tbody>${params.slice(0, max).map(p => `<tr><td>${esc(p.kind)}</td><td>${esc(p.value)}</td><td title="${esc(p.text)}">${esc(String(p.page))}</td></tr>`).join("")}</tbody></table>${params.length > max ? `<p style="font-size:12.5px;color:var(--muted)">… ${params.length - max} more in the document.</p>` : ""}`;
+}
+function docCard(d) {
+  const by = {}; d.params.forEach(p => by[p.kind] = (by[p.kind] || 0) + 1);
+  return `<div class="sec"><b>Customer document read: ${esc(d.name)}</b><div style="font-size:14px">${d.pages.length} ${d.paged ? "pages" : "sections"} · ${d.chunks.length} passages indexed · ${d.params.length} technical statements found (${Object.entries(by).map(([k, v]) => `${esc(k)} ${v}`).join(", ") || "none"}).<br>Ask a question about it, or press Send to assess the whole document. Facts from it are cited as <code>Doc p.N</code>; it is never used as evidence that a method works.</div>
+    <details style="margin-top:6px"><summary>Technical parameters found in the document</summary>${paramTable(d.params)}</details></div>`;
+}
+// ---------- technical specification: spectral window computed in code from the method and fiber ranges
+const um = nm => +(nm / 1000).toPrecision(3), wn = nm => Math.round(1e7 / nm);
+const fmtRange = ([a, b]) => `${a >= 1000 ? um(a) + "–" + um(b) + " µm" : a + "–" + b + " nm"} (${wn(b)}–${wn(a)} cm⁻¹)`;
+function specWindow(method, fiber) {
+  const out = [], cites = new Set(["S02-6-fibers"]);
+  const fams = fiber ? FIBER_RX.filter(([, rx]) => rx.test(fiber)).map(([n]) => n) : [];
+  (method || "").split(/\s*\+\s*/).forEach(part => {
+    const key = /MIR|ATR|FTIR|mid/i.test(part) ? "MIR ATR" : /NIR|near/i.test(part) ? "NIR" : /raman/i.test(part) ? "Raman" : /fluor/i.test(part) ? "Fluorescence" : /UV/i.test(part) ? "UV-Vis" : null;
+    if (!key) return; const mr = KB.METHOD_RANGE[key]; (mr.cite || []).forEach(c => cites.add(c));
+    if (!mr.nm) { out.push(`${key}: ${mr.label}`); return; }
+    const fs = fams.map(n => [n, KB.FIBERS[n]]).filter(([, r]) => Math.min(mr.nm[1], r[1]) > Math.max(mr.nm[0], r[0]));
+    out.push(`${key}: method ${fmtRange(mr.nm)}` + (fs.length ? "; " + fs.map(([n, r]) => `${n} fiber ${fmtRange(r)} → usable ${fmtRange([Math.max(mr.nm[0], r[0]), Math.min(mr.nm[1], r[1])])}`).join("; ") : fams.length ? "; the named fiber does not transmit this range" : "; fiber to be chosen"));
+  });
+  return { text:out.join(" · "), cites:[...cites].filter(known) };
+}
+
 // test hooks (used by offline evaluation scripts; harmless in the page)
 function caseInputs(enquiry) {
   const eng = E.assess(enquiry);
   const passages = retrieve(enquiry + " " + eng.findings.map(f => f.title).join(" "), 8)
-    .concat(retrieve("combination of spectral methods multispectral probe data fusion synergy same point " + enquiry, 2)).concat(retrieveExt(enquiry)).filter((p, i, arr) => arr.findIndex(q => q.id === p.id) === i);
+    .concat(retrieve("combination of spectral methods multispectral probe data fusion synergy same point " + enquiry, 2)).concat(retrieveExt(enquiry)).concat(docPassages(enquiry, 16)).filter((p, i, arr) => arr.findIndex(q => q.id === p.id) === i);
   return { eng, passages };
 }
+window.__afsDoc = () => convo.doc ? { sel:docPassages("x", 16).map(c => c.id + ' ' + c.score), ids:convo.doc.chunks.map(c => c.id), name:convo.doc.name, pages:convo.doc.pages.length, chunks:convo.doc.chunks.length, params:convo.doc.params, digest:docDigest() } : null;
 window.__afsPrompt = (enquiry, prev) => { const { eng, passages } = caseInputs(enquiry); return buildPrompt(enquiry, eng.findings, prev || null, passages); };
 window.__afsScore = (enquiry, json) => { const a = normalize(JSON.parse(JSON.stringify(json))); const v = check(a, enquiry); const { eng, passages } = caseInputs(enquiry);
   const saved = convo.enquiry; convo.enquiry = enquiry; const html = finalize(a, eng, passages, null, false); convo.enquiry = saved;
-  return { issues:v.issues, notes:v.notes, hard:v.issues.filter(x => /fiber|must name the method|unknown citation/.test(x)), dropped:a._dropped, cited:citedIds(a), method:a.inline?.method, status:a.status, findings:eng.findings.map(f => f.severity + ": " + E.plain(f.title)) }; };
+  return { issues:v.issues, notes:v.notes, hard:v.issues.filter(x => /fiber|must name the method|unknown citation/.test(x)), dropped:a._dropped, cited:citedIds(a, true), method:a.inline?.method, status:a.status, findings:eng.findings.map(f => f.severity + ": " + E.plain(f.title)) }; };
 function done() { busy = false; ctl = null; $("#send").disabled = false; $("#stop").hidden = true; $("#inp").focus(); }
 async function turn(text) {
   if (busy || !text.trim()) return;
   busy = true; $("#send").disabled = true;
   const my = ++gen;
   const followup = !!convo.enquiry;
-  convo.enquiry = followup ? `${convo.enquiry}\n\nThe client answered / added:\n${text.trim()}` : text.trim();
-  addMsg("user", esc(text.trim()));
+  const digest = convo.doc && !convo.doc.used ? (convo.doc.used = true, docDigest()) : "";
+  convo.enquiry = (followup ? `${convo.enquiry}\n\nThe client answered / added:\n${text.trim()}` : text.trim()) + digest;
+  addMsg("user", esc(text.trim()) + (digest ? `<div style="font-size:12.5px;opacity:.8;margin-top:4px">+ attached document: ${esc(convo.doc.name)}</div>` : ""));
   const pending = addMsg("bot", "");
   const bubble = pending.querySelector(".bubble");
   const eng = E.assess(convo.enquiry);
-  const passages = retrieve(convo.enquiry + " " + eng.findings.map(f => f.title).join(" "), 8)
-    .concat(retrieve("combination of spectral methods multispectral probe data fusion synergy same point " + convo.enquiry, 2)).concat(retrieveExt(convo.enquiry)).filter((p, i, arr) => arr.findIndex(q => q.id === p.id) === i);
+  const passages = caseInputs(convo.enquiry).passages;
   const prev = convo.turns.length ? convo.turns[convo.turns.length - 1] : null;
   // 1) instant answer from the rule engine (milliseconds)
   const quick = fromEngine(eng);
@@ -579,7 +693,7 @@ document.querySelectorAll(".ex button").forEach(b => b.onclick = () => { const s
 $("#msgs").addEventListener("click", e => { const b = e.target.closest(".dl"); if (!b) return; const msg = b.closest(".msg"); const i = [...document.querySelectorAll(".msg.bot")].indexOf(msg); const a = (msg && msg._answer) || null; if (!a) return;
   const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,"-"); b.dataset.f === "md" ? saveFile(`assessment-${stamp}.md`, answerMd(a), "text/markdown") : saveFile(`assessment-${stamp}.json`, answerJson(a), "application/json"); });
 if (window.claude) claude.use("downloads").then(d => { DL = d; });
-$("#newChat").onclick = () => { gen++; if (ctl) ctl.abort(); done(); convo = { enquiry:"", turns:[] }; welcome(); };
+$("#newChat").onclick = () => { gen++; if (ctl) ctl.abort(); done(); Object.keys(PID).forEach(k => { if (PID[k].src === "DOC") delete PID[k]; }); convo = { enquiry:"", turns:[] }; welcome(); };
 $("#stop").onclick = () => { if (ctl) ctl.abort(); };
 $("#send").onclick = () => { const t = $("#inp").value; $("#inp").value = ""; turn(t); };
 $("#inp").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#send").click(); } });
@@ -590,13 +704,22 @@ async function readFile(f) {
   const n = f.name.toLowerCase();
   if (n.endsWith(".pdf")) { for (const s of LIBS.pdf) await load(s); pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdf[1];
     const doc = await pdfjsLib.getDocument({ data:new Uint8Array(await f.arrayBuffer()) }).promise; const out = [];
-    for (let i = 1; i <= Math.min(doc.numPages, 30); i++) out.push((await (await doc.getPage(i)).getTextContent()).items.map(x => x.str).join(" ")); return out.join("\n"); }
-  if (n.endsWith(".docx")) { for (const s of LIBS.docx) await load(s); return (await mammoth.extractRawText({ arrayBuffer:await f.arrayBuffer() })).value; }
-  return await f.text();
+    for (let i = 1; i <= Math.min(doc.numPages, 80); i++) out.push({ n:i, label:"p." + i, text:(await (await doc.getPage(i)).getTextContent()).items.map(x => x.str).join(" ") }); return { paged:true, pages:out }; }
+  let raw;
+  if (n.endsWith(".docx")) { for (const s of LIBS.docx) await load(s); raw = (await mammoth.extractRawText({ arrayBuffer:await f.arrayBuffer() })).value; }
+  else raw = await f.text();
+  // no real pages: split into sections of about 2,500 characters on paragraph boundaries
+  const paras = raw.split(/\n\s*\n/), pages = []; let cur = "";
+  paras.forEach(pp => { if (cur.length + pp.length > 2500 && cur) { pages.push(cur); cur = ""; } cur += pp + "\n\n"; }); if (cur.trim()) pages.push(cur);
+  return { paged:false, pages:pages.map((t, i) => ({ n:i + 1, label:"§" + (i + 1), text:t })) };
 }
 async function takeFile(f) { $("#fmsg").textContent = "Reading " + f.name + "…";
-  try { const t = (await readFile(f)).replace(/\s+/g, " ").trim(); if (!t) throw new Error("no text found");
-    $("#inp").value = ($("#inp").value.trim() ? $("#inp").value.trim() + "\n\n" : "") + t; $("#fmsg").textContent = `${f.name}: ${t.length.toLocaleString()} characters added. Press Send.`;
+  try { const r = await readFile(f); const t = r.pages.map(p => p.text).join(" ").replace(/\s+/g, " ").trim(); if (!t) throw new Error("no text found (a scanned PDF needs OCR first)");
+    if (t.length < DOC_MIN) { $("#inp").value = ($("#inp").value.trim() ? $("#inp").value.trim() + "\n\n" : "") + t; $("#fmsg").textContent = `${f.name}: ${t.length.toLocaleString()} characters added. Press Send.`; return; }
+    const d = setDoc(f.name, r.pages.filter(p => p.text.trim())); d.paged = r.paged;
+    addMsg("bot", docCard(d));
+    if (!$("#inp").value.trim()) $("#inp").value = "Please give a first technical assessment of the attached project document.";
+    $("#fmsg").textContent = `${f.name}: ${d.pages.length} ${r.paged ? "pages" : "sections"}, ${d.params.length} technical statements found.`;
   } catch (e) { $("#fmsg").textContent = f.name + ": " + (e.message || "could not be read"); } }
 $("#file").onchange = e => { if (e.target.files[0]) takeFile(e.target.files[0]); e.target.value = ""; };
 const ta = $("#inp"); ta.addEventListener("dragover", e => { e.preventDefault(); ta.classList.add("drag"); }); ta.addEventListener("dragleave", () => ta.classList.remove("drag"));
