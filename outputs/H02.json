@@ -1,114 +1,122 @@
 {
   "case_id": "H02",
   "decision_status": "provisional_assessment",
-  "decision_status_reason": "The enquiry specifies the materials (whey and milk concentrate), the measurement goal (composition monitoring), and the flexibility to test interfaces, allowing for a provisional assessment of suitable methods.",
+  "decision_status_reason": "The enquiry specifies two dairy streams (clear whey and opaque milk concentrate), composition monitoring (protein, fat), and openness to comparing measurement interfaces before installation. Both NIR transmission and reflection are supported for these regimes, but the interface must be matched to optical density. Laboratory comparison of both is justified and recommended. However, some key process and performance unknowns remain, so the recommendation is provisional.",
   "requirements": {
     "stated": [
-      "The process involves a relatively clear whey stream and an opaque milk concentrate.",
-      "The goal is to monitor composition using laboratory protein and fat results where relevant.",
-      "They are considering a pilot for this monitoring.",
-      "They can compare different measurement interfaces before choosing the installation."
+      "Process handles a relatively clear whey stream.",
+      "Process handles an opaque milk concentrate.",
+      "Goal is composition monitoring.",
+      "Laboratory protein and fat results are available for relevant variables.",
+      "Different measurement interfaces can be compared before installation."
     ],
     "unknowns": [
       {
-        "item": "Specific composition variables to be monitored (e.g., protein, fat, etc.)",
-        "why_it_matters": "Knowing the specific variables is crucial for selecting appropriate measurement techniques and interfaces."
+        "item": "Exact protein and fat concentration ranges in each stream",
+        "why_it_matters": "Affects calibration, sensitivity, and method selection."
       },
       {
-        "item": "The optical properties of the whey and milk concentrate streams",
-        "why_it_matters": "These properties affect the choice of spectroscopy method and measurement interface."
+        "item": "Physical properties (flow rate, temperature, viscosity) of each stream",
+        "why_it_matters": "Influences probe/interface design and measurement stability."
       },
       {
-        "item": "The flow characteristics of the streams",
-        "why_it_matters": "Flow characteristics can influence the design and placement of measurement interfaces."
+        "item": "Required measurement accuracy and precision",
+        "why_it_matters": "Determines if a method is suitable for process control."
       },
       {
-        "item": "The acceptable range of measurement accuracy and precision",
-        "why_it_matters": "This determines the suitability of different spectroscopy methods and interfaces."
+        "item": "Installation space and constraints at measurement points",
+        "why_it_matters": "Impacts feasibility of certain probe/interface types."
       }
     ],
     "assumptions": [
-      "The laboratory protein and fat results are accurate and can be used as a reference for the pilot.",
-      "The pilot will be used to determine the best measurement interface for the final installation."
+      "Both streams are accessible for in-line measurement.",
+      "Protein and fat are the primary variables of interest.",
+      "Laboratory results are considered the reference standard for calibration and validation.",
+      "The client is open to piloting multiple interface types before final selection."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What specific composition variables (e.g., protein, fat) are to be monitored in the whey and milk concentrate?",
+      "question": "What are the typical and extreme protein and fat concentrations in both the whey and milk concentrate streams?",
       "could_change": "method"
     },
     {
       "priority": 2,
-      "question": "What are the optical properties (e.g., turbidity, color) of the whey and milk concentrate streams?",
+      "question": "What are the flow rates, temperatures, and viscosities of each stream at the intended measurement points?",
       "could_change": "probe_or_geometry"
     },
     {
       "priority": 3,
-      "question": "What are the flow characteristics (e.g., flow rate, turbulence) of the streams?",
-      "could_change": "experiment_design"
-    },
-    {
-      "priority": 4,
-      "question": "What is the acceptable range of measurement accuracy and precision for the pilot?",
+      "question": "What measurement accuracy and precision are required for protein and fat to be actionable in process control?",
       "could_change": "method"
     },
     {
-      "priority": 5,
-      "question": "Are there any specific installation constraints or environmental conditions to consider?",
+      "priority": 4,
+      "question": "Are there any installation constraints (space, cleaning, hygiene) at the proposed measurement locations?",
       "could_change": "probe_or_geometry"
+    },
+    {
+      "priority": 5,
+      "question": "Are there other components (e.g., lactose, minerals) that must be monitored, or is the focus solely on protein and fat?",
+      "could_change": "method"
     }
   ],
   "recommendations": [
     {
       "method": "NIR",
       "role": "primary_candidate",
-      "rationale": "NIR spectroscopy is suitable for both clear and opaque liquids, allowing for flexible interface options like transmission for whey and reflection for milk concentrate.",
-      "applies_when": "The streams have different optical properties, requiring different interfaces.",
-      "confidence": "medium",
+      "rationale": "NIR spectroscopy is established for in-line dairy composition monitoring, with transmission suited for clear liquids (whey) and reflection for opaque products (milk concentrate). Both interfaces can be tested in the lab to match each stream's optical density.",
+      "applies_when": "Protein and fat are the main targets; both clear and opaque streams are present.",
+      "confidence": "high",
       "citations": [
         {
           "source_id": "S01",
           "page": 17,
-          "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
+          "supports": "NIR reflection for opaque milk, NIR transmission for clear whey."
         },
         {
           "source_id": "S01",
           "page": 18,
-          "supports": "NIR Transmission is the preferred method for transparent or semi-transparent liquids."
+          "supports": "Dual technique availability for full process coverage."
         }
       ]
     },
     {
       "method": "MIR_ATR",
       "role": "comparison_candidate",
-      "rationale": "MIR-ATR can provide detailed compositional information and is effective for analyzing opaque samples like milk concentrate.",
-      "applies_when": "Detailed compositional analysis is needed, especially for opaque samples.",
+      "rationale": "MIR-ATR can provide complementary molecular specificity, especially for surface or highly concentrated samples, and is feasible for soft/liquid dairy matrices.",
+      "applies_when": "Additional molecular specificity is needed or NIR selectivity is insufficient.",
       "confidence": "medium",
       "citations": [
         {
           "source_id": "S01",
           "page": 5,
-          "supports": "MIR-ATR is effective for detailed compositional analysis."
+          "supports": "MIR-ATR offers high selectivity for surface layers."
+        },
+        {
+          "source_id": "S01",
+          "page": 10,
+          "supports": "ATR fiber probes for liquids and soft solids."
         }
       ]
     }
   ],
   "measurement_concept": {
-    "summary": "Use NIR spectroscopy with transmission for whey and reflection for milk concentrate, comparing with MIR-ATR for detailed analysis.",
+    "summary": "For clear whey, use an NIR transmission or transflection probe (1–10 mm pathlength) in a flow cell or directly in-line; for opaque milk concentrate, use an NIR diffuse reflection probe flush-mounted in the process line. Both probe types can be tested in the laboratory with process samples, using the same NIR spectrometer and fiber link. MIR-ATR can be included for comparison, especially for the concentrate.",
     "geometry": "undetermined",
-    "fiber_link_note": "Fiber choice depends on the final method selection and spectral range.",
+    "fiber_link_note": "Standard Vis-NIR silica fibers cover the NIR range for both transmission and reflection; chalcogenide or PIR fibers are needed for MIR-ATR.",
     "needs_afs_confirmation": true,
     "citations": [
       {
         "source_id": "S01",
         "page": 17,
-        "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
+        "supports": "Reflection for opaque, transmission for clear dairy streams."
       },
       {
         "source_id": "S01",
         "page": 18,
-        "supports": "NIR Transmission is the preferred method for transparent or semi-transparent liquids."
+        "supports": "Dual probe approach for full process coverage."
       }
     ]
   },
@@ -117,160 +125,102 @@
       "method": "NIR",
       "nominal_range": {
         "min": 780,
-        "max": 2500,
+        "max": 2400,
         "unit": "nm"
       },
       "status": "nominal_only",
-      "note": "NIR covers a broad range suitable for organic compounds.",
+      "note": "Standard NIR range for dairy composition; actual instrument range to be defined. 2400 nm upper limit matches Vis-NIR silica fiber window.",
+      "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
       "citations": [
         {
           "source_id": "S01",
           "page": 10,
-          "supports": "Near-IR vibrational spectroscopy (NIR) is the most common online analysis method performed using fiber optic probes."
+          "supports": "NIR range and fiber compatibility."
+        },
+        {
+          "source_id": "S02",
+          "page": 6,
+          "supports": "Vis-NIR silica fiber transmission window."
         }
       ]
     },
     {
       "method": "MIR_ATR",
       "nominal_range": {
-        "min": 4000,
-        "max": 400,
-        "unit": "cm-1"
+        "min": 3000,
+        "max": 17000,
+        "unit": "nm"
       },
       "status": "nominal_only",
-      "note": "MIR-ATR is effective for detailed compositional analysis.",
+      "note": "MIR-ATR covers 3–17 um with PIR fibers; actual probe/instrument range to be defined.",
+      "fiber_family": "Polycrystalline infrared fibers (PIR)",
       "citations": [
         {
-          "source_id": "S01",
-          "page": 5,
-          "supports": "MIR-ATR is effective for detailed compositional analysis."
+          "source_id": "S02",
+          "page": 6,
+          "supports": "PIR fiber transmission for MIR."
         }
       ]
     }
   ],
   "risks": [
     {
-      "risk": "Different optical properties of streams may require separate calibration models.",
-      "mitigation": "Develop separate calibration models for whey and milk concentrate.",
+      "risk": "Mismatch of probe geometry to stream optical density (e.g., transmission probe in opaque milk).",
+      "mitigation": "Screen both transmission and reflection probes in the lab with real process samples before installation.",
       "citations": [
         {
           "source_id": "S01",
-          "page": 17,
-          "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
+          "page": 16,
+          "supports": "Probe choice follows optical density."
         }
       ]
     },
     {
-      "risk": "High turbidity in milk concentrate may affect transmission measurements.",
-      "mitigation": "Use reflection or ATR methods for opaque samples.",
+      "risk": "Sample heterogeneity or process turbulence may affect measurement repeatability.",
+      "mitigation": "Use replicate measurements and ensure probe contact is consistent; consider multispectral or combined probes if needed.",
       "citations": [
         {
           "source_id": "S01",
-          "page": 17,
-          "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
+          "page": 7,
+          "supports": "Heterogeneity requires careful probe placement or multispectral probes."
         }
       ]
     }
   ],
   "feasibility_plan": {
-    "objective": "To determine the best measurement interface for composition monitoring of whey and milk concentrate.",
+    "objective": "Determine which probe/interface (NIR transmission, NIR reflection, MIR-ATR) provides the most robust and accurate prediction of protein and fat in both whey and milk concentrate streams.",
     "samples_or_process_states": [
-      "Relatively clear whey stream",
-      "Opaque milk concentrate"
+      "Representative samples of clear whey stream.",
+      "Representative samples of opaque milk concentrate."
     ],
     "reference_measurements": [
-      "Laboratory protein and fat results"
+      "Laboratory protein and fat results (reference standard)."
     ],
     "comparisons": [
-      "NIR transmission vs. reflection",
-      "NIR vs. MIR-ATR"
+      "NIR transmission vs NIR reflection for each stream.",
+      "MIR-ATR for comparison, especially for concentrate."
     ],
     "steps": [
-      "Conduct laboratory tests with NIR transmission on whey and reflection on milk concentrate.",
-      "Compare results with MIR-ATR for detailed compositional analysis.",
-      "Develop calibration models based on laboratory reference data."
+      "Collect representative samples of both streams.",
+      "Measure each sample with NIR transmission, NIR reflection, and MIR-ATR probes in the laboratory.",
+      "Record spectra and match to laboratory protein and fat results.",
+      "Build and validate chemometric models for each method/interface.",
+      "Compare prediction accuracy, robustness, and practical considerations (cleaning, installation, etc.)."
     ],
-    "go_no_go_basis": "Comparison of spectral data with laboratory reference results for accuracy and precision."
+    "go_no_go_basis": "Whether the method/interface achieves the client's required accuracy for protein and fat in each stream, as determined by comparison to laboratory reference results."
   },
   "source_conflicts": [],
-  "premise_findings": [
-    {
-      "check_id": "mixed_optical_regimes",
-      "severity": "check_first",
-      "finding": "The request involves both clear and opaque/turbid material. Transmission or transflection suits clear liquids, reflection suits opaque or scattering ones, so the interface and calibration may have to differ per stream or state.",
-      "citations": [
-        {
-          "source_id": "S01",
-          "page": 17,
-          "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
-        },
-        {
-          "source_id": "S01",
-          "page": 18,
-          "supports": "NIR Transmission is the preferred method for transparent or semi-transparent liquids."
-        }
-      ]
-    }
-  ],
-  "inline_recommendation": {
-    "mode": "in_line",
-    "headline": "Test NIR with transmission for whey and reflection for milk concentrate.",
-    "method": "NIR",
-    "probe": "transmission for whey, reflection for milk concentrate",
-    "install_location": "in-line with the process stream",
-    "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
-    "test_against": "MIR_ATR",
-    "not_final_because": "Specific composition variables and optical properties of streams are unknown.",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 17,
-        "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
-      },
-      {
-        "source_id": "S01",
-        "page": 18,
-        "supports": "NIR Transmission is the preferred method for transparent or semi-transparent liquids."
-      }
-    ]
-  },
-  "afs_pathway": {
-    "lab_test_methods": [
-      {
-        "method": "NIR",
-        "role": "main"
-      },
-      {
-        "method": "MIR_ATR",
-        "role": "compare"
-      }
-    ],
-    "key_spectral_features": "To be identified in the test.",
-    "path": "not_yet",
-    "path_reason": "The laboratory test must come first to identify key spectral features.",
-    "later_path": "A_chemometric_model",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 17,
-        "supports": "NIR Reflection is primarily used for opaque or highly concentrated dairy products."
-      },
-      {
-        "source_id": "S01",
-        "page": 18,
-        "supports": "NIR Transmission is the preferred method for transparent or semi-transparent liquids."
-      }
-    ]
-  },
   "meta": {
-    "model": "gpt-4o",
+    "model": "gpt-4.1",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T21:51:42.482908+00:00",
+    "generated_at": "2026-10-18T09:38:19.501847+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,
       "unsupported_numbers": [],
-      "warnings": []
+      "warnings": [
+        "status 'provisional_assessment' asserts a high-confidence primary recommendation while blocking unknowns remain open"
+      ]
     },
     "premise_checks": [
       {
@@ -296,6 +246,80 @@
         ],
         "computed": {},
         "label": "Check first"
+      }
+    ]
+  },
+  "premise_findings": [
+    {
+      "check_id": "mixed_optical_regimes",
+      "severity": "check_first",
+      "finding": "Both clear (whey) and opaque (milk concentrate) streams are present; transmission is suited for clear, reflection for opaque. Probe/interface must be matched to each stream's optical density.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 17,
+          "supports": "Reflection for opaque, transmission for clear dairy products."
+        },
+        {
+          "source_id": "S01",
+          "page": 16,
+          "supports": "Probe choice follows optical density."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "in_line",
+    "headline": "Test NIR transmission for clear whey and NIR reflection for opaque milk concentrate in the lab before installation.",
+    "method": "NIR",
+    "probe": "Transmission/transflection probe for whey; diffuse reflection probe for milk concentrate",
+    "install_location": "In-line at representative points in each process stream (whey and concentrate)",
+    "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+    "test_against": "MIR-ATR probe (especially for concentrate)",
+    "not_final_because": "Exact composition ranges, process conditions, and required accuracy are not yet defined; laboratory comparison is needed to confirm method suitability.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 17,
+        "supports": "NIR reflection for opaque, NIR transmission for clear dairy streams."
+      },
+      {
+        "source_id": "S01",
+        "page": 18,
+        "supports": "Dual technique approach for full process coverage."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "NIR",
+        "role": "main"
+      },
+      {
+        "method": "MIR_ATR",
+        "role": "compare"
+      }
+    ],
+    "key_spectral_features": "NIR: 900–1700 nm (fat and protein bands); MIR-ATR: 1740 cm-1 (fat), 1548/1640 cm-1 (protein amide bands); actual features to be confirmed in lab test.",
+    "path": "A_chemometric_model",
+    "path_reason": "NIR with chemometric calibration is the established approach for dairy composition; MIR-ATR may add specificity if needed. The lab test will identify the most informative spectral regions and confirm model robustness.",
+    "later_path": "C_spectral_fiber_sensor",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 17,
+        "supports": "NIR chemometric models for dairy composition."
+      },
+      {
+        "source_id": "S01",
+        "page": 18,
+        "supports": "Key spectral features for fat and protein in NIR and MIR."
+      },
+      {
+        "source_id": "S02",
+        "page": 20,
+        "supports": "AFS pathway: lab test, feature selection, chemometric model, then sensor."
       }
     ]
   }

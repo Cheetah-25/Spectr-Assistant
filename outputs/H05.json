@@ -1,173 +1,233 @@
 {
   "case_id": "H05",
-  "decision_status": "insufficient_information",
-  "decision_status_reason": "The enquiry lacks a defined contaminant or affected quality variable, making it impossible to recommend a specific spectroscopy method or sensor configuration. A preliminary laboratory study is needed to identify these unknowns.",
+  "decision_status": "provisional_assessment",
+  "decision_status_reason": "The enquiry describes a liquid process with unknown contamination and no defined analytical target. A justified method or sensor configuration cannot be named yet, but a multi-method laboratory screening is the supported first step for incompletely known samples. This assessment provides a reviewable plan and the facts still needed.",
   "requirements": {
     "stated": [
-      "The process involves a liquid.",
+      "There is a liquid process.",
       "The process occasionally goes off specification.",
-      "There is a suspicion of contamination."
+      "Contamination is suspected.",
+      "The contaminant is unknown.",
+      "The affected quality variable is unknown."
     ],
     "unknowns": [
       {
         "item": "Identity of the contaminant",
-        "why_it_matters": "Knowing the contaminant is crucial for selecting a spectroscopy method that can detect it."
+        "why_it_matters": "Different contaminants may require different spectroscopy methods for detection."
       },
       {
         "item": "Affected quality variable",
-        "why_it_matters": "Understanding which quality variable is affected helps in determining the relevant spectral range and sensitivity needed."
+        "why_it_matters": "The choice of spectroscopy method and sensor configuration depends on what property or variable needs to be monitored."
       },
       {
-        "item": "Spectroscopy method suitability",
-        "why_it_matters": "Different spectroscopy methods are suited for different types of contaminants and matrices."
+        "item": "Chemical and physical properties of the process liquid",
+        "why_it_matters": "These properties influence the selection of appropriate spectroscopy techniques and sensor materials."
       },
       {
-        "item": "Exact sensor configuration",
-        "why_it_matters": "The sensor configuration depends on the specific requirements of the process and the nature of the contaminant."
+        "item": "Process conditions (e.g., temperature, pressure, flow rate)",
+        "why_it_matters": "Sensor configuration and method suitability depend on the operating environment."
+      },
+      {
+        "item": "Required detection limits and response time",
+        "why_it_matters": "These factors affect the choice of method and sensor sensitivity."
       }
     ],
     "assumptions": [
-      "The client has not yet identified the contaminant.",
-      "The client has not yet identified the affected quality variable."
+      "The process is continuous or semi-continuous, as in-line monitoring is requested.",
+      "No prior analytical data about the contamination is available."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What is the suspected contaminant or class of contaminants?",
+      "question": "What is the chemical and physical nature of the process liquid (e.g., aqueous, organic, transparent, turbid, corrosive)?",
       "could_change": "method"
     },
     {
       "priority": 2,
-      "question": "Which quality variable is affected when the process goes off specification?",
-      "could_change": "method"
+      "question": "At which process step or location does the off-specification event occur, and where would in-line monitoring be feasible?",
+      "could_change": "probe_or_geometry"
     },
     {
       "priority": 3,
-      "question": "What are the typical process conditions (temperature, pressure, etc.)?",
+      "question": "What are the typical process conditions (temperature, pressure, flow rate) at the intended measurement point?",
       "could_change": "probe_or_geometry"
     },
     {
       "priority": 4,
-      "question": "Is there a reference method currently used to detect the contamination?",
-      "could_change": "experiment_design"
+      "question": "What is the minimum change in the process or contaminant level that must be detected (detection limit or sensitivity requirement)?",
+      "could_change": "method"
     },
     {
       "priority": 5,
-      "question": "What is the acceptable detection limit or sensitivity for the contaminant?",
-      "could_change": "scope_or_feasibility"
+      "question": "Is there a reference method or laboratory analysis currently used to confirm contamination or off-spec events?",
+      "could_change": "experiment_design"
     }
   ],
-  "recommendations": [],
+  "recommendations": [
+    {
+      "method": "combination",
+      "role": "primary_candidate",
+      "rationale": "For samples of incompletely known composition, a multi-method laboratory screening (NIR, MIR-ATR, Raman, UV-Vis, Fluorescence) is supported to identify the most informative method(s) for the specific process and contamination scenario.",
+      "applies_when": "The contaminant and affected variable are unknown; initial method selection must be empirical.",
+      "confidence": "high",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 3,
+          "supports": "Test several approaches for incompletely known samples."
+        }
+      ]
+    }
+  ],
   "measurement_concept": {
-    "summary": "The measurement concept cannot be defined yet due to unknown contaminant and quality variable.",
+    "summary": "A justified probe, geometry, and fiber link cannot be defined until the contaminant, affected variable, and process conditions are clarified. The first step is a laboratory study using multiple spectroscopy methods on representative process samples.",
     "geometry": "undetermined",
-    "fiber_link_note": "The fiber link and probe design depend on the specific spectroscopy method chosen, which is currently undefined.",
+    "fiber_link_note": "Fiber and probe selection depend on the spectral region(s) found informative in the laboratory screening.",
     "needs_afs_confirmation": true,
     "citations": [
       {
         "source_id": "S01",
         "page": 3,
-        "supports": "test several approaches for incompletely known samples"
-      },
-      {
-        "source_id": "S01",
-        "page": 5,
-        "supports": "method selection depends on many factors"
+        "supports": "Multi-method laboratory screening is the supported approach for unknown samples."
       }
     ]
   },
-  "spectral_range": [],
-  "risks": [
+  "spectral_range": [
     {
-      "risk": "Unknown contaminant may not be detectable by the chosen method.",
-      "mitigation": "Conduct preliminary tests with multiple spectroscopy methods to identify the contaminant."
+      "method": "NIR",
+      "status": "nominal_only",
+      "note": "Nominal range for NIR spectroscopy is 780–2500 nm; actual range depends on instrument and fiber selection after laboratory screening.",
+      "nominal_range": {
+        "min": 780,
+        "max": 2500,
+        "unit": "nm"
+      },
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 10,
+          "supports": "NIR range and typical use for liquids."
+        }
+      ]
     },
     {
-      "risk": "Process conditions may affect measurement accuracy.",
-      "mitigation": "Ensure the chosen method and probe are suitable for the process conditions."
+      "method": "MIR_ATR",
+      "status": "nominal_only",
+      "note": "Nominal range for MIR-ATR is 4000–400 cm-1 (2.5–25 um); actual range depends on probe and fiber selection after laboratory screening.",
+      "nominal_range": {
+        "min": 4000,
+        "max": 400,
+        "unit": "cm-1"
+      },
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 10,
+          "supports": "MIR-ATR range and typical use for liquids."
+        }
+      ]
+    },
+    {
+      "method": "Raman",
+      "status": "nominal_only",
+      "note": "Nominal Raman shift range is 100–4000 cm-1; excitation wavelength to be defined with the expert after initial screening.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 11,
+          "supports": "Raman shift range and need to define excitation wavelength."
+        }
+      ]
+    },
+    {
+      "method": "UV_Vis",
+      "status": "nominal_only",
+      "note": "Nominal range for UV-Vis is 190–1100 nm; actual range depends on instrument and fiber selection after laboratory screening.",
+      "nominal_range": {
+        "min": 190,
+        "max": 1100,
+        "unit": "nm"
+      },
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "UV-Vis range and typical use for liquids."
+        }
+      ]
+    },
+    {
+      "method": "Fluorescence",
+      "status": "nominal_only",
+      "note": "Nominal excitation and emission ranges depend on the analyte; to be defined after laboratory screening.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "Fluorescence range and typical use for liquids."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "The contaminant may not be detectable by optical spectroscopy if it lacks a spectral signature in the accessible regions.",
+      "mitigation": "Screen multiple methods in the laboratory to maximize the chance of detection; if none are informative, consider alternative analytical approaches.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 3,
+          "supports": "Multi-method screening is needed for unknowns."
+        }
+      ]
+    },
+    {
+      "risk": "Process conditions (e.g., temperature, pressure, chemical aggressiveness) may limit probe or fiber selection.",
+      "mitigation": "Define process conditions before selecting in-line hardware; use laboratory results to guide robust probe design.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Probe and fiber selection depend on process conditions."
+        }
+      ]
     }
   ],
   "feasibility_plan": {
-    "objective": "Identify the contaminant and affected quality variable in the liquid process.",
+    "objective": "Identify which spectroscopy method(s) provide the most sensitive and selective response to off-specification events or contamination in the process liquid.",
     "samples_or_process_states": [
-      "Liquid samples from the process when on-spec and off-spec."
+      "Representative process liquid samples (on-spec and off-spec, if available)",
+      "Spiked samples with plausible contaminants (if possible)"
     ],
     "reference_measurements": [
-      "To be agreed with the client, possibly including GC-MS or HPLC for contaminant identification."
+      "Current laboratory analysis (if any)",
+      "Physical/chemical property measurements (e.g., turbidity, pH, conductivity)"
     ],
     "comparisons": [
-      "Compare results from different spectroscopy methods to identify the most suitable one."
+      "Spectral response of each method to on-spec vs off-spec samples",
+      "Sensitivity to spiked contaminants (if available)"
     ],
     "steps": [
-      "Collect samples from the process under different conditions.",
-      "Conduct a multi-method spectroscopy analysis in the laboratory.",
-      "Analyze data to identify potential contaminants and affected quality variables."
+      "Collect representative process samples (on-spec and off-spec, if possible).",
+      "Screen NIR, MIR-ATR, Raman, UV-Vis, and Fluorescence spectroscopy on these samples in the laboratory.",
+      "Analyze which method(s) show the clearest distinction between on-spec and off-spec samples or respond to spiked contaminants.",
+      "If a method is informative, proceed to define probe geometry, fiber type, and installation location for in-line testing."
     ],
-    "go_no_go_basis": "Identification of the contaminant and affected quality variable."
+    "go_no_go_basis": "A method is advanced if it shows a clear, reproducible spectral response to the off-spec or contaminated state, as determined by laboratory screening and agreed reference measurements."
   },
   "source_conflicts": [],
-  "premise_findings": [
-    {
-      "check_id": "undefined_target",
-      "severity": "check_first",
-      "finding": "The quantity to measure is not yet defined. Method selection depends on the analytical problem."
-    },
-    {
-      "check_id": "premature_certainty",
-      "severity": "check_first",
-      "finding": "A final configuration or approval is requested; the stated facts do not yet support one."
-    }
-  ],
-  "inline_recommendation": {
-    "mode": "not_applicable",
-    "headline": "No method can be named yet due to undefined contaminant and quality variable.",
-    "method": "none_yet",
-    "probe": "undetermined",
-    "install_location": "undetermined",
-    "fiber_family": "not_yet_defined",
-    "test_against": "undetermined",
-    "not_final_because": "The contaminant and affected quality variable are not yet identified.",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 3,
-        "supports": "test several approaches for incompletely known samples"
-      },
-      {
-        "source_id": "S01",
-        "page": 5,
-        "supports": "method selection depends on many factors"
-      }
-    ]
-  },
-  "afs_pathway": {
-    "lab_test_methods": [
-      {
-        "method": "combination",
-        "role": "main"
-      }
-    ],
-    "key_spectral_features": "To be determined in the test.",
-    "path": "not_yet",
-    "path_reason": "The laboratory test must identify the contaminant and affected quality variable first.",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 3,
-        "supports": "test several approaches for incompletely known samples"
-      }
-    ]
-  },
   "meta": {
-    "model": "gpt-4o",
+    "model": "gpt-4.1",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T21:52:24.771547+00:00",
+    "generated_at": "2026-10-18T09:39:43.021411+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,
       "unsupported_numbers": [],
-      "warnings": []
+      "warnings": [
+        "status 'provisional_assessment' asserts a high-confidence primary recommendation while blocking unknowns remain open"
+      ]
     },
     "premise_checks": [
       {
@@ -202,6 +262,84 @@
         ],
         "computed": {},
         "label": "Check first"
+      }
+    ]
+  },
+  "premise_findings": [
+    {
+      "check_id": "undefined_target",
+      "severity": "check_first",
+      "finding": "The quantity to measure is not yet defined. Method selection depends on the analytical problem; for samples of incompletely known composition, several methods are screened first.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 3,
+          "supports": "Test several approaches for incompletely known samples."
+        }
+      ]
+    },
+    {
+      "check_id": "premature_certainty",
+      "severity": "check_first",
+      "finding": "A final configuration or approval is requested; the stated facts do not yet support one. The assessment gives a first, reviewable recommendation and the facts still needed.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Method selection requires specialised knowledge of many factors."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "laboratory_study",
+    "headline": "Screen NIR, MIR-ATR, Raman, UV-Vis, and Fluorescence on process samples in the laboratory before selecting an in-line method.",
+    "method": "none_yet",
+    "probe": "Not yet defined; depends on laboratory results.",
+    "install_location": "Not yet defined; depends on laboratory results and process constraints.",
+    "fiber_family": "not_yet_defined",
+    "test_against": "All other major spectroscopy methods in the laboratory screening.",
+    "not_final_because": "The contaminant, affected variable, and process conditions are unknown; laboratory screening is required to identify the most informative method(s).",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 3,
+        "supports": "Multi-method laboratory screening is the supported approach for unknown samples."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "NIR",
+        "role": "main"
+      },
+      {
+        "method": "MIR_ATR",
+        "role": "main"
+      },
+      {
+        "method": "Raman",
+        "role": "main"
+      },
+      {
+        "method": "UV_Vis",
+        "role": "main"
+      },
+      {
+        "method": "Fluorescence",
+        "role": "main"
+      }
+    ],
+    "key_spectral_features": "To be identified in the laboratory screening; no spectral region can be justified until the contaminant or affected variable is known.",
+    "path": "not_yet",
+    "path_reason": "The laboratory test must come first to identify which method(s) are informative for the unknown contaminant or off-spec event.",
+    "later_path": "A_chemometric_model",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 3,
+        "supports": "Multi-method laboratory screening is the supported approach for unknown samples."
       }
     ]
   }

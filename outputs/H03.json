@@ -1,159 +1,147 @@
 {
   "case_id": "H03",
   "decision_status": "insufficient_information",
-  "decision_status_reason": "The client has not identified a fluorescent target or marker for glucose concentration and viable biomass, which is crucial for using fluorescence spectroscopy effectively in this application.",
+  "decision_status_reason": "No fluorescent target, marker, or reference relationship for glucose or viable biomass is identified, and there is no evidence that these analytes are intrinsically fluorescent in fermentation. Fluorescence sensitivity does not compensate for lack of selectivity or a physical basis for measurement; thus, no justified method can be named yet.",
   "requirements": {
     "stated": [
-      "The client has a fluorescence spectrometer.",
-      "The client wants to report glucose concentration and viable biomass during fermentation using the spectrometer.",
-      "The client believes fluorescence can be very sensitive."
+      "The client already has a fluorescence spectrometer.",
+      "They want to use it to report glucose concentration and viable biomass directly during fermentation.",
+      "Their justification is that fluorescence can be very sensitive.",
+      "They have not identified a fluorescent target, marker, or reference relationship."
     ],
     "unknowns": [
       {
-        "item": "Fluorescent target, marker, or reference relationship for glucose concentration and viable biomass.",
-        "why_it_matters": "Identifying a specific fluorescent target or marker is crucial for accurately measuring glucose concentration and viable biomass using fluorescence spectroscopy."
+        "item": "Whether glucose or viable biomass have intrinsic fluorescence or require labeling/markers",
+        "why_it_matters": "Determines if direct measurement is possible or if additional reagents or genetic modifications are needed."
       },
       {
-        "item": "Specific method or setup for using the fluorescence spectrometer in this application.",
-        "why_it_matters": "The method or setup will determine how the spectrometer can be used effectively for the desired measurements."
+        "item": "The specific fermentation system or organism used",
+        "why_it_matters": "Different organisms and systems may have different autofluorescence or require different markers."
+      },
+      {
+        "item": "The excitation/emission wavelengths available on the spectrometer",
+        "why_it_matters": "Limits or enables detection of specific fluorophores or autofluorescence."
+      },
+      {
+        "item": "The presence of interfering fluorescent compounds in the fermentation broth",
+        "why_it_matters": "Could affect specificity and accuracy of measurements."
       }
     ],
     "assumptions": [
-      "The client assumes that fluorescence sensitivity is sufficient for their application without having identified specific targets or markers."
+      "The client intends to use the existing fluorescence spectrometer without major hardware modifications.",
+      "No prior method for fluorescence-based glucose or biomass measurement is established in their setup."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What specific fluorescent markers or targets are available for glucose and biomass in your fermentation process?",
+      "question": "Does your fermentation system or organism produce any intrinsic fluorescent compounds, or are you able to introduce a fluorescent marker specific to glucose or viable biomass?",
       "could_change": "method"
     },
     {
       "priority": 2,
-      "question": "Are there any known fluorescent compounds naturally present or added in your fermentation process that correlate with glucose or biomass?",
-      "could_change": "method"
+      "question": "What are the excitation and emission wavelength ranges of your fluorescence spectrometer?",
+      "could_change": "spectral_range"
     },
     {
       "priority": 3,
-      "question": "What are the expected concentration ranges for glucose and biomass during the fermentation process?",
+      "question": "Are there known interfering fluorescent species in your fermentation broth that could affect measurement specificity?",
       "could_change": "experiment_design"
     },
     {
       "priority": 4,
-      "question": "Is there a reference method currently used for measuring glucose and biomass in your process?",
+      "question": "What is the reference method for glucose and viable biomass quantification in your process?",
       "could_change": "experiment_design"
     },
     {
       "priority": 5,
-      "question": "What are the physical and chemical characteristics of the fermentation media?",
-      "could_change": "probe_or_geometry"
+      "question": "Are you open to using additional reagents or genetic modifications to introduce a specific fluorescent marker if needed?",
+      "could_change": "method"
     }
   ],
   "recommendations": [],
   "measurement_concept": {
-    "summary": "Cannot be defined yet due to lack of identified fluorescent targets or markers for glucose and biomass.",
+    "summary": "A fluorescence-based measurement for glucose or viable biomass cannot be defined until a specific fluorescent target or marker is identified. Without this, there is no physical basis for selective measurement.",
     "geometry": "undetermined",
-    "fiber_link_note": "Fluorescence requires a fluorescent target or marker to be effective.",
-    "needs_afs_confirmation": false,
+    "fiber_link_note": "Cannot specify fiber or probe without a defined fluorescent analyte or marker.",
+    "needs_afs_confirmation": true,
     "citations": [
       {
         "source_id": "S01",
-        "page": 5,
-        "supports": "Fluorescence requires a fluorescent component to respond."
+        "page": 6,
+        "supports": "Fluorimetry requires a fluorescent component in the sample."
+      },
+      {
+        "source_id": "S04",
+        "page": 1,
+        "supports": "Fluorescence analysis is only applicable to samples with a fluorescent component."
       }
     ]
   },
-  "spectral_range": [],
+  "spectral_range": [
+    {
+      "method": "Fluorescence",
+      "status": "unknown_until_system_defined",
+      "note": "Cannot specify excitation/emission range or fiber family until a fluorescent target or marker is identified.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "Fluorimetry spectral range depends on the fluorophore."
+        }
+      ]
+    }
+  ],
   "risks": [
     {
-      "risk": "Lack of a fluorescent target or marker may lead to ineffective measurements.",
-      "mitigation": "Identify specific fluorescent markers or targets for glucose and biomass.",
+      "risk": "No intrinsic fluorescence or marker for glucose or viable biomass; measurement not physically possible.",
+      "mitigation": "Screen for intrinsic fluorescence or consider introducing a specific fluorescent marker.",
       "citations": [
         {
           "source_id": "S01",
           "page": 5,
-          "supports": "Most chemicals do not fluoresce; a target is needed."
+          "supports": "Most chemicals do not exhibit fluorescence."
+        }
+      ]
+    },
+    {
+      "risk": "Low selectivity of fluorescence; risk of interference from other fluorescent species.",
+      "mitigation": "Identify and validate a specific fluorescent target or marker; assess matrix interferences.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "Fluorimetry selectivity is low."
         }
       ]
     }
   ],
   "feasibility_plan": {
-    "objective": "To determine the feasibility of using fluorescence spectroscopy for glucose and biomass measurement during fermentation.",
+    "objective": "To determine if fluorescence spectroscopy can be used to report glucose concentration or viable biomass in fermentation.",
     "samples_or_process_states": [
-      "Fermentation media at various stages."
+      "Fermentation broth at different process stages",
+      "Known concentrations of glucose and viable biomass (if available)"
     ],
     "reference_measurements": [
-      "To be agreed with the client."
+      "Standard glucose assay (e.g., enzymatic or HPLC)",
+      "Viable cell count or optical density"
     ],
     "comparisons": [
-      "Fluorescence measurements against reference methods."
+      "Fluorescence signal versus reference measurements for glucose and biomass"
     ],
     "steps": [
-      "Identify potential fluorescent markers for glucose and biomass.",
-      "Conduct preliminary tests to establish correlation between fluorescence signals and target concentrations.",
-      "Develop a calibration model if a suitable marker is found."
+      "Screen fermentation broth for intrinsic fluorescence at available excitation/emission wavelengths.",
+      "If no intrinsic fluorescence is found, evaluate feasibility of introducing a specific fluorescent marker for glucose or viable biomass.",
+      "If a marker is identified, calibrate fluorescence response against reference methods.",
+      "Assess interference from other fluorescent species in the broth."
     ],
-    "go_no_go_basis": "Identification of a suitable fluorescent marker and successful correlation with target concentrations."
+    "go_no_go_basis": "Go/no-go depends on demonstration of a selective, quantifiable fluorescence signal correlated to glucose or viable biomass, as validated against reference methods. Acceptance targets must be defined by the client."
   },
   "source_conflicts": [],
-  "premise_findings": [
-    {
-      "check_id": "sensitivity_without_target",
-      "severity": "wont_work",
-      "finding": "High sensitivity is not selectivity. Without a named target or reference relationship, there is no basis for reporting glucose or biomass from fluorescence.",
-      "citations": [
-        {
-          "source_id": "S01",
-          "page": 6,
-          "supports": "Fluorimetry sensitivity high, selectivity low."
-        },
-        {
-          "source_id": "S01",
-          "page": 5,
-          "supports": "Most chemicals do not fluoresce."
-        },
-        {
-          "source_id": "S04",
-          "page": 4,
-          "supports": "Limited to samples with a fluorescent component."
-        }
-      ]
-    }
-  ],
-  "inline_recommendation": {
-    "mode": "not_applicable",
-    "headline": "No method can be named yet due to lack of fluorescent targets.",
-    "method": "none_yet",
-    "probe": "undetermined",
-    "install_location": "undetermined",
-    "fiber_family": "not_yet_defined",
-    "test_against": "undetermined",
-    "not_final_because": "No fluorescent target or marker identified for glucose and biomass.",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 5,
-        "supports": "Fluorescence requires a fluorescent component to respond."
-      }
-    ]
-  },
-  "afs_pathway": {
-    "lab_test_methods": [],
-    "key_spectral_features": "To be determined once a fluorescent target is identified.",
-    "path": "not_yet",
-    "path_reason": "A fluorescent target or marker must be identified before proceeding.",
-    "citations": [
-      {
-        "source_id": "S01",
-        "page": 5,
-        "supports": "Fluorescence requires a fluorescent component to respond."
-      }
-    ]
-  },
   "meta": {
-    "model": "gpt-4o",
+    "model": "gpt-4.1",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T21:51:53.103946+00:00",
+    "generated_at": "2026-10-18T09:38:43.343984+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,
@@ -188,6 +176,66 @@
           ]
         },
         "label": "Won't work"
+      }
+    ]
+  },
+  "premise_findings": [
+    {
+      "check_id": "sensitivity_without_target",
+      "severity": "wont_work",
+      "finding": "High sensitivity is not selectivity. Without a fluorescent target or reference relationship, fluorescence cannot selectively report glucose or viable biomass.",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 6,
+          "supports": "Fluorimetry sensitivity high, selectivity low."
+        },
+        {
+          "source_id": "S01",
+          "page": 5,
+          "supports": "Most chemicals do not fluoresce."
+        },
+        {
+          "source_id": "S04",
+          "page": 1,
+          "supports": "Limited to samples with a fluorescent component."
+        }
+      ]
+    }
+  ],
+  "inline_recommendation": {
+    "mode": "not_applicable",
+    "headline": "No in-line fluorescence method can be justified for glucose or viable biomass until a fluorescent target or marker is identified.",
+    "method": "none_yet",
+    "probe": "not_yet_defined",
+    "install_location": "not_yet_defined",
+    "fiber_family": "not_yet_defined",
+    "test_against": "not_yet_defined",
+    "not_final_because": "No fluorescent target, marker, or reference relationship for glucose or viable biomass is established; physical basis for measurement is missing.",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 6,
+        "supports": "Fluorimetry requires a fluorescent component in the sample."
+      }
+    ]
+  },
+  "afs_pathway": {
+    "lab_test_methods": [
+      {
+        "method": "Fluorescence",
+        "role": "main"
+      }
+    ],
+    "key_spectral_features": "Unknown until a fluorescent target or marker is identified; otherwise, no relevant features for glucose or viable biomass.",
+    "path": "not_yet",
+    "path_reason": "A multi-method laboratory test cannot proceed until a fluorescent target or marker is identified for the analytes of interest.",
+    "later_path": "none",
+    "citations": [
+      {
+        "source_id": "S01",
+        "page": 6,
+        "supports": "Fluorimetry is only applicable to samples with a fluorescent component."
       }
     ]
   }

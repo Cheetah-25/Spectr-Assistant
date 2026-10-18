@@ -1,98 +1,194 @@
 {
   "case_id": "H06",
   "decision_status": "outside_supported_scope",
-  "decision_status_reason": "The client cannot quote the LED NIR kidney study as proof of readiness for tumor boundary decisions during live surgery without in vivo validation and regulatory approval, which are outside this assessment's scope.",
+  "decision_status_reason": "The findings of the LED NIR kidney study cannot be quoted as proof that a sensor is ready for intraoperative tumor boundary guidance in live surgery. The cited study is a proof-of-concept on ex vivo samples; in vivo validation, clinical studies, and regulatory approval are required for patient use, which are outside the scope of this technical assessment. The appropriate next step is a laboratory feasibility study using the intended sensor and relevant tissue types.",
   "requirements": {
     "stated": [
-      "The client read the supplied LED NIR kidney study.",
-      "The client wants to use the concept from the study to guide tumor boundary decisions during live surgery.",
-      "The client has no new in vivo data.",
-      "The client has no validation on their own setup."
+      "Client read the supplied LED NIR kidney study.",
+      "Client wants to use the same concept to guide tumor boundary decisions during live surgery.",
+      "Client has no new in vivo data.",
+      "Client has no validation on their own setup."
     ],
     "unknowns": [
       {
-        "item": "The specific findings of the LED NIR kidney study.",
-        "why_it_matters": "Understanding the specific findings is crucial to determine if they are applicable to guiding tumor boundary decisions during surgery."
+        "item": "Details of the proposed sensor (design, specifications, compatibility)",
+        "why_it_matters": "Sensor characteristics may affect performance and applicability to tumor boundary detection."
       },
       {
-        "item": "The differences between the kidney study setup and the proposed tumor boundary setup.",
-        "why_it_matters": "Differences in setup could affect the applicability of the study's findings to the new context."
+        "item": "Similarity between the kidney study conditions and the intended tumor surgery context",
+        "why_it_matters": "Differences in tissue type, surgical environment, or measurement goals may impact the relevance of the original study's findings."
       },
       {
-        "item": "The specific requirements for the sensor to be considered ready for use in live surgery.",
-        "why_it_matters": "Knowing these requirements is necessary to assess if the current sensor meets them."
+        "item": "Regulatory or clinical requirements for using the sensor in live surgery",
+        "why_it_matters": "These requirements may dictate the need for additional validation or data."
+      },
+      {
+        "item": "Intended tumor type and anatomical site",
+        "why_it_matters": "Optical properties and boundary characteristics may differ, affecting feasibility."
       }
     ],
     "assumptions": [
-      "The client assumes that the findings from the kidney study can be directly applied to tumor boundary decisions without additional validation."
+      "The client intends to use a similar or identical sensor setup as in the kidney study.",
+      "The client has not performed any preliminary tests or validation with their own hardware or in their specific surgical context."
     ]
   },
   "clarification_questions": [
     {
       "priority": 1,
-      "question": "What are the specific findings of the LED NIR kidney study that you believe are applicable to tumor boundary decisions?",
+      "question": "What is the intended tumor type and anatomical site for boundary detection?",
       "could_change": "method"
     },
     {
       "priority": 2,
-      "question": "What are the differences between the kidney study setup and your proposed tumor boundary setup?",
-      "could_change": "experiment_design"
+      "question": "Can you provide details of your proposed sensor design and its compatibility with surgical workflow?",
+      "could_change": "probe_or_geometry"
     },
     {
       "priority": 3,
-      "question": "What specific requirements must the sensor meet to be considered ready for use in live surgery?",
-      "could_change": "scope_or_feasibility"
-    }
-  ],
-  "recommendations": [],
-  "measurement_concept": {
-    "summary": "The measurement concept cannot be defined yet due to lack of in vivo validation and regulatory approval for the proposed application.",
-    "geometry": "undetermined",
-    "fiber_link_note": "The fiber link and probe design are not defined due to the lack of specific application details.",
-    "needs_afs_confirmation": false,
-    "citations": []
-  },
-  "spectral_range": [],
-  "risks": [
-    {
-      "risk": "The LED NIR kidney study findings may not directly apply to tumor boundary decisions during live surgery.",
-      "mitigation": "Conduct in vivo validation and clinical studies to confirm applicability."
+      "question": "Will the sensor be used in direct contact with tissue, or at a distance? What are the sterility and cleaning requirements?",
+      "could_change": "probe_or_geometry"
     },
     {
-      "risk": "Lack of regulatory approval for the proposed use in live surgery.",
-      "mitigation": "Seek regulatory guidance and approval for clinical use.",
+      "priority": 4,
+      "question": "What are the expected optical properties (scattering, absorption) of the target tissue compared to kidney tissue?",
+      "could_change": "method"
+    },
+    {
+      "priority": 5,
+      "question": "What reference method or clinical standard will be used to validate tumor boundary detection?",
+      "could_change": "experiment_design"
+    }
+  ],
+  "recommendations": [
+    {
+      "method": "NIR",
+      "role": "primary_candidate",
+      "rationale": "Diffuse reflectance NIR spectroscopy with a fiber probe is supported for ex vivo tumor/normal discrimination and is the basis of the cited kidney study; it is worth laboratory testing on the intended tissue type.",
+      "applies_when": "The tissue type is similar in optical properties to kidney and the sensor can be adapted for the surgical workflow.",
+      "confidence": "medium",
       "citations": [
         {
           "source_id": "S03",
-          "page": 14,
-          "supports": "The results reported here can be considered as a successful feasibility study of an LED-based NIR sensor for cancer diagnostics aimed at in vivo applications."
+          "page": 2,
+          "supports": "NIR diffuse reflectance is promising for tumor/normal discrimination in tissue."
+        }
+      ]
+    },
+    {
+      "method": "combination",
+      "role": "comparison_candidate",
+      "rationale": "Combining NIR with MIR-ATR or fluorescence may improve boundary detection in heterogeneous tissues; this is supported for ex vivo tissue classification and margin recognition.",
+      "applies_when": "The tissue is heterogeneous or the NIR-only approach is insufficient for robust discrimination.",
+      "confidence": "medium",
+      "citations": [
+        {
+          "source_id": "S01",
+          "page": 13,
+          "supports": "Multispectral approaches (NIR, MIR-ATR, fluorescence) are used for tumor margin recognition."
+        },
+        {
+          "source_id": "S04",
+          "page": 1,
+          "supports": "Combining fluorescence and IR improves tumor margin detection."
         }
       ]
     }
   ],
+  "measurement_concept": {
+    "summary": "A laboratory feasibility study should be performed using the intended sensor (or a close prototype) on ex vivo samples of the target tissue, comparing NIR (and optionally multispectral) fiber probe measurements at the intended measurement geometry to histopathological reference. In vivo or intraoperative use is not supported without further validation.",
+    "geometry": "diffuse_reflection",
+    "fiber_link_note": "Standard Vis-NIR silica fibers are suitable for NIR diffuse reflectance in the 900–1500 nm range as in the cited study.",
+    "needs_afs_confirmation": true,
+    "citations": [
+      {
+        "source_id": "S03",
+        "page": 5,
+        "supports": "The cited study used a fiber-coupled NIR diffuse reflectance probe with LEDs at 0.94, 1.17, 1.30, and 1.44 um."
+      },
+      {
+        "source_id": "S03",
+        "page": 14,
+        "supports": "Further studies are needed for other organs and in vivo use."
+      }
+    ]
+  },
+  "spectral_range": [
+    {
+      "method": "NIR",
+      "nominal_range": {
+        "min": 900,
+        "max": 1500,
+        "unit": "nm"
+      },
+      "status": "confirmed_by_sources",
+      "note": "The cited LED-based sensor used 0.94, 1.17, 1.30, and 1.44 um (940–1440 nm) for kidney tissue discrimination.",
+      "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+      "citations": [
+        {
+          "source_id": "S03",
+          "page": 5,
+          "supports": "LED emission maxima at 0.94, 1.17, 1.30, and 1.44 um."
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Ex vivo or in vitro results may not translate to in vivo or intraoperative performance due to differences in tissue properties, environment, and measurement conditions.",
+      "mitigation": "Conduct laboratory feasibility studies on fresh ex vivo samples of the intended tissue type, followed by controlled in vivo validation before any clinical use.",
+      "citations": [
+        {
+          "source_id": "S03",
+          "page": 3,
+          "supports": "Spectra of frozen/thawed biopsies can differ from real-life in vivo measurements."
+        }
+      ]
+    },
+    {
+      "risk": "Sensor performance may vary with tissue type, tumor heterogeneity, and surgical conditions.",
+      "mitigation": "Test the sensor on a representative set of tissue samples covering expected variability; optimize probe design and data processing for the specific application.",
+      "citations": [
+        {
+          "source_id": "S03",
+          "page": 14,
+          "supports": "Sensor performance should be improved and adapted for each case individually."
+        }
+      ]
+    },
+    {
+      "risk": "No regulatory or clinical approval for intraoperative use; patient safety and efficacy are not established.",
+      "mitigation": "Restrict initial studies to laboratory or ex vivo settings; clinical validation and regulatory approval are required before patient use.",
+      "citations": []
+    }
+  ],
   "feasibility_plan": {
-    "objective": "To validate the LED NIR sensor for tumor boundary decisions during live surgery.",
+    "objective": "To determine whether the proposed NIR (or multispectral) fiber-optic sensor can reliably discriminate tumor from normal tissue in the intended anatomical context, using ex vivo samples.",
     "samples_or_process_states": [
-      "In vivo tumor samples during surgery."
+      "Fresh ex vivo samples of the intended tumor type and anatomical site",
+      "Representative normal tissue from the same site"
     ],
     "reference_measurements": [
-      "Histopathological analysis of tumor margins."
+      "Histopathological assessment of tumor boundaries (gold standard)"
     ],
     "comparisons": [
-      "Comparison with established surgical margin assessment techniques."
+      "Sensor discrimination results versus histopathology",
+      "Comparison of NIR-only and multispectral (if available) approaches"
     ],
     "steps": [
-      "Conduct in vivo validation studies.",
-      "Develop a clinical protocol for sensor use during surgery.",
-      "Seek regulatory approval for clinical use."
+      "Define the sensor configuration and measurement geometry for the intended tissue.",
+      "Collect ex vivo tissue samples representing tumor and normal regions.",
+      "Acquire NIR (and optionally multispectral) spectra at defined locations using the sensor.",
+      "Process data using chemometric classification models (e.g., PLS-DA).",
+      "Compare sensor-based discrimination to histopathological reference.",
+      "Assess robustness across tissue heterogeneity and sample variability."
     ],
-    "go_no_go_basis": "Regulatory approval and successful in vivo validation."
+    "go_no_go_basis": "Go/no-go is based on the sensor's ability to discriminate tumor from normal tissue with accuracy meeting client-defined acceptance targets, as validated against histopathology. No clinical or in vivo claims are made at this stage."
   },
   "source_conflicts": [],
   "meta": {
-    "model": "gpt-4o",
+    "model": "gpt-4.1",
     "kb_version": "kb-e5505ad92bbc",
-    "generated_at": "2026-10-17T21:52:40.161563+00:00",
+    "generated_at": "2026-10-18T09:40:14.548999+00:00",
     "verification": {
       "citations_ok": true,
       "range_check_ok": true,
@@ -132,49 +228,69 @@
     {
       "check_id": "research_as_proof",
       "severity": "wont_work",
-      "finding": "Research and proof-of-concept results are a reason to test a method, not proof that a different set-up is ready for the intended use. Use on patients additionally needs in vivo validation, clinical studies and the applicable regulatory approval, which are outside this assessment.",
+      "finding": "The LED NIR kidney study is a proof-of-concept on ex vivo samples; it cannot be quoted as proof that a sensor is ready for intraoperative tumor boundary guidance. In vivo validation and regulatory approval are required for patient use.",
       "citations": [
         {
           "source_id": "S03",
           "page": 1,
-          "supports": "In vitro samples, limited patient number."
+          "supports": "The cited study used in vitro samples and is a proof-of-concept."
         },
         {
           "source_id": "S03",
           "page": 3,
-          "supports": "Ex vivo spectra can differ from in vivo."
+          "supports": "Ex vivo spectra can differ from in vivo; transferability is not guaranteed."
         },
         {
           "source_id": "S03",
           "page": 14,
-          "supports": "Proof of concept; further studies needed."
+          "supports": "The study is a proof-of-concept; further studies are needed."
         }
       ]
     }
   ],
   "inline_recommendation": {
-    "mode": "not_applicable",
-    "headline": "In vivo validation and regulatory approval needed for clinical use.",
-    "method": "none_yet",
-    "probe": "not_yet_defined",
-    "install_location": "not_yet_defined",
-    "fiber_family": "not_yet_defined",
-    "test_against": "not_yet_defined",
-    "not_final_because": "In vivo validation and regulatory approval are required for clinical use.",
+    "mode": "laboratory_study",
+    "headline": "Laboratory feasibility study required; no clinical or in vivo claims are supported by the cited research.",
+    "method": "NIR",
+    "probe": "Fiber-coupled NIR diffuse reflectance probe (as in the cited study), adapted for the intended tissue type",
+    "install_location": "Laboratory or ex vivo tissue bench (not in vivo or intraoperative)",
+    "fiber_family": "Standard and Al/Cu-coated Vis-NIR silica fibers",
+    "test_against": "Multispectral probe (NIR + MIR-ATR or fluorescence) if available; always compare to histopathology",
+    "not_final_because": "No in vivo or clinical validation; ex vivo feasibility must be established for the intended tissue and sensor setup.",
     "citations": [
       {
         "source_id": "S03",
         "page": 14,
-        "supports": "The results reported here can be considered as a successful feasibility study of an LED-based NIR sensor for cancer diagnostics aimed at in vivo applications."
+        "supports": "Further studies are needed for other organs and in vivo use."
       }
     ]
   },
   "afs_pathway": {
-    "lab_test_methods": [],
-    "key_spectral_features": "not_yet",
+    "lab_test_methods": [
+      {
+        "method": "NIR",
+        "role": "main"
+      },
+      {
+        "method": "combination",
+        "role": "compare"
+      }
+    ],
+    "key_spectral_features": "NIR: 965, 1155, 1200, 1300, 1400, and 1450 nm (water and lipid bands); combination: MIR-ATR and fluorescence features may provide complementary information for tissue discrimination.",
     "path": "not_yet",
-    "path_reason": "In vivo validation and regulatory approval are required before proceeding with clinical use.",
+    "path_reason": "Laboratory feasibility must be established for the intended tissue and sensor setup before any process or clinical pathway can be defined.",
     "later_path": "none",
-    "citations": []
+    "citations": [
+      {
+        "source_id": "S03",
+        "page": 8,
+        "supports": "Key NIR bands for tumor discrimination are at 965, 1155, 1200, and 1450 nm."
+      },
+      {
+        "source_id": "S01",
+        "page": 13,
+        "supports": "Multispectral approaches are used for tumor margin recognition."
+      }
+    ]
   }
 }
