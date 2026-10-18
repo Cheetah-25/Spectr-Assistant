@@ -25,3 +25,6 @@ _slides_png/
 
 # OS
 .DS_Store
+
+# final-evaluation file: read at run time, never committed
+customer_scenarios_for_final_evaluation.txt

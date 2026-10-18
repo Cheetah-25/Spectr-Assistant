@@ -1,4 +1,11 @@
 # Spectr-Assistant
+
+> **Demo version: `webapp/`.** A chat assistant (single HTML page, runs as a Claude artifact or in any browser) with
+> RAG over the AFS materials, premise checks, strict citations and downloadable reports. The final answers to
+> H01–H06 generated with it are in `webapp/outputs/`; repeated runs and a trap scorecard are in `webapp/bench/`.
+> See [`webapp/README.md`](webapp/README.md) for the architecture, the use of AFS materials, setup and results.
+> The Streamlit app below is the earlier Python version.
+
 ## Run the app
 
 ```bash

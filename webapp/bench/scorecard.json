@@ -1,0 +1,903 @@
+{
+  "baseline": {
+    "runs": 2,
+    "answers": 12,
+    "valid_json_pct": 75,
+    "trap_caught_pct": 75,
+    "trap_caught_of_valid_pct": 100,
+    "method_named_pct": 75,
+    "needed_repair": 1,
+    "uncited_removed_total": 131,
+    "answers_with_unsupported_numbers_pct": 78,
+    "avg_unsupported_numbers": 3,
+    "avg_sources": 0,
+    "perCase": {
+      "H01": {
+        "trap": "Old NIR calibration is not valid for the new formulation; Raman does not keep it valid",
+        "caught": 2,
+        "runs": 2,
+        "valid": 2,
+        "methods": [
+          "Keep NIR as the main method for the existing pilot, since it is already installed and fast. Build a designed set of blended powders covering the new API and blend across the target concentration range, plus the old formulation as a control. Quantify the failure of the old model on the new blend, then test transfer approaches (bias or slope correction, or augmented PLS with the new samples). Evaluate Raman on the same samples as a complementary method if the new API has strong, selective Raman bands.",
+          "Primary: NIR (existing) with a calibration-transfer assessment on the new blend. Secondary: Raman evaluated for its own calibration on the new blend, and optionally as a combined NIR+Raman model if both are feasible in-line."
+        ]
+      },
+      "H02": {
+        "trap": "Clear whey and opaque concentrate need different interfaces (transmission/transflection vs reflection)",
+        "caught": 2,
+        "runs": 2,
+        "valid": 2,
+        "methods": [
+          "NIR spectroscopy (about 900-2500 nm, with the water combination band near 1940 nm and the protein and fat CH/NH bands near 1700-1750 nm and 2300-2350 nm), with separate calibrations per stream. Transmission for whey, diffuse reflectance or transflectance for concentrate. Spectra should be taken at a controlled product temperature.",
+          "Fibre-coupled NIR (roughly 900-2500 nm) as the main method for protein and fat in both streams. For the whey, NIR transmission or transflectance with a fixed short path, and optionally UV-Vis at about 280 nm for protein. For the concentrate, NIR diffuse reflectance or transflectance with a very short gap, since transmission saturates in opaque high-scatter samples."
+        ]
+      },
+      "H03": {
+        "trap": "Fluorescence has no selectivity for glucose / viable biomass without a named fluorophore",
+        "caught": 2,
+        "runs": 2,
+        "valid": 2,
+        "methods": [
+          "Native fluorescence in the UV/visible range, scanning excitation-emission matrices (EEM) or fixed bands, with NADH-type (about 340/460 nm) and flavin-type (about 450/530 nm) channels as candidates. Glucose is not a candidate for fluorescence and would need Raman or NIR, or a reagent-based enzymatic assay that is not suited to direct in-line use.",
+          "Excitation-emission matrix (EEM) fluorescence with chemometric (PLS) modelling for biomass; glucose needs a second method such as NIR or Raman, or an enzymatic/affinity sensor, not intrinsic fluorescence."
+        ]
+      },
+      "H04": {
+        "trap": "Silica fiber cannot carry MIR; concept not approved as proposed",
+        "caught": 2,
+        "runs": 2,
+        "valid": 2,
+        "methods": [
+          "Near-infrared transmission or reflectance at the water overtone band (about 1450 nm, with 1940 nm as a secondary band), calibrated by PLS against Karl Fischer reference values. MIR ATR, if still required, must be done with an IR-transmitting fiber or with the analyzer located at the probe.",
+          "NIR absorption spectroscopy of the water combination/overtone band near 1.94 um (with 1.45 um as a reference or check band), using a reflectance or transmission probe, with a short MIR ATR lab reference if needed"
+        ]
+      },
+      "H05": {
+        "trap": "Target and contaminant undefined: no exact configuration, screen first",
+        "caught": 1,
+        "runs": 2,
+        "valid": 1,
+        "methods": [
+          null,
+          "Lab phase: reference chemistry (for example HPLC, GC-MS, ICP-MS or OES, Karl Fischer, as relevant) on archived on-spec and off-spec samples, plus broad-range UV-Vis, NIR, and Raman screening of the same samples. The in-line method is selected only after this phase."
+        ]
+      },
+      "H06": {
+        "trap": "Kidney in-vitro study is not proof for live surgery; outside supported scope",
+        "caught": 0,
+        "runs": 2,
+        "valid": 0,
+        "methods": [
+          null
+        ]
+      }
+    },
+    "rows": [
+      {
+        "run": "run1",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 12,
+        "sources": 0,
+        "unsupported_numbers": 0,
+        "questions": 7,
+        "steps": 8,
+        "method": "Keep NIR as the main method for the existing pilot, since it is already installed and fast. Build a designed set of blended powders covering the new API and blend across the target concentration range, plus the old formulation as a control. Quantify the failure of the old model on the new blend, then test transfer approaches (bias or slope correction, or augmented PLS with the new samples). Evaluate Raman on the same samples as a complementary method if the new API has strong, selective Raman bands.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 16,
+        "sources": 0,
+        "unsupported_numbers": 8,
+        "questions": 9,
+        "steps": 10,
+        "method": "NIR spectroscopy (about 900-2500 nm, with the water combination band near 1940 nm and the protein and fat CH/NH bands near 1700-1750 nm and 2300-2350 nm), with separate calibrations per stream. Transmission for whey, diffuse reflectance or transflectance for concentrate. Spectra should be taken at a controlled product temperature.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 15,
+        "sources": 0,
+        "unsupported_numbers": 2,
+        "questions": 9,
+        "steps": 8,
+        "method": "Native fluorescence in the UV/visible range, scanning excitation-emission matrices (EEM) or fixed bands, with NADH-type (about 340/460 nm) and flavin-type (about 450/530 nm) channels as candidates. Glucose is not a candidate for fluorescence and would need Raman or NIR, or a reagent-based enzymatic assay that is not suited to direct in-line use.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 14,
+        "sources": 0,
+        "unsupported_numbers": 3,
+        "questions": 8,
+        "steps": 7,
+        "method": "Near-infrared transmission or reflectance at the water overtone band (about 1450 nm, with 1940 nm as a secondary band), calibrated by PLS against Karl Fischer reference values. MIR ATR, if still required, must be done with an IR-transmitting fiber or with the analyzer located at the probe.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H05",
+        "valid": false
+      },
+      {
+        "run": "run1",
+        "id": "H06",
+        "valid": false
+      },
+      {
+        "run": "run2",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 12,
+        "sources": 0,
+        "unsupported_numbers": 0,
+        "questions": 7,
+        "steps": 9,
+        "method": "Primary: NIR (existing) with a calibration-transfer assessment on the new blend. Secondary: Raman evaluated for its own calibration on the new blend, and optionally as a combined NIR+Raman model if both are feasible in-line.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 16,
+        "sources": 0,
+        "unsupported_numbers": 5,
+        "questions": 9,
+        "steps": 9,
+        "method": "Fibre-coupled NIR (roughly 900-2500 nm) as the main method for protein and fat in both streams. For the whey, NIR transmission or transflectance with a fixed short path, and optionally UV-Vis at about 280 nm for protein. For the concentrate, NIR diffuse reflectance or transflectance with a very short gap, since transmission saturates in opaque high-scatter samples.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 1,
+        "uncited_removed": 18,
+        "sources": 0,
+        "unsupported_numbers": 3,
+        "questions": 8,
+        "steps": 8,
+        "method": "Excitation-emission matrix (EEM) fluorescence with chemometric (PLS) modelling for biomass; glucose needs a second method such as NIR or Raman, or an enzymatic/affinity sensor, not intrinsic fluorescence.",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 14,
+        "sources": 0,
+        "unsupported_numbers": 5,
+        "questions": 8,
+        "steps": 7,
+        "method": "NIR absorption spectroscopy of the water combination/overtone band near 1.94 um (with 1.45 um as a reference or check band), using a reflectance or transmission probe, with a short MIR ATR lab reference if needed",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 14,
+        "sources": 0,
+        "unsupported_numbers": 1,
+        "questions": 11,
+        "steps": 8,
+        "method": "Lab phase: reference chemistry (for example HPLC, GC-MS, ICP-MS or OES, Karl Fischer, as relevant) on archived on-spec and off-spec samples, plus broad-range UV-Vis, NIR, and Raman screening of the same samples. The in-line method is selected only after this phase.",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run2",
+        "id": "H06",
+        "valid": false
+      }
+    ]
+  },
+  "fast": {
+    "runs": 5,
+    "answers": 30,
+    "valid_json_pct": 97,
+    "trap_caught_pct": 97,
+    "trap_caught_of_valid_pct": 100,
+    "method_named_pct": 97,
+    "needed_repair": 1,
+    "uncited_removed_total": 0,
+    "answers_with_unsupported_numbers_pct": 0,
+    "avg_unsupported_numbers": 0,
+    "avg_sources": 19.5,
+    "perCase": {
+      "H01": {
+        "trap": "Old NIR calibration is not valid for the new formulation; Raman does not keep it valid",
+        "caught": 5,
+        "runs": 5,
+        "valid": 5,
+        "methods": [
+          "NIR",
+          "NIR + Raman"
+        ]
+      },
+      "H02": {
+        "trap": "Clear whey and opaque concentrate need different interfaces (transmission/transflection vs reflection)",
+        "caught": 5,
+        "runs": 5,
+        "valid": 5,
+        "methods": [
+          "NIR"
+        ]
+      },
+      "H03": {
+        "trap": "Fluorescence has no selectivity for glucose / viable biomass without a named fluorophore",
+        "caught": 5,
+        "runs": 5,
+        "valid": 5,
+        "methods": [
+          "Raman",
+          "NIR"
+        ]
+      },
+      "H04": {
+        "trap": "Silica fiber cannot carry MIR; concept not approved as proposed",
+        "caught": 5,
+        "runs": 5,
+        "valid": 5,
+        "methods": [
+          "MIR ATR"
+        ]
+      },
+      "H05": {
+        "trap": "Target and contaminant undefined: no exact configuration, screen first",
+        "caught": 5,
+        "runs": 5,
+        "valid": 5,
+        "methods": [
+          "NIR"
+        ]
+      },
+      "H06": {
+        "trap": "Kidney in-vitro study is not proof for live surgery; outside supported scope",
+        "caught": 4,
+        "runs": 5,
+        "valid": 4,
+        "methods": [
+          "NIR",
+          null
+        ]
+      }
+    },
+    "rows": [
+      {
+        "run": "run1",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 18,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 20,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 21,
+        "unsupported_numbers": 0,
+        "questions": 3,
+        "steps": 5,
+        "method": "Raman",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 22,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 20,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 31,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      },
+      {
+        "run": "run2",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 15,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 23,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run2",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 18,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run2",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 19,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run2",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 23,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run2",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 22,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      },
+      {
+        "run": "run3",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 20,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run3",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 18,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run3",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 20,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "Raman",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run3",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 17,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run3",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 22,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run3",
+        "id": "H06",
+        "valid": false
+      },
+      {
+        "run": "run4",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 1,
+        "uncited_removed": 0,
+        "sources": 18,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run4",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 19,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run4",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 19,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "Raman",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run4",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 17,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run4",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 21,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run4",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 24,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      },
+      {
+        "run": "run5",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 20,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR + Raman",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run5",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 16,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run5",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 23,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 4,
+        "method": "Raman",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run5",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 15,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run5",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 21,
+        "unsupported_numbers": 0,
+        "questions": 4,
+        "steps": 5,
+        "method": "NIR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run5",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 24,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      }
+    ]
+  },
+  "strong": {
+    "runs": 1,
+    "answers": 6,
+    "valid_json_pct": 100,
+    "trap_caught_pct": 100,
+    "trap_caught_of_valid_pct": 100,
+    "method_named_pct": 100,
+    "needed_repair": 0,
+    "uncited_removed_total": 0,
+    "answers_with_unsupported_numbers_pct": 0,
+    "avg_unsupported_numbers": 0,
+    "avg_sources": 25.2,
+    "perCase": {
+      "H01": {
+        "trap": "Old NIR calibration is not valid for the new formulation; Raman does not keep it valid",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR"
+        ]
+      },
+      "H02": {
+        "trap": "Clear whey and opaque concentrate need different interfaces (transmission/transflection vs reflection)",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR"
+        ]
+      },
+      "H03": {
+        "trap": "Fluorescence has no selectivity for glucose / viable biomass without a named fluorophore",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "Raman"
+        ]
+      },
+      "H04": {
+        "trap": "Silica fiber cannot carry MIR; concept not approved as proposed",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "MIR ATR"
+        ]
+      },
+      "H05": {
+        "trap": "Target and contaminant undefined: no exact configuration, screen first",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "MIR ATR"
+        ]
+      },
+      "H06": {
+        "trap": "Kidney in-vitro study is not proof for live surgery; outside supported scope",
+        "caught": 1,
+        "runs": 1,
+        "valid": 1,
+        "methods": [
+          "NIR"
+        ]
+      }
+    },
+    "rows": [
+      {
+        "run": "run1",
+        "id": "H01",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 18,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H02",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 23,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H03",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 26,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 4,
+        "method": "Raman",
+        "status": "provisional_assessment"
+      },
+      {
+        "run": "run1",
+        "id": "H04",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 26,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H05",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 27,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "MIR ATR",
+        "status": "insufficient_information"
+      },
+      {
+        "run": "run1",
+        "id": "H06",
+        "valid": true,
+        "trap": true,
+        "method_named": true,
+        "hard_issues": 0,
+        "uncited_removed": 0,
+        "sources": 31,
+        "unsupported_numbers": 0,
+        "questions": 5,
+        "steps": 5,
+        "method": "NIR",
+        "status": "outside_supported_scope"
+      }
+    ]
+  }
+}

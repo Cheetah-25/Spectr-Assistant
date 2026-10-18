@@ -1,0 +1,609 @@
+<title>In-line Spectroscopy Assessor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: example rail left, chat thread right; each assistant turn is an assessment card. */
+:root {
+  --bg:#f4f5f7; --sheet:#fff; --ink:#18202b; --muted:#5b6573; --line:#dde1e7; --soft:#eceff3;
+  --accent:#2f4ac0; --accent-soft:#e6eafb; --ok:#1f7a4d; --ok-soft:#e3f3ea; --warn:#9a6200; --warn-soft:#fbf0d9;
+  --bad:#b3261e; --bad-soft:#fbe5e3; --info:#5a4bb0; --info-soft:#ece9fa; --user:#e9edf8; --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --f-d:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif; --f-b:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --f-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0f1319; --sheet:#161b23; --ink:#e5e9ef; --muted:#9aa4b2; --line:#2a313c; --soft:#1e242e; --accent:#8ea2ff; --accent-soft:#232a4a;
+  --ok:#5fd39a; --ok-soft:#15301f; --warn:#f0b84f; --warn-soft:#33270f; --bad:#ff8a80; --bad-soft:#3a1a18; --info:#b4a8ff; --info-soft:#262145; --user:#1d2436; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark; } }
+:root[data-theme="dark"] { --bg:#0f1319; --sheet:#161b23; --ink:#e5e9ef; --muted:#9aa4b2; --line:#2a313c; --soft:#1e242e; --accent:#8ea2ff; --accent-soft:#232a4a;
+  --ok:#5fd39a; --ok-soft:#15301f; --warn:#f0b84f; --warn-soft:#33270f; --bad:#ff8a80; --bad-soft:#3a1a18; --info:#b4a8ff; --info-soft:#262145; --user:#1d2436; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark; }
+* { box-sizing:border-box } [hidden] { display:none !important }
+body { background:var(--bg); color:var(--ink); font:15px/1.55 var(--f-b); }
+.wrap { max-width:1280px; margin:0 auto; padding-block:18px 24px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); }
+header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:8px 20px; padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:14px; }
+h1 { font:700 25px/1.1 var(--f-d); margin:0; } header p { margin:4px 0 0; color:var(--muted); font-size:14px; max-width:72ch; }
+.engine { font:500 12px var(--f-m); padding:4px 9px; border-radius:999px; background:var(--soft); color:var(--muted); }
+.engine.on { background:var(--ok-soft); color:var(--ok); }
+.grid { display:grid; grid-template-columns:250px minmax(0,1fr); gap:18px; align-items:start; }
+@media (max-width:860px) { .grid { grid-template-columns:minmax(0,1fr); } }
+nav h2 { font:600 11px var(--f-m); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px; }
+.ex { display:flex; flex-direction:column; gap:2px; margin-bottom:14px; }
+.ex button { all:unset; cursor:pointer; display:grid; grid-template-columns:34px minmax(0,1fr); gap:6px; padding:6px 8px; border-radius:6px; font-size:13.5px; line-height:1.3; }
+.ex button:hover { background:var(--soft); } .ex button:focus-visible { outline:2px solid var(--accent); }
+.ex b { font:500 12px var(--f-m); color:var(--muted); }
+.btn { all:unset; box-sizing:border-box; cursor:pointer; font:600 13px var(--f-b); padding:8px 13px; border-radius:8px; background:var(--accent); color:var(--sheet); text-align:center; }
+.btn.ghost { background:transparent; color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+.btn[disabled] { opacity:.45; cursor:default; } .btn:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.thread { background:var(--sheet); border:1px solid var(--line); border-radius:12px; display:flex; flex-direction:column; min-width:0; }
+.msgs { padding:18px; display:flex; flex-direction:column; gap:16px; min-height:420px; }
+.msg { display:flex; gap:10px; align-items:flex-start; } .msg.user { flex-direction:row-reverse; }
+.av { flex:none; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font:700 12px var(--f-m); background:var(--accent); color:var(--sheet); }
+.msg.user .av { background:var(--muted); }
+.bubble { min-width:0; max-width:100%; } .msg.user .bubble { background:var(--user); padding:10px 14px; border-radius:12px 12px 2px 12px; max-width:80%; white-space:pre-wrap; }
+.msg.bot .bubble { flex:1; overflow-wrap:anywhere; }
+.typing { color:var(--muted); font-style:italic; }
+.reqgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:14px; } .reqgrid small { display:block; font:600 11px var(--f-m); text-transform:uppercase; color:var(--muted); } .reqgrid ul { margin:2px 0 0; padding-left:18px; } .req { margin:0 0 10px; } @media (max-width:640px) { .reqgrid { grid-template-columns:1fr; } }
+.dlrow { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.refine { font-size:13px; padding:6px 10px; margin:0 0 10px; border:1px dashed var(--line); border-radius:8px; }
+.card { border:2px solid var(--accent); border-radius:12px; padding:14px 16px; background:color-mix(in srgb,var(--accent-soft) 40%,var(--sheet)); }
+.card .mode { font:600 11px var(--f-m); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); }
+.card h3 { font:700 20px/1.25 var(--f-d); margin:4px 0 10px; text-wrap:balance; }
+.cells { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }
+.cell { background:var(--sheet); border:1px solid var(--line); border-radius:8px; padding:7px 10px; }
+.cell small { display:block; font:600 10.5px var(--f-m); text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.cell.m span { font:700 19px var(--f-d); color:var(--accent); }
+.nf { margin-top:9px; padding:7px 11px; border-radius:6px; background:var(--warn-soft); color:var(--warn); font-weight:500; font-size:14px; }
+.mscard { border:1px solid var(--info); border-radius:10px; padding:10px 12px; background:color-mix(in srgb,var(--info-soft) 60%,var(--sheet)); }
+.msname { font:700 17px var(--f-d); color:var(--info); margin-bottom:6px; }
+.msgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px; font-size:13.5px; }
+.msgrid small { display:block; font:600 10.5px var(--f-m); text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.spec { border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--sheet); }
+.spec h4 { margin:0 0 4px; font:700 17px var(--f-d); } .spec .sub { color:var(--muted); font-size:13px; }
+.spec svg { width:100%; height:auto; display:block; } .spec svg text { font:11px var(--f-m); fill:var(--muted); }
+.chartbox { position:relative; margin-top:8px; overflow-x:auto; } .chartbox svg { min-width:520px; }
+.tip { position:absolute; pointer-events:none; background:var(--ink); color:var(--sheet); font:12px var(--f-m); padding:3px 7px; border-radius:5px; white-space:nowrap; }
+.legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12.5px; margin-top:4px; } .legend span { display:inline-flex; align-items:center; gap:5px; }
+.legend i { width:12px; height:3px; border-radius:2px; display:inline-block; }
+table.pk { border-collapse:collapse; width:100%; font-size:13.5px; margin-top:6px; } table.pk td, table.pk th { text-align:left; padding:4px 8px 4px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+table.pk th { font:600 10.5px var(--f-m); text-transform:uppercase; color:var(--muted); }
+.spec select { font:13px var(--f-b); color:var(--ink); background:var(--soft); border:1px solid var(--line); border-radius:6px; padding:3px 6px; }
+.srcs { border-top:1px solid var(--line); padding-top:8px; }
+ol.srclist { margin:4px 0 0; padding-left:20px; font-size:13px; } ol.srclist li { margin:5px 0; }
+.changed { padding:8px 12px; border-radius:8px; background:var(--info-soft); color:var(--info); font-weight:500; margin-bottom:10px; font-size:14px; }
+.status { display:inline-block; font:600 12.5px var(--f-b); padding:3px 10px; border-radius:999px; margin:10px 8px 4px 0; }
+.status.provisional_assessment { background:var(--ok-soft); color:var(--ok); } .status.insufficient_information { background:var(--warn-soft); color:var(--warn); } .status.outside_supported_scope { background:var(--bad-soft); color:var(--bad); }
+.sec { margin-top:12px; } .sec > b { font:600 11px var(--f-m); letter-spacing:.07em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:5px; }
+.prob { border-left:4px solid var(--info); padding:4px 10px; margin:6px 0; font-size:14px; }
+.prob.wont_work { border-color:var(--bad); } .prob.wrong_assumption { border-color:var(--warn); }
+.prob i { font-style:normal; font:600 10.5px var(--f-m); text-transform:uppercase; letter-spacing:.06em; display:block; }
+.prob.wont_work i { color:var(--bad); } .prob.wrong_assumption i { color:var(--warn); } .prob.check_first i { color:var(--info); }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px; }
+.tile { border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13.5px; background:var(--sheet); }
+.tile .r { font:600 10.5px var(--f-m); text-transform:uppercase; padding:1px 6px; border-radius:4px; background:var(--accent-soft); color:var(--accent); }
+.tile.main { border-color:var(--ok); } .tile.main .r { background:var(--ok); color:var(--sheet); }
+.tile.not_suitable { border-color:var(--bad); } .tile.not_suitable .r { background:var(--bad-soft); color:var(--bad); }
+.tile .n { font:700 15px var(--f-d); margin:3px 0; }
+ol.q { margin:0; padding-left:20px; } ol.q li { margin:3px 0; } ol.q small { color:var(--muted); display:block; }
+.path3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; } @media (max-width:640px){ .path3 { grid-template-columns:minmax(0,1fr); } }
+.pc { border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:13px; opacity:.5; background:var(--sheet); }
+.pc.on { opacity:1; border:2px solid var(--ok); background:var(--ok-soft); } .pc.later { opacity:1; border:1px dashed var(--accent); }
+.pc b { display:block; font-size:13.5px; }
+details { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; } summary { cursor:pointer; color:var(--accent); font-weight:600; font-size:14px; }
+.checks div { font-size:13.5px; margin:3px 0; } .ok { color:var(--ok); } .no { color:var(--bad); } .nt { color:var(--warn); }
+.cite { all:unset; cursor:pointer; font:500 11px var(--f-m); color:var(--accent); background:var(--accent-soft); padding:0 5px; border-radius:3px; white-space:nowrap; }
+.cite.gen { color:var(--warn); background:var(--warn-soft); }
+.composer { border-top:1px solid var(--line); padding:12px; display:flex; flex-direction:column; gap:8px; position:sticky; bottom:0; background:var(--sheet); border-radius:0 0 12px 12px; }
+.composer textarea { width:100%; min-height:64px; max-height:220px; resize:vertical; font:15px/1.45 var(--f-b); color:var(--ink); background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+.composer textarea:focus-visible { outline:2px solid var(--accent); }
+.composer textarea.drag { border-color:var(--accent); background:var(--accent-soft); }
+.crow { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; }
+.filelbl { cursor:pointer; font:600 13px var(--f-b); padding:7px 12px; border-radius:8px; color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); position:relative; }
+.filelbl input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+#fmsg { font-size:12.5px; color:var(--muted); }
+.drawer { position:fixed; right:0; top:0; bottom:0; width:min(420px,100%); background:var(--sheet); border-left:1px solid var(--line); z-index:20; overflow-y:auto; padding:calc(env(safe-area-inset-top,0px) + 16px) max(16px,env(safe-area-inset-right,0px)) 16px 16px; box-shadow:-8px 0 24px rgb(0 0 0/.12); }
+.drawer .ev { border-top:1px solid var(--line); padding:10px 0; font-size:14px; } .drawer code { font:600 13px var(--f-m); color:var(--accent); } .drawer small { display:block; color:var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div><h1>In-line Spectroscopy Assessor</h1>
+    <p>Describe a customer's process. The assistant recommends the in-line method, flags problems with the request, asks what it needs, and re-assesses when you answer. Every claim is checked against the AFS materials.</p></div>
+    <span class="engine" id="engine" style="max-width:100%">Checking for Claude…</span>
+  </header>
+  <div class="grid">
+    <nav aria-label="Examples">
+      <h2 id="exHh">Final evaluation</h2><div class="ex" id="exH"></div>
+      <h2>Development</h2><div class="ex" id="exD"></div>
+      <button class="btn ghost" id="newChat" type="button" style="width:100%">New conversation</button>
+      <button class="btn ghost" id="demoSpec" type="button" style="width:100%;margin-top:8px">Load demo spectra (synthetic)</button>
+      <p style="font-size:12px;color:var(--muted);margin:6px 2px 0">Spectra: CSV/TXT, first column wavelength or wavenumber, then one column per spectrum. Put the group or value in the column or file name (e.g. <code>water_0.5pct_1</code>).</p>
+    </nav>
+    <section class="thread" aria-label="Conversation">
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="composer">
+        <label for="inp" class="sr" hidden>Message</label>
+        <textarea id="inp" placeholder="Describe the process (material, what to monitor, where, constraints) — or answer the questions. Drop a .txt / .pdf / .docx here."></textarea>
+        <div class="crow"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label class="filelbl">Attach enquiry<input type="file" id="file" accept=".txt,.md,.pdf,.docx"></label><label class="filelbl">Attach spectra<input type="file" id="spfile" multiple accept=".csv,.txt,.tsv,.dat,.prn"></label><span id="fmsg"></span></div>
+        <span style="display:flex;gap:8px"><button class="btn ghost" id="stop" type="button" hidden>Stop</button><button class="btn" id="send" type="button">Send</button></span></div>
+      </div>
+    </section>
+  </div>
+</div>
+<aside class="drawer" id="drawer" hidden aria-label="Evidence"></aside>
+
+<script>/*__KB__*/</script>
+<script>/*__ENGINE__*/</script>
+<script>/*__SCEN__*/</script>
+<script>/*__RAG__*/</script>
+<script>/*__SPEC__*/
+/*__EXT__*/</script>
+<script>
+(() => {
+const E = window.AFS_ENGINE, KB = window.AFS_KB, SC = window.AFS_SCENARIOS;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const STATUS = { provisional_assessment:"Provisional assessment", insufficient_information:"Insufficient information", outside_supported_scope:"Outside the supported scope" };
+const SEV = { wont_work:"Won't work", wrong_assumption:"Wrong assumption", check_first:"Check first" };
+const ROLE = { main:"Main", compare:"Compare", only_if_needed:"Only if needed", not_suitable:"Not suitable" };
+const MODE = { in_line:"In-line", in_situ:"In situ", lab_first:"Lab screening first", laboratory_study:"Laboratory study" };
+const PATHS = [["A","Path A · Chemometric model","One full-spectrum method with a calibration model."],["B","Path B · Custom MSF system","Several methods kept for the client's own R&D."],["C","Path C · Spectral fiber sensor","A few-wavelength sensor at a fixed process point."]];
+const SEV_MAP = { blocker:"wont_work", correction:"wrong_assumption", caution:"check_first" };
+
+let sample = null, convo = { enquiry:"", turns:[] }, busy = false;
+
+// ---------- RAG: BM25 retrieval over page passages of S01-S05 (254 passages, 1-based page tags)
+const PASS = (window.AFS_RAG || { passages:[] }).passages.concat(window.AFS_EXT || []); const PID = Object.fromEntries(PASS.map(p => [p.id, p]));
+const STOP = new Set("the and for with that this from are was were has have had not but can may into than then also such their there these those which while where when what will would could should about over under using used use between per its our your they them been being more most less other each both very would like want need".split(" "));
+const toks = s => (s.toLowerCase().match(/[a-z][a-z0-9\-]+/g) || []).filter(t => t.length > 2 && !STOP.has(t)).map(t => t.length > 4 && t.endsWith("s") ? t.slice(0,-1) : t);
+const DOCS = PASS.map(p => toks(p.text)); const AVG = DOCS.reduce((a,d) => a + d.length, 0) / Math.max(DOCS.length,1);
+const DF = {}; DOCS.forEach(d => new Set(d).forEach(t => DF[t] = (DF[t]||0) + 1));
+window.__afsRetrieve = (q, k) => retrieve(q, k); window.__afsExt = (q) => retrieveExt(q, 5);
+function retrieve(query, k = 10) {
+  const q = [...new Set(toks(query))], N = DOCS.length, k1 = 1.4, b = 0.75;
+  const scored = DOCS.map((d, i) => { const tf = {}; d.forEach(t => tf[t] = (tf[t]||0) + 1); let s = 0;
+    for (const t of q) if (tf[t]) { const idf = Math.log(1 + (N - DF[t] + 0.5) / (DF[t] + 0.5)); s += idf * tf[t] * (k1 + 1) / (tf[t] + k1 * (1 - b + b * d.length / AVG)); }
+    if (PASS[i].src === "S05") s *= 0.5;  return [s, i]; }).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]);
+  const out = [], perPage = {};
+  for (const [s, i] of scored) { const p = PASS[i]; if (p.scope === "external-imaging" && k < 400) continue; const key = p.src + p.page; if ((perPage[key] = (perPage[key]||0) + 1) > 2) continue; out.push({ ...p, score:+s.toFixed(2) }); if (out.length >= k) break; }
+  return out;
+}
+// external research pages: offered only when their BM25 score shows the enquiry is about imaging/tissue topics
+// external research pages: offered only when the enquiry is about their topic (imaging, tissue, surgery)
+const EXT_TOPIC = {
+  X01: /\b(drone|satellite|aerial|remote sensing|forest|image registration)/i,
+  X02: /\b(camera|imag(e|ing)|sorting|conveyor|agricultur|crop|field of view)/i,
+  X03: /\b(optoacoustic|photoacoustic|oncolog|tumou?r|in vivo|deep tissue|patient)/i,
+  X04: /\b(OCT|coherence tomography|surg(ery|ical)|biops|endoscop|microscop)/i,
+  X05: /\b(hyperspectral|imag(e|ing)|camera|remote sensing)/i };
+function retrieveExt(query, k = 2) {
+  const hit = PASS.filter(p => p.scope === "external-imaging" && EXT_TOPIC[p.src] && EXT_TOPIC[p.src].test(query));
+  const rank = Object.fromEntries(retrieve(query, 400).map(p => [p.id, p.score]));
+  return hit.map(p => ({ ...p, score:rank[p.id] || 0 })).sort((x, y) => y.score - x.score).slice(0, k);
+}
+const known = id => !!(KB.CLAIMS[id] || PID[id]);
+const label = id => PID[id] ? (PID[id].page === "web" ? `${PID[id].src} (web)` : `${PID[id].src} p.${PID[id].page}`) : E.citeText(id);
+
+// ---------- evidence chips
+const chips = ids => { ids = [...new Set((ids||[]).filter(known))]; if (!ids.length) return "";
+  return ` <button class="cite${ids.every(i=>KB.CLAIMS[i] && KB.CLAIMS[i].src==="GEN")?" gen":""}" type="button" data-ids="${ids.join(",")}">${[...new Set(ids.map(label))].join("; ")}</button>`; };
+const R = s => E.citeGroups(esc(s), ids => chips(ids));
+document.addEventListener("click", e => { const b = e.target.closest(".cite"); if (!b) return;
+  $("#drawer").innerHTML = `<button class="btn ghost" id="cl" type="button" style="float:right">Close</button><h3 style="font:600 12px var(--f-m);text-transform:uppercase;color:var(--muted)">Evidence</h3>` +
+    b.dataset.ids.split(",").map(id => { const c = KB.CLAIMS[id] || PID[id], s = KB.SOURCES[c.src]; return `<div class="ev"><code>${esc(label(id))}</code><small>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · external research, imaging context only` : `${esc(s.title)} · scope ${esc(c.scope)}${PID[id] ? " · retrieved passage" : " · curated claim"}`}</small>${esc(c.text)}</div>`; }).join("");
+  $("#drawer").hidden = false; $("#cl").onclick = () => $("#drawer").hidden = true; });
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#drawer").hidden = true; });
+
+// ---------- convert the rule engine's assessment into the chat shape (offline / fallback)
+function fromEngine(o) {
+  const v = o.verdict, it = v.items[0] || {};
+  const ids = s => [...String(s || "").matchAll(/\{\{([A-Za-z0-9\-]+)\}\}/g)].map(m => m[1]).filter(known);
+  const strip = s => String(s || "").replace(/\s*\{\{[A-Za-z0-9\-]+\}\}/g, "").replace(/\s+([.;,])/g, "$1").trim();
+  const roleMap = { primary:"main", comparison:"compare", conditional:"only_if_needed", screening:"only_if_needed", combination:"only_if_needed" };
+  return {
+    status:o.status === "provisional" ? "provisional_assessment" : o.status === "insufficient" ? "insufficient_information" : "outside_supported_scope",
+    status_reason:strip(o.statusWhy), answer:strip(o.answer),
+    answer_cites:[...new Set(ids(o.statusWhy).concat(ids(o.answer), ...o.findings.map(f => ids(f.text))))].slice(0, 4),
+    inline:{ mode:/situ/i.test(v.mode)?"in_situ":/screen/i.test(v.mode)?"lab_first":/laboratory|clinical/i.test(v.mode)?"laboratory_study":"in_line",
+      headline:strip(v.headline), method:it.method||"", probe:it.probe||"", install:it.install||"", fiber:it.fiber||"", test_against:strip(v.testAgainst), not_final_because:strip(v.blocker),
+      cites:[...new Set(ids(v.testAgainst).concat(...o.recs.filter(r => r.role === "primary").map(r => ids(r.reason))))] },
+    problems:o.findings.map(f => ({ severity:SEV_MAP[f.severity]||"check_first", text:strip(f.title + ". " + f.text), cites:ids(f.text) })),
+    methods:o.recs.slice(0,4).map(r => ({ method:r.method, role:roleMap[r.role]||"only_if_needed", why:strip(r.reason + " " + r.conditions), cites:ids(r.reason + " " + r.conditions) })),
+    questions:o.questions.slice(0,5).map(q => ({ q:strip(q.q), why:strip(q.why), cites:ids(q.q + " " + q.why) })),
+    experiment:{ objective:strip(o.plan.objective), steps:o.plan.steps.map(strip), references:o.plan.references.map(strip), go_no_go:strip(o.plan.decision), cites:[...new Set([].concat(...o.plan.steps.map(ids)))] },
+    pathway:{ lab_test:o.pathway.step1, key_features:strip(o.pathway.features), path:o.pathway.path||"not_yet", path_reason:strip(o.pathway.why), later:o.pathway.later||"none", cites:ids(o.pathway.features + " " + o.pathway.why + " " + (o.pathway.laterWhy||"")) },
+    multispectral:(() => { const r = o.recs.find(x => /\+/.test(x.method));
+      return r ? { worth_testing:true, combination:r.method, why:E.plain(r.reason).replace(/\[[^\]]*\]/g,"").trim(), probe:/same spot|combined/i.test(r.geometry) ? "Combined probe on the same spot" : r.geometry, fusion:"Low-level fusion of synchronised spectra; compare with single-method models", test:E.plain(r.conditions).replace(/\[[^\]]*\]/g,"").trim(), cites:["S01-7-synergy","S01-8-same-spot"] }
+        : { worth_testing:false, why:"The rule engine found no source-backed combination for this case; test single methods first.", cites:["S01-7-synergy"] }; })(),
+    requirements:{ stated:(o.facts||[]).map(x => ({ item:"stated", value:x })), missing:(o.unknowns||[]).map(u => strip(u.item)) },
+    assumptions:o.assumptions, _engine:"rules" };
+}
+
+// ---------- verifier for Claude's JSON
+const TOK = /\{\{([A-Za-z0-9\-]+)\}\}/g;
+const FIBER_RX = [["Vis-NIR silica",/silica|quartz/i],["CIR (As-S chalcogenide)",/chalcogenide|\bCIR\b/i],["PIR (polycrystalline AgHal)",/polycrystalline|\bPIR\b|silver halide/i],["Hollow glass waveguide",/hollow/i]];
+const METHOD_NM = m => /MIR|ATR|FTIR|mid/i.test(m) ? [2500,25000] : /NIR|near/i.test(m) ? [780,2500] : null;
+function walk(o, fn) { if (typeof o === "string") fn(o); else if (Array.isArray(o)) o.forEach(x => walk(x, fn)); else if (o && typeof o === "object") for (const k in o) if (k !== "cites" && k[0] !== "_") walk(o[k], fn); }
+// repair citation ids the model writes slightly wrong, and move ids written into prose into the cites
+function normId(id) { id = String(id||"").trim().replace(/^\[|\]$/g,""); if (known(id)) return id; if (known("P:" + id)) return "P:" + id; return id; }
+const RAWID = /\(?\b((?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+)\b(?:,\s*)?\)?/g;
+function normalize(a) {
+  const fixObj = o => { if (!o || typeof o !== "object") return;
+    if (Array.isArray(o.cites)) o.cites = [...new Set(o.cites.map(normId))];
+    for (const k of Object.keys(o)) { if (k === "cites" || k[0] === "_") continue; const v = o[k];
+      if (typeof v === "string") { const found = []; const cleaned = v.replace(/\((?:\s*(?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+\s*[,;]?)+\)/g, m => { (m.match(/(?:P:)?(?:S0\d|X0\d|REF)-[A-Za-z0-9\-]+/g)||[]).forEach(x => found.push(normId(x))); return ""; }).replace(/\s+([.,;])/g, "$1").trim();
+        const good = found.filter(known); if (good.length) { o[k] = cleaned; const tgt = (k === "answer" || k === "status_reason") ? "answer_cites" : "cites"; if (o === a && tgt === "cites") a.answer_cites = [...new Set((a.answer_cites||[]).concat(good))]; else o[tgt] = [...new Set((o[tgt]||[]).concat(good))]; } }
+      else if (Array.isArray(v)) v.forEach(fixObj); else if (v && typeof v === "object") fixObj(v); } };
+  if (Array.isArray(a.answer_cites)) a.answer_cites = [...new Set(a.answer_cites.map(normId))];
+  fixObj(a); return a;
+}
+function check(a, enquiry) {
+  const issues = [], notes = [];
+  // citations
+  let total = 0; const bad = new Set();
+  const scan = obj => { (obj?.cites||[]).forEach(id => { total++; if (!known(id)) bad.add(id); }); };
+  [a.inline, ...(a.problems||[]), ...(a.methods||[]), a.multispectral].forEach(scan);
+  if (a.multispectral && a.multispectral.worth_testing && !(a.multispectral.cites||[]).length) issues.push("the multispectral option must cite its evidence");
+  walk(a, s => { let m; TOK.lastIndex = 0; while ((m = TOK.exec(s))) { total++; if (!KB.CLAIMS[m[1]]) bad.add(m[1]); } });
+  if (bad.size) issues.push("unknown citation ids: " + [...bad].join(", "));
+  // numbers
+  const nums = s => (s.replace(TOK,"").replace(/\b(P:)?[SX]0\d(-[A-Za-z0-9\-]+)?\b/g,"").replace(/\b[SDHC]0\d\b/g,"").replace(/\bp\.\s?\d+/g,"").match(/\d+(?:[.,]\d+)?/g)||[]).map(n=>n.replace(",","."));
+  const allowed = new Set(nums(enquiry)); Object.values(KB.CLAIMS).forEach(c => nums(c.text).forEach(n => allowed.add(n))); PASS.forEach(p => nums(p.text).forEach(n => allowed.add(n))); ["0","1","2","3","4","5"].forEach(n=>allowed.add(n));
+  // unit conversions of source numbers (µm <-> cm-1, nm <-> cm-1) are allowed: 10000/x and 1e7/x, rounded
+  [...allowed].forEach(n => { const x = parseFloat(n); if (x > 0) [1e4 / x, 1e7 / x].forEach(v => { if (v >= 1 && v < 1e6) { allowed.add(String(Math.round(v))); allowed.add(String(+v.toFixed(1))); allowed.add(String(+v.toFixed(2))); } }); });
+  const unsup = new Set(); walk(a, s => nums(s).forEach(n => { if (!allowed.has(n)) unsup.add(n); }));
+  if (unsup.size) issues.push("numbers not found in the enquiry or sources: " + [...unsup].join(", "));
+  // fiber
+  const inl = a.inline || {}; let fiberRes = "n/a";
+  // each method of a combination needs at least one named fiber that transmits its range
+  const fams = inl.fiber ? FIBER_RX.filter(([,rx]) => rx.test(inl.fiber)).map(([n]) => n) : [];
+  if (fams.length) (inl.method||"").split(/\s*\+\s*/).forEach(part => { const need = METHOD_NM(part); if (!need) return;
+    const ok = fams.some(n => { const fr = KB.FIBERS[n]; return Math.max(0, Math.min(need[1],fr[1]) - Math.max(need[0],fr[0])) > 0; });
+    if (!ok) { fiberRes = "incompatible"; issues.push(`fiber ${fams.join(" / ")} does not transmit the ${part} range`); } else if (fiberRes !== "incompatible") fiberRes = "ok"; });
+  // in-line card must name a method
+  if (!inl.method || /none|no method/i.test(inl.method) || /\bno method\b|cannot be (named|approved|recommended)|not approved/i.test(inl.headline||"")) issues.push("the in-line card must name the method to test first");
+  const unc = [];
+  const has = x => x && (x.cites||[]).some(known);
+  if (!((a.answer_cites||[]).some(known)) && a._engine !== "rules") unc.push("answer/status_reason");
+  if (a.inline && !has(a.inline)) unc.push("inline card");
+  (a.problems||[]).forEach((p, i) => { if (!has(p)) unc.push("problem " + (i + 1)); });
+  (a.methods||[]).forEach((m, i) => { if (!has(m)) unc.push("method " + (i + 1)); });
+  if (a.multispectral && !has(a.multispectral)) unc.push("multispectral option");
+  if (unc.length) issues.push("uncited statements (cite a passage or claim id, or remove them): " + unc.join(", "));
+  if (!(a.questions||[]).length && a.status !== "provisional_assessment") notes.push("no clarification questions");
+  return { issues, notes, total, bad:[...bad], unsup:[...unsup], fiber:fiberRes, uncited:unc };
+}
+
+// ---------- prompt for Claude
+function claimsBlock() { return Object.values(KB.CLAIMS).map(c => `${c.id} | ${E.citeText(c.id)} | scope=${c.scope} | ${c.text}`).join("\n"); }
+function buildPrompt(enquiry, findings, prev, passages) {
+  return `You are the AI assistant of an AFS (Art Fiber Systems) expert. Draft a FIRST technical assessment of a customer enquiry on IN-LINE fiber-optic process spectroscopy.
+
+RULES
+- Use ONLY the retrieved passages and the knowledge-base claims below as technical evidence. Cite them by id (passage ids start with "P:") in "cites" arrays. Scope "business" is context, never evidence; "clinical-research" is never proof of clinical or process readiness.
+- Scope "external-imaging" (ids P:X01..P:X05) are external research web pages on multispectral IMAGING (cameras, MSOT, OCT, hyperspectral imaging). Cite them only when the enquiry concerns imaging, tissue or multispectral cameras, or to name a research group worth consulting; never as evidence that an in-line fiber spectroscopy method works in the client's process, and say they are external, not AFS.
+- STRICT CITATION RULE: every statement you make must be supported by a cited passage or claim from the supplied documents (AFS sources or the listed external research pages). "answer", "status_reason", "inline", every "problems" item, every "methods" item and "multispectral" must each carry at least one id in their cites ("answer_cites" for answer and status_reason). If a statement cannot be cited, leave it out. Never add knowledge that is not in the passages or claims.
+- Anything the client did not state is unknown: ask about it or state it as an assumption. Never invent spectra, accuracy, detection limits, response times, fiber lengths, prices or product codes. Use only numbers that appear in the enquiry or the claims.
+- A published application is a reason to test a method, not proof. Look for an application example of the same measured quantity first and use its method.
+- ALWAYS name one method in "inline" (the method to test first), even when the client's concept is rejected or facts are missing; put every caveat in "not_final_because". The headline starts with "Test <method> ...". Answer approval questions in "status_reason".
+- The fiber must transmit the method's range (fiber table in the claims). Raman: give excitation (nm) separately from Raman shift (cm-1).
+- Reference measurements are independent laboratory analyses, never the instrument's own calibration.
+- MULTISPECTRAL: always assess whether combining two methods is worth testing (for example NIR + Raman, MIR ATR + fluorescence, NIR + fluorescence, MIR + Raman). Say which pair, why their information is complementary, whether the probes must sample the same spot (combined multispectral probe) or only be time-synchronised, and how the data are fused (low-level fusion of synchronised spectra, or a model per method). A combination is a hypothesis: it must beat the best single method on the same validation data. If no combination is justified, say so and why.
+- "requirements": extract the process requirements and constraints from the ENQUIRY only (material, target variable, location, conditions, constraints, reference, goal), in the client's own words; this section needs no citation, and you must not add anything the client did not state. List in "missing" what a first assessment still needs.
+- Address EVERY premise check below in "problems" (same severity, plain words for an engineer).
+- Status: provisional_assessment when material, quantity and location are known; insufficient_information when the target is undefined or the concept is blocked and the alternative depends on missing facts; outside_supported_scope when the use needs validation beyond a first assessment (e.g. decisions on patients). Even then, name methods worth screening and concrete laboratory steps.
+- At most 5 questions, highest impact first, answerable by the client. If the enquiry contains the client's answers, treat them as facts, do not ask again, and update the assessment.${prev ? "\n- This is a follow-up: fill \"changed\" with one sentence on what changed versus the previous answer and why." : ""}
+- If a spectral analysis is given: say what it shows for the method choice (does the method see the difference?), put the key spectral features into pathway.key_features, check that the fiber covers the measured range, and never derive accuracy or concentrations from a few spectra.
+- Be concise: one sentence per field; at most 4 problems, 4 methods and 4 questions; 3-5 experiment steps.
+
+PREMISE CHECKS COMPUTED IN CODE
+${findings.length ? findings.map(f => `- [${SEV_MAP[f.severity]}] ${E.plain(f.title)}: ${E.plain(f.text)}`).join("\n") : "- none"}
+${prev ? `\nPREVIOUS ANSWER (summary)\nstatus=${prev.status}; method=${prev.inline?.method}; headline=${prev.inline?.headline}\n` : ""}
+ENQUIRY (with any client answers)
+${enquiry}
+${convo.spectra ? `\nSPECTRAL ANALYSIS OF THE CLIENT'S MEASURED SPECTRA (computed in code; use these results as given, do not invent other band assignments, and use it in the method choice, problems, key spectral features and the experiment):\n${E.plain(convo.spectra.text)}\n` : ""}
+
+RETRIEVED SOURCE PASSAGES (RAG, BM25 top ${passages.length} for this enquiry; id | page | scope | text). Prefer these for case-specific evidence and cite them by id:
+${passages.map(p => `${p.id} | ${label(p.id)} | scope=${p.scope} | ${p.text}`).join("\n")}
+
+CURATED KNOWLEDGE-BASE CLAIMS (id | label | scope | claim)
+${claimsBlock()}
+
+Reply with ONLY one JSON object:
+{"requirements":{"stated":[{"item":"material|target|location|conditions|constraint|reference|goal","value":"as stated by the client"}],"missing":["..."]},
+ "status":"provisional_assessment|insufficient_information|outside_supported_scope","status_reason":"...","answer":"2-3 sentence direct answer","answer_cites":["id"],
+ "inline":{"mode":"in_line|in_situ|lab_first|laboratory_study","headline":"Test ...","method":"NIR|MIR ATR|Raman|Fluorescence|UV-Vis|NIR + Raman|...","probe":"...","install":"where in the process","fiber":"fiber family","test_against":"one alternative","not_final_because":"...","cites":["id"]},
+ "problems":[{"severity":"wont_work|wrong_assumption|check_first","text":"...","cites":["id"]}],
+ "methods":[{"method":"...","role":"main|compare|only_if_needed|not_suitable","why":"...","cites":["id"]}],
+ "questions":[{"q":"...","why":"...","cites":["id"]}],
+ "experiment":{"objective":"...","steps":["..."],"references":["..."],"go_no_go":"criteria come from the client","cites":["id"]},
+ "pathway":{"lab_test":["method (main|compare|only if needed)"],"key_features":"...","path":"A|B|C|not_yet","path_reason":"...","later":"A|B|C|none","cites":["id"]},
+ "multispectral":{"worth_testing":true,"combination":"e.g. NIR + Raman","why":"complementary information","probe":"combined probe (same spot) | separate synchronised probes","fusion":"low-level fusion of synchronised spectra | model per method","test":"how to prove the gain","cites":["id"]},
+ "assumptions":["..."],"changed":"${prev ? "..." : ""}"}`;
+}
+
+// ---------- render one assistant turn
+function cardHTML(a, v) {
+  const inl = a.inline || {};
+  const cells = [["Method", inl.method, "m"], ["Probe / interface", inl.probe], ["Install", inl.install], ["Fiber", inl.fiber]].map(([k, x, c]) => `<div class="cell ${c||""}"><small>${k}</small><span>${esc(x || "to be defined")}</span></div>`).join("");
+  const pw = a.pathway || {};
+  const exp = a.experiment || {};
+  const rq = a.requirements || {};
+  const reqHTML = ((rq.stated||[]).length || (rq.missing||[]).length) ? `<div class="sec req"><b>Requirements and constraints (from the enquiry)</b><div class="reqgrid"><div><small>Stated by the client</small><ul>${(rq.stated||[]).map(x => `<li>${x.item && x.item !== "stated" ? `<i>${esc(x.item)}:</i> ` : ""}${esc(x.value || x)}</li>`).join("") || "<li>—</li>"}</ul></div><div><small>Still missing</small><ul>${(rq.missing||[]).map(x => `<li>${esc(x)}</li>`).join("") || "<li>Nothing critical</li>"}</ul></div></div></div>` : "";
+  return `${a.changed ? `<div class="changed">What changed: ${esc(a.changed)}</div>` : ""}${reqHTML}
+  <div class="card"><div class="mode">Recommended in-line method · ${esc(MODE[inl.mode] || inl.mode || "")}</div><h3>${esc(inl.headline || "")}</h3>
+   <div class="cells">${cells}</div>
+   ${inl.test_against ? `<div style="margin-top:8px;font-size:14px"><b>Test against:</b> ${esc(inl.test_against)}${chips(inl.cites)}</div>` : chips(inl.cites)}
+   ${inl.not_final_because ? `<div class="nf">Not final yet: ${esc(inl.not_final_because)}</div>` : ""}</div>
+  <span class="status ${esc(a.status)}">${esc(STATUS[a.status] || a.status)}</span><span style="font-size:14px">${esc(a.status_reason || "")}</span>
+  ${a.answer ? `<p style="margin:8px 0 0">${esc(a.answer)}${chips(a.answer_cites)}</p>` : ""}
+  ${(a.problems||[]).length ? `<div class="sec"><b>Risks and problems with the request</b>${a.problems.map(p => `<div class="prob ${esc(p.severity)}"><i>${esc(SEV[p.severity] || p.severity)}</i>${esc(p.text)}${chips(p.cites)}</div>`).join("")}</div>` : ""}
+  ${msHTML(a.multispectral)}
+  ${(a.questions||[]).length ? `<div class="sec"><b>To sharpen this, tell me</b><ol class="q">${a.questions.map(q => `<li>${esc(q.q)}${q.why ? `<small>${esc(q.why)}${chips(q.cites)}</small>` : ""}</li>`).join("")}</ol></div>` : ""}
+  <details><summary>Methods, first experiment, AFS pathway, checks</summary>
+   ${(a.methods||[]).length ? `<div class="sec"><b>Methods worth testing</b><div class="tiles">${a.methods.map(m => `<div class="tile ${esc(m.role)}"><span class="r">${esc(ROLE[m.role] || m.role)}</span><div class="n">${esc(m.method)}</div>${R(m.why)}${chips(m.cites)}</div>`).join("")}</div></div>` : ""}
+   <div class="sec"><b>First experiment</b>${esc(exp.objective || "")}${chips(exp.cites)}<ol class="q">${(exp.steps||[]).map(s => `<li>${R(s)}</li>`).join("")}</ol>
+    ${(exp.references||[]).length ? `<div style="font-size:14px"><b>References:</b> ${exp.references.map(esc).join("; ")}</div>` : ""}
+    ${exp.go_no_go ? `<div style="font-size:14px;margin-top:4px"><b>Go / no-go:</b> ${esc(exp.go_no_go)}</div>` : ""}</div>
+   <div class="sec"><b>AFS pathway</b><div style="font-size:14px">1. Lab test: ${esc((pw.lab_test||[]).join(" · ") || "—")}<br>2. Key spectral features: ${R(pw.key_features || "found in the test")}<br>3. ${esc(pw.path_reason || "")}${chips(pw.cites)}</div>
+    <div class="path3" style="margin-top:6px">${PATHS.map(([k,n,d]) => `<div class="pc ${pw.path===k?"on":pw.later===k?"later":""}"><b>${n}</b>${pw.path===k?"Recommended · ":pw.later===k?"Next step · ":""}${d}</div>`).join("")}</div></div>
+   ${(a.assumptions||[]).length ? `<div class="sec"><b>Assumptions</b><ul style="margin:0;padding-left:18px;font-size:14px">${a.assumptions.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+   ${(a._passages||[]).length ? `<div class="sec"><b>Retrieved sources (RAG · BM25)</b><div style="font-size:13px">${a._passages.map(p => `<div style="margin:3px 0">${chips([p.id])} <span style="color:var(--muted)">score ${p.score}</span> ${esc(p.text.slice(0,140))}…</div>`).join("")}</div></div>` : ""}
+   <div class="sec checks"><b>Automatic checks</b>
+    <div class="${v.bad.length?"no":"ok"}">${v.bad.length?"✕":"✓"} ${v.total} citations ${v.bad.length?"— unknown ids removed: "+esc(v.bad.join(", ")):"resolve to AFS source pages"}</div>
+    <div class="${v.unsup.length?"nt":"ok"}">${v.unsup.length?"! Numbers not found in sources: "+esc(v.unsup.join(", ")):"✓ Every number appears in the enquiry or a source"}</div>
+    <div class="${v.fiber==="incompatible"?"no":"ok"}">${v.fiber==="incompatible"?"✕ Fiber cannot carry the method's range":"✓ Fiber / method range: "+esc(v.fiber)}</div>
+    <div class="muted" style="color:var(--muted)">Generated by ${a._engine === "rules" ? "the offline rule engine (Claude unavailable in this view)" : "Claude with retrieval-augmented generation over the AFS sources, then checked in code"}${a._repaired ? " · one repair pass" : ""}.</div></div>
+  </details>`;
+}
+function citedIds(a) {
+  const ids = [];
+  const add = arr => (arr||[]).forEach(id => { if (known(id) && !ids.includes(id)) ids.push(id); });
+  add(a.answer_cites); add(a.inline?.cites); (a.questions||[]).forEach(q => add(q.cites)); add(a.experiment?.cites); add(a.pathway?.cites); (a.problems||[]).forEach(p => add(p.cites)); (a.methods||[]).forEach(m => add(m.cites)); add(a.multispectral?.cites);
+  const walkTok = s => { if (typeof s === "string") { let m; TOK.lastIndex = 0; while ((m = TOK.exec(s))) add([m[1]]); } else if (Array.isArray(s)) s.forEach(walkTok); else if (s && typeof s === "object") Object.entries(s).forEach(([k, v]) => { if (k[0] !== "_") walkTok(v); }); };
+  walkTok(a);
+  return ids;
+}
+function answerMd(a) {
+  const L = [], c = ids => [...new Set((ids||[]).filter(known).map(label))].join("; "), cs = ids => (ids||[]).filter(known).length ? ` [${c(ids)}]` : "";
+  const inl = a.inline || {}, rq = a.requirements || {}, exp = a.experiment || {}, pw = a.pathway || {}, ms = a.multispectral;
+  L.push(`# In-line spectroscopy first assessment`, ``, `Generated by ${a._engine === "rules" ? "the offline rule engine" : "Claude with RAG over the AFS sources, checked in code"}. First assessment to support an AFS expert; not a final recommendation.`, ``, `## Enquiry`, ``, a._enquiry || "", ``);
+  L.push(`## Requirements and constraints`, ``, ...(rq.stated||[]).map(x => `- ${x.item && x.item !== "stated" ? x.item + ": " : ""}${x.value || x}`), ``, `Missing:`, ...(rq.missing||[]).map(x => `- ${x}`), ``);
+  L.push(`## Recommended in-line method`, ``, `**${inl.headline || ""}**${cs(inl.cites)}`, ``, `| Method | Probe / interface | Install | Fiber |`, `|---|---|---|---|`, `| ${inl.method||""} | ${inl.probe||""} | ${inl.install||""} | ${inl.fiber||""} |`, ``, inl.test_against ? `Test against: ${inl.test_against}` : "", inl.not_final_because ? `Not final yet: ${inl.not_final_because}` : "", ``);
+  L.push(`Status: ${STATUS[a.status] || a.status}. ${a.status_reason || ""}`, ``, a.answer ? a.answer + cs(a.answer_cites) : "", ``);
+  if ((a.problems||[]).length) L.push(`## Risks and problems with the request`, ``, ...a.problems.map(p => `- **${SEV[p.severity] || p.severity}:** ${p.text}${cs(p.cites)}`), ``);
+  if ((a.methods||[]).length) L.push(`## Methods worth testing`, ``, ...a.methods.map(m => `- **${m.method}** (${ROLE[m.role] || m.role}): ${m.why}${cs(m.cites)}`), ``);
+  if (ms) L.push(`## Multispectral option`, ``, ms.worth_testing === false ? `No combination justified yet. ${ms.why || ""}${cs(ms.cites)}` : `**${ms.combination}**: ${ms.why}. Probe: ${ms.probe}. Fusion: ${ms.fusion}. Prove the gain: ${ms.test}${cs(ms.cites)}`, ``);
+  if ((a.questions||[]).length) L.push(`## Clarification questions`, ``, ...a.questions.map((q, i) => `${i + 1}. ${q.q}${q.why ? ` (${q.why})` : ""}${cs(q.cites)}`), ``);
+  L.push(`## First feasibility experiment`, ``, (exp.objective || "") + cs(exp.cites), ``, ...(exp.steps||[]).map((x, i) => `${i + 1}. ${x}`), ``, (exp.references||[]).length ? `References: ${exp.references.join("; ")}` : "", exp.go_no_go ? `Go / no-go: ${exp.go_no_go}` : "", ``);
+  L.push(`## AFS pathway`, ``, `1. Lab test: ${(pw.lab_test||[]).join(" · ")}`, `2. Key spectral features: ${pw.key_features || ""}`, `3. Path ${pw.path || ""}: ${pw.path_reason || ""}${cs(pw.cites)}`, ``);
+  if ((a.assumptions||[]).length) L.push(`## Assumptions`, ``, ...a.assumptions.map(x => `- ${x}`), ``);
+  L.push(`## Sources cited`, ``, ...citedIds(a).map(id => { const cc = KB.CLAIMS[id] || PID[id], sr = KB.SOURCES[cc.src]; return `- **${label(id)}** (${sr ? (sr.url || sr.file) : cc.src}): ${cc.text}`; }));
+  if ((a._dropped||[]).length) L.push(``, `Removed because no source was cited: ${a._dropped.join(", ")}.`);
+  return L.filter((x, i, arr) => !(x === "" && arr[i - 1] === "")).join("\n");
+}
+function answerJson(a) { const o = {}; for (const k in a) if (k[0] !== "_") o[k] = a[k]; o.enquiry = a._enquiry; o.engine = a._engine === "rules" ? "rule engine" : "claude+rag"; o.sources = citedIds(a).map(id => { const cc = KB.CLAIMS[id] || PID[id], sr = KB.SOURCES[cc.src]; return { id, label:label(id), source:sr ? (sr.url || sr.file) : cc.src, text:cc.text }; }); o.removed_uncited = a._dropped || []; return JSON.stringify(o, null, 2); }
+let DL = null;
+async function saveFile(name, text, type) {
+  try { if (DL) { await DL.save({ filename:name, data:text }); return; } } catch (e) { if (e && e.code === "declined") return; }
+  const u = URL.createObjectURL(new Blob([text], { type })); const l = document.createElement("a"); l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000);
+}
+window.__afsExport = (enquiry, json) => { const a = normalize(JSON.parse(JSON.stringify(json))); a._enquiry = enquiry; a._engine = a._engine || "claude"; const { eng, passages } = caseInputs(enquiry); const saved = convo.enquiry; convo.enquiry = enquiry; finalize(a, eng, passages, null, false); convo.enquiry = saved; return { md:answerMd(a), json:answerJson(a), dropped:a._dropped }; };
+function sourcesHTML(a) {
+  const ids = citedIds(a);
+  const rows = ids.map(id => { const c = KB.CLAIMS[id] || PID[id], s = KB.SOURCES[c.src];
+    const ext = s && s.url;
+    return `<li><b>${esc(label(id))}</b> <span style="color:var(--muted)">· ${ext ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · external research, imaging context` : esc(s ? s.file : c.src) + " · " + (PID[id] ? "retrieved passage" : "curated claim")}</span><br>${esc(c.text)}</li>`; }).join("");
+  const rel = (a._passages||[]).filter(p => p.scope === "external-imaging" && !ids.includes(p.id));
+  return `<div class="sec srcs"><b>Sources cited in this answer (${ids.length})</b>${ids.length ? `<ol class="srclist">${rows}</ol>` : `<p style="font-size:13px;color:var(--bad)">No source cited.</p>`}
+    ${rel.length ? `<p style="font-size:13px;margin:8px 0 2px"><b>Related external research</b> <span style="color:var(--muted)">(retrieved for this enquiry, not used as evidence)</span></p><ul class="srclist">${rel.map(p => { const x = KB.SOURCES[p.src]; return `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`; }).join("")}</ul>` : ""}
+    ${(a._dropped||[]).length ? `<p style="font-size:12.5px;color:var(--muted);margin:4px 0 0">Removed because no source was cited: ${esc(a._dropped.join(", "))}.</p>` : ""}
+    <div class="dlrow"><button class="btn ghost dl" type="button" data-f="md">Download report (Markdown)</button><button class="btn ghost dl" type="button" data-f="json">Download (JSON)</button></div></div>`;
+}
+function msHTML(m) {
+  if (!m) return "";
+  if (m.worth_testing === false) return `<div class="sec"><b>Multispectral option</b><div style="font-size:14px">No combination justified yet. ${esc(m.why || "")}${chips(m.cites)}</div></div>`;
+  return `<div class="sec ms"><b>Multispectral option · worth testing</b><div class="mscard"><div class="msname">${esc(m.combination || "")}</div>
+    <div class="msgrid"><div><small>Why</small>${esc(m.why || "")}</div><div><small>Probe</small>${esc(m.probe || "")}</div><div><small>Data fusion</small>${esc(m.fusion || "")}</div><div><small>Prove the gain</small>${esc(m.test || "")}</div></div>${chips(m.cites)}</div></div>`;
+}
+function addMsg(role, html) {
+  const d = document.createElement("div"); d.className = "msg " + role;
+  d.innerHTML = `<div class="av">${role === "user" ? "You" : "AFS"}</div><div class="bubble">${html}</div>`;
+  $("#msgs").appendChild(d); d.scrollIntoView({ behavior:"smooth", block:"start" }); return d;
+}
+function welcome() {
+  $("#msgs").innerHTML = "";
+  addMsg("bot", `Describe the customer's process: the material, what should be monitored, where, and any constraints. You can also attach the enquiry as a file, or pick an example on the left. I'll recommend the in-line method to test first, flag problems with the request, and ask what I need. Answer in your own words and I'll re-assess.`);
+}
+
+// ---------- one turn: instant rule-engine answer, then Claude (fast tier) refines it
+let gen = 0, ctl = null;
+function finalize(a, eng, passages, prev, followup) {
+  a._passages = passages; a._enquiry = a._enquiry || convo.enquiry;
+  if (convo.spectra && a._engine === "rules" && convo.spectra.res.keyFeatures) a.pathway.key_features = "From the attached spectra: " + convo.spectra.res.keyFeatures.map(k => SP.fmtX(k.x, convo.spectra.res.unit) + (k.bands[0] ? " (" + k.bands[0].label + ")" : "")).join("; ");
+  if (followup && !a.changed && prev) {
+    const ch = []; if (prev.status !== a.status) ch.push(`status ${STATUS[prev.status]} → ${STATUS[a.status]}`);
+    if ((prev.inline||{}).method !== (a.inline||{}).method) ch.push(`method ${(prev.inline||{}).method} → ${(a.inline||{}).method}`);
+    a.changed = ch.join("; ") || "status and method unchanged; details updated with your answers.";
+  }
+  const v = check(a, convo.enquiry + " " + (convo.spectra ? E.plain(convo.spectra.text) : ""));
+  if (a.inline?.cites) a.inline.cites = a.inline.cites.filter(known);
+  (a.problems||[]).concat(a.methods||[]).concat(a.multispectral ? [a.multispectral] : []).forEach(x => { if (x.cites) x.cites = x.cites.filter(known); });
+  // enforce: nothing uncited is shown
+  const cited = x => x && (x.cites||[]).some(known);
+  const dropped = [];
+  a.problems = (a.problems||[]).filter(p => cited(p) || (dropped.push("a problem statement"), false));
+  a.methods = (a.methods||[]).filter(m => cited(m) || (dropped.push("a method statement"), false));
+  if (a.multispectral && !cited(a.multispectral)) { a.multispectral = null; dropped.push("the multispectral option"); }
+  if (a._engine !== "rules" && !(a.answer_cites||[]).some(known)) { a.answer = ""; a.status_reason = ""; dropped.push("the summary"); }
+  if (a.inline && !cited(a.inline) && a._engine !== "rules") a.inline.not_final_because = ((a.inline.not_final_because || "") + " No source was cited for this card; treat it as unverified.").trim();
+  a._dropped = dropped;
+  return cardHTML(a, v) + sourcesHTML(a);
+}
+// test hooks (used by offline evaluation scripts; harmless in the page)
+function caseInputs(enquiry) {
+  const eng = E.assess(enquiry);
+  const passages = retrieve(enquiry + " " + eng.findings.map(f => f.title).join(" "), 8)
+    .concat(retrieve("combination of spectral methods multispectral probe data fusion synergy same point " + enquiry, 2)).concat(retrieveExt(enquiry)).filter((p, i, arr) => arr.findIndex(q => q.id === p.id) === i);
+  return { eng, passages };
+}
+window.__afsPrompt = (enquiry, prev) => { const { eng, passages } = caseInputs(enquiry); return buildPrompt(enquiry, eng.findings, prev || null, passages); };
+window.__afsScore = (enquiry, json) => { const a = normalize(JSON.parse(JSON.stringify(json))); const v = check(a, enquiry); const { eng, passages } = caseInputs(enquiry);
+  const saved = convo.enquiry; convo.enquiry = enquiry; const html = finalize(a, eng, passages, null, false); convo.enquiry = saved;
+  return { issues:v.issues, notes:v.notes, hard:v.issues.filter(x => /fiber|must name the method|unknown citation/.test(x)), dropped:a._dropped, cited:citedIds(a), method:a.inline?.method, status:a.status, findings:eng.findings.map(f => f.severity + ": " + E.plain(f.title)) }; };
+function done() { busy = false; ctl = null; $("#send").disabled = false; $("#stop").hidden = true; $("#inp").focus(); }
+async function turn(text) {
+  if (busy || !text.trim()) return;
+  busy = true; $("#send").disabled = true;
+  const my = ++gen;
+  const followup = !!convo.enquiry;
+  convo.enquiry = followup ? `${convo.enquiry}\n\nThe client answered / added:\n${text.trim()}` : text.trim();
+  addMsg("user", esc(text.trim()));
+  const pending = addMsg("bot", "");
+  const bubble = pending.querySelector(".bubble");
+  const eng = E.assess(convo.enquiry);
+  const passages = retrieve(convo.enquiry + " " + eng.findings.map(f => f.title).join(" "), 8)
+    .concat(retrieve("combination of spectral methods multispectral probe data fusion synergy same point " + convo.enquiry, 2)).concat(retrieveExt(convo.enquiry)).filter((p, i, arr) => arr.findIndex(q => q.id === p.id) === i);
+  const prev = convo.turns.length ? convo.turns[convo.turns.length - 1] : null;
+  // 1) instant answer from the rule engine (milliseconds)
+  const quick = fromEngine(eng);
+  const quickHTML = finalize(quick, eng, passages, prev, followup);
+  pending._answer = quick;
+  if (!sample) { bubble.innerHTML = quickHTML; convo.turns.push(quick); done(); return; }
+  const t0 = Date.now();
+  bubble.innerHTML = `<div class="refine" id="ref${my}"><span class="typing">Instant answer below · Claude is checking it against the AFS sources (<b class="sec">0</b> s)…</span></div>` + quickHTML;
+  const tick = setInterval(() => { const el = document.querySelector(`#ref${my} b.sec`); if (el) el.textContent = Math.round((Date.now() - t0) / 1000); }, 1000);
+  $("#stop").hidden = false;
+  ctl = new AbortController();
+  let a = null;
+  try {
+    const opt = { modelTier:"quick", cache:false, signal:ctl.signal };
+    a = normalize(await sample.json(buildPrompt(convo.enquiry, eng.findings, prev, passages), opt));
+    let v = check(a, convo.enquiry + " " + (convo.spectra ? E.plain(convo.spectra.text) : ""));
+    // repair only for errors that cannot be fixed by removing text
+    const hard = v.issues.filter(x => /fiber|must name the method|unknown citation/.test(x));
+    if (hard.length && my === gen) {
+      const fix = await sample.json(buildPrompt(convo.enquiry, eng.findings, prev, passages) + `\n\nYOUR PREVIOUS JSON FAILED THESE CHECKS, fix them and return the full JSON:\n- ${hard.join("\n- ")}\n\nPREVIOUS JSON:\n${JSON.stringify(a)}`, opt);
+      if (fix && fix.inline) { a = normalize(fix); a._repaired = true; }
+    }
+  } catch (e) {
+    if (e && (e.code === "not_granted" || e.code === "sampling_disabled")) { sample = null; setEngine(); }
+    a = null;
+  }
+  clearInterval(tick);
+  if (my !== gen) return;               // conversation was reset meanwhile
+  if (a && a.inline) { bubble.innerHTML = finalize(a, eng, passages, prev, followup); pending._answer = a; convo.turns.push(a); }
+  else { const r = document.getElementById("ref" + my); if (r) r.innerHTML = `<span style="color:var(--muted);font-size:13px">Showing the rule-engine answer (Claude ${ctl && ctl.signal.aborted ? "stopped" : "was not available"}).</span>`; convo.turns.push(quick); }
+  done();
+}
+
+// ---------- spectra: upload, analysis card, charts
+const SP = window.AFS_SPECTRA;
+const COLS = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)"];
+function lineChart(r) {
+  const W = 640, H = 260, L = 46, Rm = 12, T = 12, B = 30, rev = r.unit === "cm-1";
+  const xs = r.grid, xmin = Math.min(...xs), xmax = Math.max(...xs);
+  const sx = v => rev ? L + (xmax - v) / (xmax - xmin) * (W - L - Rm) : L + (v - xmin) / (xmax - xmin) * (W - L - Rm);
+  const all = r.pre.flat(), ymin = Math.min(...all), ymax = Math.max(...all), sy = v => T + (ymax - v) / (ymax - ymin || 1) * (H - T - B);
+  const ug = [...new Set(r.groups)], col = g => ug.length <= 4 ? COLS[ug.indexOf(g)] : "var(--muted)";
+  const step = Math.max(1, Math.floor(xs.length / 300));
+  const paths = r.pre.map((y, i) => `<path d="${xs.filter((_, j) => j % step === 0).map((x, k) => (k ? "L" : "M") + sx(x).toFixed(1) + " " + sy(y[k * step]).toFixed(1)).join("")}" fill="none" stroke="${col(r.groups[i])}" stroke-width="1.6" opacity=".85"/>`).join("");
+  const ticks = 6, tk = Array.from({ length: ticks }, (_, i) => xmin + (xmax - xmin) * i / (ticks - 1));
+  const axis = `<line x1="${L}" x2="${W - Rm}" y1="${H - B}" y2="${H - B}" stroke="var(--line)"/>` + tk.map(t => `<line x1="${sx(t)}" x2="${sx(t)}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${sx(t)}" y="${H - B + 16}" text-anchor="middle">${Math.round(t)}</text>`).join("") + `<text x="${W - Rm}" y="${H - 2}" text-anchor="end">${r.unit === "nm" ? "wavelength (nm)" : r.unit === "um" ? "wavelength (µm)" : r.method === "Raman" ? "Raman shift (cm⁻¹)" : "wavenumber (cm⁻¹)"}</text><text x="4" y="${T + 8}">SNV</text>`;
+  const pks = r.peaks.slice(0, 6).map((p, i) => `<line x1="${sx(p.x)}" x2="${sx(p.x)}" y1="${T}" y2="${H - B}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/><text x="${sx(p.x) + 3}" y="${T + 10 + (i % 3) * 12}" style="fill:var(--ink)">${Math.round(p.x)}</text>`).join("");
+  const legend = ug.length <= 4 ? `<div class="legend">${ug.map((g, i) => `<span><i style="background:${COLS[i]}"></i>${esc(g)}</span>`).join("")}</div>` : `<div class="legend"><span>${ug.length} groups (shown in grey)</span></div>`;
+  return { html: `<div class="chartbox" data-chart="line"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Preprocessed spectra">${axis}${paths}${pks}<line class="cross" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="var(--accent)" visibility="hidden"/></svg><div class="tip" hidden></div></div>${legend}`, sx, xs, W, L, Rm, rev, xmin, xmax };
+}
+function scatter(r) {
+  if (!r.pca || r.pca.length < 2) return "";
+  const W = 420, H = 260, L = 40, Rm = 12, T = 12, B = 30, a = r.pca[0].scores, b = r.pca[1].scores;
+  const pad = v => (Math.max(...v) - Math.min(...v)) * 0.08 || 1, x0 = Math.min(...a) - pad(a), x1 = Math.max(...a) + pad(a), y0 = Math.min(...b) - pad(b), y1 = Math.max(...b) + pad(b);
+  const sx = v => L + (v - x0) / (x1 - x0) * (W - L - Rm), sy = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+  const ug = [...new Set(r.groups)], col = g => ug.length <= 4 ? COLS[ug.indexOf(g)] : "var(--muted)";
+  const pts = a.map((v, i) => `<circle cx="${sx(v).toFixed(1)}" cy="${sy(b[i]).toFixed(1)}" r="5" fill="${col(r.groups[i])}" stroke="var(--sheet)" stroke-width="2"><title>${esc(r.names[i])}: PC1 ${v.toFixed(2)}, PC2 ${b[i].toFixed(2)}</title></circle>`).join("");
+  return `<div class="chartbox" style="max-width:460px"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="PCA score plot" style="min-width:320px"><line x1="${L}" x2="${W - Rm}" y1="${sy(0)}" y2="${sy(0)}" stroke="var(--line)"/><line x1="${sx(0)}" x2="${sx(0)}" y1="${T}" y2="${H - B}" stroke="var(--line)"/>${pts}<text x="${W - Rm}" y="${H - 6}" text-anchor="end">PC1 (${(r.pca[0].expl * 100).toFixed(0)} %)</text><text x="4" y="${T + 8}">PC2 (${(r.pca[1].expl * 100).toFixed(0)} %)</text></svg></div>`;
+}
+function bandCell(bs) { return bs.length ? bs.map(bd => esc(bd.label) + chips([bd.cite])).join("<br>") : `<span style="color:var(--muted)">no band named in the AFS sources (not interpreted)</span>`; }
+function specSources(r) {
+  const ids = [...new Set([].concat(...r.peaks.map(p => p.bands.map(b => b.cite)), ...(r.keyFeatures||[]).map(k => k.bands.map(b => b.cite)), ["S02-6-fibers"]))].filter(known);
+  return `<div class="sec srcs"><b>Sources cited (${ids.length})</b><ol class="srclist">${ids.map(id => { const c = KB.CLAIMS[id]; return `<li><b>${esc(label(id))}</b> <span style="color:var(--muted)">· ${esc(KB.SOURCES[c.src].file)}</span><br>${esc(c.text)}</li>`; }).join("")}</ol></div>`;
+}
+function specCard(r, synthetic) {
+  const lc = lineChart(r);
+  const fib = r.fibers.filter(f => f.verdict !== "no").map(f => `${esc(f.fam)} <span style="color:var(--muted)">(${f.verdict === "covers" ? "covers the range" : "partial"})</span>`).join("<br>") || "none";
+  const kinds = Object.keys(SP.KINDS).map(k => `<option${k === r.kind ? " selected" : ""}>${esc(k)}</option>`).join("");
+  return `<div class="spec"><h4>Spectral analysis</h4><div class="sub">Computed in the browser (no AI): units, SNV, Savitzky–Golay smoothing, peak finding, band matching against the AFS sources, fiber coverage${r.pca ? ", PCA" : ""}.${synthetic ? " <b>Synthetic demo data, not measurements.</b>" : ""}</div>
+   <div style="margin-top:8px;font-size:14px">${r.n} spectra · axis: <select class="kindSel" aria-label="Axis type">${kinds}</select> · method ${esc(r.method)} · range ${esc(SP.fmtX(r.range[0], r.unit))} – ${esc(SP.fmtX(r.range[1], r.unit))}</div>
+   ${lc.html}
+   <table class="pk"><thead><tr><th>Peak</th><th>Matches</th></tr></thead><tbody>${r.peaks.map(p => `<tr><td>${esc(SP.fmtX(p.x, r.unit))}</td><td>${bandCell(p.bands)}</td></tr>`).join("") || `<tr><td colspan="2">No clear peaks above the noise.</td></tr>`}</tbody></table>
+   ${r.pca ? `<div class="sec"><b>Multivariate check (PCA)</b><div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start">${scatter(r)}<div style="flex:1;min-width:220px;font-size:14px">
+     ${r.separation ? `<p style="margin:0 0 6px"><b>Groups ${esc(r.separation.groups.join(", "))}:</b> separation ratio ${r.separation.ratio.toFixed(1)} → <b>${r.separation.ratio > 2 ? "clearly separated" : r.separation.ratio > 1 ? "partly separated" : "overlapping"}</b>.</p>` : ""}
+     <b>Key spectral features</b> (largest PC1 loadings):<ul style="margin:4px 0;padding-left:18px">${r.keyFeatures.map(k => `<li>${esc(SP.fmtX(k.x, r.unit))}${k.bands.length ? " · " + esc(k.bands[0].label) + chips([k.bands[0].cite]) : ""}</li>`).join("")}</ul>
+     ${r.correlation ? `<b>Most correlated with the value in the names:</b><ul style="margin:4px 0;padding-left:18px">${r.correlation.top.map(t => `<li>${esc(SP.fmtX(t.x, r.unit))} · r = ${t.rval.toFixed(2)}${t.bands.length ? " · " + esc(t.bands[0].label) : ""}</li>`).join("")}</ul>` : ""}</div></div></div>` : `<p style="font-size:13px;color:var(--muted)">Attach 3 or more spectra (for example good vs off-spec, or several concentrations) to get PCA and key spectral features.</p>`}
+   <div class="sec"><b>Fibers that transmit the measured range</b><div style="font-size:14px">${fib}${chips(["S02-6-fibers"])}</div></div>
+   <p style="font-size:13px;color:var(--muted);margin:8px 0 0">A few spectra show whether a method sees a difference. They do not give a calibrated concentration or accuracy; that needs the reference samples of the first experiment.</p>
+   ${specSources(r)}
+   <div style="margin-top:8px"><button class="btn useSpec" type="button">${convo.enquiry ? "Re-assess with these spectra" : "Use in the next assessment"}</button></div></div>`;
+}
+function wireSpec(node, sets, synthetic) {
+  const box = node.querySelector('[data-chart="line"]'), svg = box.querySelector("svg"), tip = box.querySelector(".tip"), cross = svg.querySelector(".cross");
+  const r = convo.spectra.res, lc = lineChart(r);
+  svg.addEventListener("mousemove", ev => { const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const frac = (p.x - lc.L) / (lc.W - lc.L - lc.Rm); if (frac < 0 || frac > 1) { tip.hidden = true; cross.setAttribute("visibility", "hidden"); return; }
+    const xv = lc.rev ? lc.xmax - frac * (lc.xmax - lc.xmin) : lc.xmin + frac * (lc.xmax - lc.xmin);
+    const j = r.grid.reduce((bi, g, i) => Math.abs(g - xv) < Math.abs(r.grid[bi] - xv) ? i : bi, 0);
+    const mean = r.pre.reduce((s, y) => s + y[j], 0) / r.pre.length;
+    cross.setAttribute("x1", p.x); cross.setAttribute("x2", p.x); cross.setAttribute("visibility", "visible");
+    tip.hidden = false; tip.textContent = `${SP.fmtX(r.grid[j], r.unit)} · mean SNV ${mean.toFixed(2)}`; const bb = box.getBoundingClientRect();
+    tip.style.left = Math.min(ev.clientX - bb.left + 10, bb.width - 170) + "px"; tip.style.top = "6px"; });
+  svg.addEventListener("mouseleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  node.querySelector(".kindSel").onchange = e => { try { const res = SP.analyse(sets, e.target.value); convo.spectra = { res, text: SP.summaryText(res), sets, synthetic };
+    node.querySelector(".bubble").innerHTML = specCard(res, synthetic); wireSpec(node, sets, synthetic); } catch (err) { alertMsg(err.message); } };
+  node.querySelector(".useSpec").onclick = () => { if (convo.enquiry) turn("Measured spectra attached (see the spectral analysis above)."); else { $("#inp").focus(); $("#fmsg").textContent = "Spectra stored. Describe the process and press Send; the analysis is included."; } };
+}
+function alertMsg(t) { addMsg("bot", `<span style="color:var(--bad)">${esc(t)}</span>`); }
+async function takeSpectra(files, synthetic) {
+  try {
+    const sets = synthetic ? SP.demoSet() : await Promise.all([...files].map(async f => SP.parseTable(await f.text(), f.name)));
+    const res = SP.analyse(sets);
+    convo.spectra = { res, text: SP.summaryText(res), sets, synthetic };
+    addMsg("user", synthetic ? "Loaded the synthetic demo spectra (12 spectra: oil with 0, 0.5, 1 and 2 % water, 3 replicates each)." : `Attached ${res.n} spectra: ${esc(res.names.slice(0, 6).join(", "))}${res.n > 6 ? " …" : ""}`);
+    const node = addMsg("bot", specCard(res, synthetic)); wireSpec(node, sets, synthetic);
+  } catch (e) { alertMsg("Could not read the spectra: " + (e.message || e)); }
+}
+$("#spfile").onchange = e => { if (e.target.files.length) takeSpectra(e.target.files, false); e.target.value = ""; };
+$("#demoSpec").onclick = () => { if (!busy) takeSpectra(null, true); };
+
+// ---------- examples, input, files
+function exBtn(s) { return `<button type="button" data-id="${s.id}"><b>${s.id}</b><span>${esc(s.title)}</span></button>`; }
+$("#exH").innerHTML = SC.filter(s => /^H/.test(s.id)).map(exBtn).join("");
+if (!SC.some(s => /^H/.test(s.id))) $("#exHh").hidden = true;
+$("#exD").innerHTML = SC.filter(s => /^D/.test(s.id)).map(exBtn).join("");
+document.querySelectorAll(".ex button").forEach(b => b.onclick = () => { const s = SC.find(x => x.id === b.dataset.id); gen++; if (ctl) ctl.abort(); done(); convo = { enquiry:"", turns:[] }; welcome(); turn(s.enquiry); });
+$("#msgs").addEventListener("click", e => { const b = e.target.closest(".dl"); if (!b) return; const msg = b.closest(".msg"); const i = [...document.querySelectorAll(".msg.bot")].indexOf(msg); const a = (msg && msg._answer) || null; if (!a) return;
+  const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,"-"); b.dataset.f === "md" ? saveFile(`assessment-${stamp}.md`, answerMd(a), "text/markdown") : saveFile(`assessment-${stamp}.json`, answerJson(a), "application/json"); });
+if (window.claude) claude.use("downloads").then(d => { DL = d; });
+$("#newChat").onclick = () => { gen++; if (ctl) ctl.abort(); done(); convo = { enquiry:"", turns:[] }; welcome(); };
+$("#stop").onclick = () => { if (ctl) ctl.abort(); };
+$("#send").onclick = () => { const t = $("#inp").value; $("#inp").value = ""; turn(t); };
+$("#inp").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#send").click(); } });
+
+const LIBS = { pdf:["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js","https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"], docx:["https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"] };
+const loaded = {}; const load = src => loaded[src] || (loaded[src] = new Promise((r, j) => { const s = document.createElement("script"); s.src = src; s.onload = r; s.onerror = () => j(new Error("could not load reader")); document.head.appendChild(s); }));
+async function readFile(f) {
+  const n = f.name.toLowerCase();
+  if (n.endsWith(".pdf")) { for (const s of LIBS.pdf) await load(s); pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdf[1];
+    const doc = await pdfjsLib.getDocument({ data:new Uint8Array(await f.arrayBuffer()) }).promise; const out = [];
+    for (let i = 1; i <= Math.min(doc.numPages, 30); i++) out.push((await (await doc.getPage(i)).getTextContent()).items.map(x => x.str).join(" ")); return out.join("\n"); }
+  if (n.endsWith(".docx")) { for (const s of LIBS.docx) await load(s); return (await mammoth.extractRawText({ arrayBuffer:await f.arrayBuffer() })).value; }
+  return await f.text();
+}
+async function takeFile(f) { $("#fmsg").textContent = "Reading " + f.name + "…";
+  try { const t = (await readFile(f)).replace(/\s+/g, " ").trim(); if (!t) throw new Error("no text found");
+    $("#inp").value = ($("#inp").value.trim() ? $("#inp").value.trim() + "\n\n" : "") + t; $("#fmsg").textContent = `${f.name}: ${t.length.toLocaleString()} characters added. Press Send.`;
+  } catch (e) { $("#fmsg").textContent = f.name + ": " + (e.message || "could not be read"); } }
+$("#file").onchange = e => { if (e.target.files[0]) takeFile(e.target.files[0]); e.target.value = ""; };
+const ta = $("#inp"); ta.addEventListener("dragover", e => { e.preventDefault(); ta.classList.add("drag"); }); ta.addEventListener("dragleave", () => ta.classList.remove("drag"));
+ta.addEventListener("drop", e => { e.preventDefault(); ta.classList.remove("drag"); if (e.dataTransfer.files[0]) takeFile(e.dataTransfer.files[0]); });
+
+function setEngine() { const el = $("#engine"); el.textContent = sample ? "Claude + AFS sources + code checks" : "Offline rule engine (open in Claude for AI answers)"; el.className = "engine" + (sample ? " on" : ""); }
+welcome(); setEngine();
+if (window.claude) claude.use("sample").then(s => { sample = s; setEngine(); }); else $("#engine").textContent = "Offline rule engine";
+})();
+</script>

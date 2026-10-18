@@ -1,0 +1,68 @@
+{
+  "generated": "2026-10-18T11:22:21.418Z",
+  "model": "Claude Opus (strongest tier); the live demo uses the fast tier for speed",
+  "pipeline": "same prompt for every case (__afsPrompt: premise checks + BM25 retrieval + curated claims) -> Claude -> code checks (__afsScore) -> repair only on hard errors (none needed) -> export (__afsExport); unedited",
+  "benchmark": "bench/: 5 fast-tier runs, this strong run and a no-pipeline baseline, scored by tests/scorecard.js",
+  "cases": [
+    {
+      "id": "H01",
+      "method": "NIR",
+      "status": "provisional_assessment",
+      "trap_caught": true,
+      "cited_sources": 18,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    },
+    {
+      "id": "H02",
+      "method": "NIR",
+      "status": "provisional_assessment",
+      "trap_caught": true,
+      "cited_sources": 23,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    },
+    {
+      "id": "H03",
+      "method": "Raman",
+      "status": "provisional_assessment",
+      "trap_caught": true,
+      "cited_sources": 26,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    },
+    {
+      "id": "H04",
+      "method": "MIR ATR",
+      "status": "insufficient_information",
+      "trap_caught": true,
+      "cited_sources": 26,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    },
+    {
+      "id": "H05",
+      "method": "MIR ATR",
+      "status": "insufficient_information",
+      "trap_caught": true,
+      "cited_sources": 27,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    },
+    {
+      "id": "H06",
+      "method": "NIR",
+      "status": "outside_supported_scope",
+      "trap_caught": true,
+      "cited_sources": 31,
+      "needed_repair": false,
+      "removed_uncited": [],
+      "numbers_not_in_sources": 0
+    }
+  ]
+}
